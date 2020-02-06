@@ -1,0 +1,44 @@
+{
+  "name": "identity-system",
+  "version": "1.0.0",
+  "main": "./build/index.js",
+  "scripts": {
+    "start": "node build/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint . --ext .ts --fix",
+    "build": "tsc --project .",
+    "buildWatch": "tsc --watch --project ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xpring-eng/identity-system.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/xpring-eng/identity-system/issues"
+  },
+  "homepage": "https://github.com/xpring-eng/identity-system#readme",
+  "dependencies": {
+    "@types/debug": "^4.1.5",
+    "debug": "^4.1.1",
+    "express": "^4.17.1",
+    "reduct": "^3.3.1",
+    "typescript": "^3.7.5"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.2",
+    "@types/node": "^13.7.0",
+    "@typescript-eslint/eslint-plugin": "^2.19.0",
+    "eslint": "^6.8.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-config-airbnb-typescript": "^6.3.1",
+    "eslint-config-prettier": "^6.10.0",
+    "eslint-plugin-import": "^2.20.1",
+    "eslint-plugin-mocha": "^6.2.2",
+    "eslint-plugin-prettier": "^3.1.2",
+    "prettier": "^1.19.1"
+  },
+  "description": ""
+}

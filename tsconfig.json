@@ -1,0 +1,19 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "project": ".",
+    "outDir": "./build",
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "strict": true,
+    "strictPropertyInitialization": false,
+    "downlevelIteration": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "includes": [
+    "src/**/*.ts"
+  ]
+}
