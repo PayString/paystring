@@ -1,17 +1,17 @@
+import Config from './services/config'
+
 import Express = require('express')
+import Reduct = require('reduct')
 
 export default class App {
   private publicApiServer: Express.Application
 
   private privateApiServer: Express.Application
 
-  private publicApiServerPort: number
+  private config: Config
 
-  private privateApiServerPort: number
-
-  constructor() {
-    this.publicApiServerPort = 8080
-    this.privateApiServerPort = 8081
+  constructor(deps: Reduct.Injector) {
+    this.config = deps(Config)
   }
 
   public async init(): Promise<void> {
@@ -28,15 +28,15 @@ export default class App {
     })
 
     const publicApi = this.publicApiServer.listen(
-      this.publicApiServerPort,
+      this.config.publicApiPort,
       () => {
-        console.log(`Public API listening on ${this.publicApiServerPort}`)
+        console.log(`Public API listening on ${this.config.publicApiPort}`)
       },
     )
     const privateApi = this.privateApiServer.listen(
-      this.privateApiServerPort,
+      this.config.privateApiPort,
       () => {
-        console.log(`Private API listening on ${this.privateApiServerPort}`)
+        console.log(`Private API listening on ${this.config.privateApiPort}`)
       },
     )
 
