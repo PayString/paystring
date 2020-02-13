@@ -1,10 +1,5 @@
 export default class Config {
-  public privateApiPort: number
+  public publicApiPort = 8080
 
-  public publicApiPort: number
-
-  constructor() {
-    this.publicApiPort = 8080
-    this.privateApiPort = 8081
-  }
+  public privateApiPort = 8081
 }
