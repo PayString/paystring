@@ -52,11 +52,21 @@ module.exports = {
   ],
 
   rules: {
+    /* NORMAL ESLINT RULES */
+    //
     // This rule is about explicitly using `return undefined` when a function returns any non-undefined object.
     // However, since we're using TypeScript, it will yell at us if a function is not allowed to return `undefined` in its signature, so we don't need this rule.
     'consistent-return': 'off',
+
     // We log to the console intentionally
     'no-console': 'off',
+
+    /* TYPESCRIPT ESLINT PLUGIN RULES */
+    //
+    // Allow unused parameters that start with an underscore.
+    // This is the convention in TypeScript, to opt out of the "noUnusedParameters" compiler check.
+    // This makes refactoring and building easier, as you can define stub functions that don't use all their arguments.
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
   },
 
   overrides: [],
