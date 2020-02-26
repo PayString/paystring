@@ -1,4 +1,5 @@
 import reduct from 'reduct'
+
 import App from './app'
 
 async function run(): Promise<void> {

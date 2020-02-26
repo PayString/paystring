@@ -50,16 +50,16 @@ module.exports = {
     'prettier/@typescript-eslint',
     'plugin:prettier/recommended',
   ],
-
   rules: {
     /* NORMAL ESLINT RULES */
     //
-    // This rule is about explicitly using `return undefined` when a function returns any non-undefined object.
-    // However, since we're using TypeScript, it will yell at us if a function is not allowed to return `undefined` in its signature, so we don't need this rule.
-    'consistent-return': 'off',
-
-    // We log to the console intentionally
-    'no-console': 'off',
+    // Enforce empty lines between multi-line class members (like method definitions),
+    // but not between single line class members (like properties on a database model).
+    'lines-between-class-members': [
+      'error',
+      'always',
+      { exceptAfterSingleLine: true },
+    ],
 
     /* TYPESCRIPT ESLINT PLUGIN RULES */
     //
@@ -67,6 +67,17 @@ module.exports = {
     // This is the convention in TypeScript, to opt out of the "noUnusedParameters" compiler check.
     // This makes refactoring and building easier, as you can define stub functions that don't use all their arguments.
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+
+    /* IMPORT PLUGIN RULES */
+    //
+    // Sort imports alphabetically
+    'import/order': [
+      'error',
+      {
+        'newlines-between': 'always',
+        alphabetize: { order: 'asc', caseInsensitive: false },
+      },
+    ],
   },
 
   overrides: [],
