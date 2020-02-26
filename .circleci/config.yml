@@ -1,0 +1,37 @@
+# Copyright Ripple Labs, 2019
+version: 2.1
+orbs:
+  codecov: codecov/codecov@1.0.4
+jobs:
+  build:
+    docker:
+      - image: circleci/node:12
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            - v1-dependencies-
+      - run:
+          name: "Install dependencies"
+          command: |
+            sudo npm -g i nyc codecov
+            npm i
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+      - run: npm run build
+      - run: nyc npm test
+
+      - run:
+          name: Code Coverage
+          command: |
+            mkdir coverage
+            nyc report --reporter=text-lcov > coverage/coverage.json
+            codecov
