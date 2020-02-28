@@ -1,45 +1,32 @@
-import Config from './services/config'
+import privateAPIRouter from './routes/privateAPIRouter'
+import publicAPIRouter from './routes/publicAPIRouter'
+import { Config, Version } from './services/config'
 
 import Express = require('express')
-import Reduct = require('reduct')
 
 export default class App {
-  private publicApiServer: Express.Application
+  private publicAPIServer: Express.Application
 
-  private privateApiServer: Express.Application
+  private privateAPIServer: Express.Application
 
-  private config: Config
-
-  constructor(deps: Reduct.Injector) {
-    this.config = deps(Config)
+  public init(): void {
+    this.launchPublicAPI()
+    this.launchPrivateAPI()
   }
 
-  public async init(): Promise<void> {
-    this.publicApiServer = Express()
-    this.privateApiServer = Express()
-
-    this.publicApiServer.get('/', (req, res) => {
-      res.send('This server should receive requests from $domain.com/user')
-    })
-    this.privateApiServer.get('/', (req, res) => {
-      res.send(
-        'This will expose a simple CRUD API for wallets to update user mappings.',
-      )
-    })
-
-    const publicApi = this.publicApiServer.listen(
-      this.config.publicApiPort,
-      () => {
-        console.log(`Public API listening on ${this.config.publicApiPort}`)
-      },
+  private launchPublicAPI(): void {
+    this.publicAPIServer = Express()
+    this.publicAPIServer.get('/', publicAPIRouter)
+    this.publicAPIServer.listen(Config.publicAPIPort, () =>
+      console.log(`Public API listening on ${Config.publicAPIPort}`),
     )
-    const privateApi = this.privateApiServer.listen(
-      this.config.privateApiPort,
-      () => {
-        console.log(`Private API listening on ${this.config.privateApiPort}`)
-      },
-    )
+  }
 
-    await Promise.all([publicApi, privateApi])
+  private launchPrivateAPI(): void {
+    this.privateAPIServer = Express()
+    this.privateAPIServer.use(`${Version.V1}/users`, privateAPIRouter)
+    this.privateAPIServer.listen(Config.privateAPIPort, () =>
+      console.log(`Private API listening on ${Config.privateAPIPort}`),
+    )
   }
 }

@@ -22,6 +22,7 @@
   "homepage": "https://github.com/xpring-eng/identity-system#readme",
   "dependencies": {
     "@types/debug": "^4.1.5",
+    "body-parser": "^1.19.0",
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "reduct": "^3.3.1",
