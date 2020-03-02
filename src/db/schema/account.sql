@@ -1,4 +1,4 @@
--- We use a UUID id column because the Travel Rule requires exhanging an account number,
+-- We use a UUID id column because the Travel Rule requires exchanging an account number,
 -- and we wouldn't want to expose a monotonically increasing integer.
 
 CREATE TABLE IF NOT EXISTS account (
