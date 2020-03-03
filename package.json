@@ -26,7 +26,7 @@
     "debug": "^4.1.1",
     "express": "^4.17.1",
     "reduct": "^3.3.1",
-    "typescript": "^3.7.5"
+    "typescript": "^3.8.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.9",
