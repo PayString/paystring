@@ -4,8 +4,6 @@ import { getUser, postUser, putUser, deleteUser } from '../services/users'
 
 import API from './API'
 
-import bodyParser = require('body-parser')
-
 const privateAPIRouter = express.Router()
 
 /**
@@ -14,8 +12,8 @@ const privateAPIRouter = express.Router()
  */
 privateAPIRouter
   .get('/', getUser, API.setStatusToSuccessMiddleware())
-  .post('/', bodyParser.json(), postUser, API.setStatusToSuccessMiddleware())
-  .put('/', bodyParser.json(), putUser, API.setStatusToSuccessMiddleware())
+  .post('/', express.json(), postUser, API.setStatusToSuccessMiddleware())
+  .put('/', express.json(), putUser, API.setStatusToSuccessMiddleware())
   .delete('/', deleteUser, API.setStatusToSuccessMiddleware())
 
 export default privateAPIRouter
