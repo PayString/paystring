@@ -16,7 +16,7 @@ export default class App {
 
   private launchPublicAPI(): void {
     this.publicAPIServer = Express()
-    this.publicAPIServer.get('/', publicAPIRouter)
+    this.publicAPIServer.get('/*', publicAPIRouter)
     this.publicAPIServer.listen(Config.publicAPIPort, () =>
       console.log(`Public API listening on ${Config.publicAPIPort}`),
     )

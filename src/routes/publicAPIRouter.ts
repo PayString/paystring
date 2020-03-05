@@ -10,7 +10,7 @@ const publicAPIRouter = express.Router()
  * routes for resolving payment pointers to addresses
  */
 publicAPIRouter.get(
-  '/',
+  '/*',
   getAddressFromPaymentPointer,
   API.setStatusToSuccessMiddleware(),
 )
