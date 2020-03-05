@@ -12,7 +12,13 @@ import databaseConfiguration from './databaseConfiguration'
 
 export default async function syncDatabaseSchema(): Promise<void> {
   // Define the list of directories holding '*.sql' files, in the order we want to execute them
-  const sqlDirectories = ['extensions', 'schema', 'functions', 'triggers']
+  const sqlDirectories = [
+    'extensions',
+    'schema',
+    'functions',
+    'triggers',
+    'seed',
+  ]
 
   // Loop through directories holding SQL files and execute them against the database
   for (const directory of sqlDirectories) {
