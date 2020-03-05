@@ -1,6 +1,6 @@
 import * as express from 'express'
 
-import getAddressFromPaymentPointer from '../services/paymentPointers'
+import getPaymentInfoFromPaymentPointer from '../services/paymentPointers'
 
 import API from './API'
 
@@ -11,7 +11,7 @@ const publicAPIRouter = express.Router()
  */
 publicAPIRouter.get(
   '/*',
-  getAddressFromPaymentPointer,
+  getPaymentInfoFromPaymentPointer,
   API.setStatusToSuccessMiddleware(),
 )
 
