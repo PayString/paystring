@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "main": "./build/src/index.js",
   "scripts": {
+    "copySQL": "copyfiles -u 1 **/*.sql build/src",
     "start": "node build/src/index.js",
     "test": "nyc mocha",
     "lint": "eslint . --ext .ts --fix",
-    "build": "tsc --project .",
+    "build": "tsc --project . && npm run copySQL",
     "buildWatch": "tsc --watch --project ."
   },
   "repository": {
@@ -38,6 +39,7 @@
     "@typescript-eslint/eslint-plugin": "^2.22.0",
     "@typescript-eslint/parser": "^2.21.0",
     "chai": "^4.2.0",
+    "copyfiles": "^2.2.0",
     "eslint": "^6.8.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-config-airbnb-typescript": "^7.0.0",

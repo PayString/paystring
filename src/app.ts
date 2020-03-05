@@ -1,3 +1,4 @@
+import syncDatabaseSchema from './db/syncDatabaseSchema'
 import privateAPIRouter from './routes/privateAPIRouter'
 import publicAPIRouter from './routes/publicAPIRouter'
 import { Config, Version } from './services/config'
@@ -9,7 +10,10 @@ export default class App {
 
   private privateAPIServer: Express.Application
 
-  public init(): void {
+  public async init(): Promise<void> {
+    // Execute DDL statements not yet defined on the current database
+    await syncDatabaseSchema()
+
     this.launchPublicAPI()
     this.launchPrivateAPI()
   }
