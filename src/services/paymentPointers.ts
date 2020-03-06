@@ -22,7 +22,8 @@ export default async function getPaymentInfoFromPaymentPointer(
    *  const paymentPointerUrl =
    *  `${req.protocol}://${req.hostname}:${Config.publicAPIPort}${req.originalUrl}`
    */
-  const paymentPointer = `${req.protocol}://${req.hostname}${req.originalUrl}`
+  // TODO(aking): stop hardcoding HTTPS. We should at minimum be using ${req.protocol}
+  const paymentPointer = `https://${req.hostname}${req.originalUrl}`
 
   // Get the payment_information from the database, given our currency, network, and paymentPointer
   const paymentInformation = await knex
