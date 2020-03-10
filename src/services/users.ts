@@ -4,14 +4,64 @@ import knex from '../db/knex'
 import Account from '../models/account'
 import Address from '../models/address'
 
-export function getUser(
-  _req: Request,
+// TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
+// Stop passing req, res, and next in here and do that stuff on the outside.
+
+// TODO:(hbergren) Handle both a single user and an array of users
+// TODO:(hbergren) Should this handle being hit with the UUID identifying the user account as well?
+export async function getUser(
+  req: Request,
   res: Response,
   next: NextFunction,
-): void {
-  res.send('TODO: get user')
-  console.log('get user hit')
-  // TODO(hbergen): implement retrieval
+): Promise<void> {
+  const paymentPointer = req.query.payment_pointer
+
+  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  if (!paymentPointer) {
+    res
+      .status(400)
+      .send(
+        'A `payment_pointer` querystring parameter must be provided. This should be run through `encodeURIComponent` or an equivalent.',
+      )
+  }
+
+  type AddressRetrieval = Pick<
+    Address,
+    'account_id' | 'currency' | 'network' | 'payment_information'
+  >
+
+  const addresses = await knex
+    .select(
+      'address.account_id',
+      'address.currency',
+      'address.network',
+      'address.payment_information',
+    )
+    .from<Address>('address')
+    .innerJoin<Account>('account', 'address.account_id', 'account.id')
+    .where('account.payment_pointer', paymentPointer)
+    // .orWhere('account.id', accountID)
+    .then((rows: AddressRetrieval[]) => rows)
+
+  if (addresses.length === 0) {
+    res
+      .status(404)
+      .send(
+        `No PayID information could be found for the payment pointer ${paymentPointer}.`,
+      )
+  }
+
+  // TODO:(hbergren) Does not work for multiple accounts
+  const accountID = addresses[0].account_id
+  addresses.forEach((address) => {
+    /* eslint-disable-next-line no-param-reassign */
+    delete address.account_id
+  })
+
+  res.send({
+    account_id: accountID,
+    addresses,
+  })
   next()
 }
 

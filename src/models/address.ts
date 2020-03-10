@@ -1,6 +1,6 @@
 export default interface Address {
   readonly id: number
-  readonly account_id: string // UUID. TODO:(hbergren) Can we type this better?
+  account_id: string // UUID. TODO:(hbergren) Can we type this better?
 
   currency: string
   network: string
