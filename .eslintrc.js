@@ -23,6 +23,7 @@ module.exports = {
   plugins: [
     '@typescript-eslint', // Add some TypeScript specific rules, and disable rules covered by the typechecker
     'import', // Add rules that help validate proper imports
+    'mocha', // Add rules for writing better Mocha tests
     'prettier', // Allows running prettier as an ESLint rule, and reporting differences as individual linting issues
   ],
 
@@ -38,6 +39,9 @@ module.exports = {
     'plugin:import/errors',
     'plugin:import/warnings',
     'plugin:import/typescript',
+
+    // Add rules for Mocha-specific syntax
+    'plugin:mocha/recommended',
 
     // Add Airbnb + TypeScript support
     'airbnb-base',
@@ -80,5 +84,16 @@ module.exports = {
     ],
   },
 
-  overrides: [],
+  overrides: [
+    {
+      files: ['test/**/*.ts'],
+      env: {
+        mocha: true, // Global variables for mocha
+      },
+      rules: {
+        // For our Mocha test files, the pattern has been to have unnamed functions
+        'func-names': 'off',
+      }
+    },
+  ],
 }

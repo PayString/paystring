@@ -6,6 +6,16 @@ jobs:
   build:
     docker:
       - image: circleci/node:12
+      - image: circleci/postgres:12
+        environment:
+          POSTGRES_USER: circleci
+          POSTGRES_DB: circleci
+          POSTGRES_PASSWORD: password
+
+    environment:
+      DB_USERNAME: circleci
+      DB_NAME: circleci
+      DB_PASSWORD: password
 
     working_directory: ~/repo
 
@@ -17,7 +27,7 @@ jobs:
             - v1-dependencies-{{ checksum "package.json" }}
             - v1-dependencies-
       - run:
-          name: "Install dependencies"
+          name: 'Install dependencies'
           command: |
             sudo npm -g i nyc codecov
             npm i
