@@ -24,7 +24,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "express": "^4.17.1",
-    "knex": "^0.20.10",
+    "knex": "^0.20.11",
     "pg": "^7.18.2",
     "reduct": "^3.3.1",
     "typescript": "^3.8.3"
