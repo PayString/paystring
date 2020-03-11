@@ -5,7 +5,7 @@
   "scripts": {
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
     "start": "node build/src/index.js",
-    "test": "nyc mocha",
+    "test": "nyc mocha 'test/**/*.ts'",
     "lint": "eslint . --ext .ts --fix",
     "build": "tsc --project . && npm run copySQL",
     "buildWatch": "tsc --watch --project ."

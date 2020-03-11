@@ -1,8 +1,7 @@
-import { assert } from 'chai'
 import * as request from 'supertest'
 import 'mocha'
 
-import App from '../src/app'
+import App from '../../src/app'
 
 const app = new App()
 
@@ -11,15 +10,10 @@ describe('publicAPIRouter', function(): void {
     await app.init()
   })
 
-  it('/status/health', function(done): void {
+  it('Returns a 200 for a GET /status/health', function(done): void {
     request(app.publicAPIExpress)
       .get('/status/health')
-      .expect(200)
-      .then((response: request.Response) => {
-        assert(response.text === "I'm alive!")
-        done()
-      })
-      .catch(done)
+      .expect(200, "I'm alive!", done)
   })
 
   after(function() {
