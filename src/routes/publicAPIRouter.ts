@@ -1,8 +1,7 @@
 import * as express from 'express'
 
-import getPaymentInfoFromPaymentPointer from '../services/paymentPointers'
-
 import API from './API'
+import getPaymentInfo from './paymentPointers'
 
 const publicAPIRouter = express.Router()
 
@@ -17,10 +16,6 @@ publicAPIRouter.get(
   },
   API.setStatusToSuccessMiddleware(),
 )
-publicAPIRouter.get(
-  '/*',
-  getPaymentInfoFromPaymentPointer,
-  API.setStatusToSuccessMiddleware(),
-)
+publicAPIRouter.get('/*', getPaymentInfo, API.setStatusToSuccessMiddleware())
 
 export default publicAPIRouter

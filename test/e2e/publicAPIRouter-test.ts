@@ -7,7 +7,7 @@ const app = new App()
 
 describe('publicAPIRouter', function(): void {
   before(async function() {
-    await app.init()
+    await app.init({ log: false })
   })
 
   it('Returns a 200 for a GET /status/health', function(done): void {

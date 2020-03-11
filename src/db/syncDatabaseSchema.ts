@@ -10,7 +10,7 @@ import { Client } from 'pg'
 
 import databaseConfiguration from './databaseConfiguration'
 
-export interface SyncConfiguration {
+interface SyncConfiguration {
   logQueries: boolean
   seedDatabase: boolean
 }
