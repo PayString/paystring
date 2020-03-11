@@ -10,15 +10,21 @@ import { Client } from 'pg'
 
 import databaseConfiguration from './databaseConfiguration'
 
-export default async function syncDatabaseSchema(): Promise<void> {
+export interface SyncConfiguration {
+  logQueries: boolean
+  seedDatabase: boolean
+}
+
+export default async function syncDatabaseSchema(
+  syncConfig: SyncConfiguration = {
+    logQueries: true,
+    seedDatabase: false,
+  },
+): Promise<void> {
   // Define the list of directories holding '*.sql' files, in the order we want to execute them
-  const sqlDirectories = [
-    'extensions',
-    'schema',
-    'functions',
-    'triggers',
-    'seed',
-  ]
+  const sqlDirectories = ['extensions', 'schema', 'functions', 'triggers']
+  // Run the seed script if we are seeding our database
+  if (syncConfig.seedDatabase) sqlDirectories.push('seed')
 
   // Loop through directories holding SQL files and execute them against the database
   for (const directory of sqlDirectories) {
@@ -40,7 +46,7 @@ export default async function syncDatabaseSchema(): Promise<void> {
     const client = new Client(databaseConfiguration)
     client.connect()
 
-    console.log(`Executing query:\n${sql}`)
+    if (syncConfig.logQueries) console.log(`Executing query:\n${sql}`)
     await client.query(sql).catch((err: Error) => {
       console.error('error running query', file, err.message)
 
