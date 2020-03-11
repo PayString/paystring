@@ -5,7 +5,7 @@ import App from '../../src/app'
 
 const app = new App()
 
-describe('publicAPIRouter', function(): void {
+describe('E2E - publicAPIRouter', function(): void {
   before(async function() {
     await app.init({ log: false })
   })
