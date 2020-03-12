@@ -39,7 +39,7 @@
     "@types/node": "^13.9.0",
     "@types/pg": "^7.14.2",
     "@types/supertest": "^2.0.8",
-    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
     "@typescript-eslint/parser": "^2.23.0",
     "chai": "^4.2.0",
     "copyfiles": "^2.2.0",
