@@ -1,10 +1,9 @@
 import 'mocha'
-
 import { assert } from 'chai'
 
 import knex from '../../src/db/knex'
 import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
-import getPaymentInfoFromPaymentPointer from '../../src/services/paymentPointers'
+import getPaymentInfoFromDatabase from '../../src/services/paymentPointers'
 
 describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
   before(async function() {
@@ -15,7 +14,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
   it('Gets payment information for a known payment pointer', async function() {
     // GIVEN a payment pointer / currency / network tuple known to exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
-    const paymentInfo = await getPaymentInfoFromPaymentPointer(
+    const paymentInfo = await getPaymentInfoFromDatabase(
       'https://xpring.io/hansbergren',
       'XRP',
       'TESTNET',
@@ -31,7 +30,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
   it('Returns undefined for an unknown payment pointer', async function() {
     // GIVEN a payment pointer / currency / network tuple known to not exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
-    const paymentInfo = await getPaymentInfoFromPaymentPointer(
+    const paymentInfo = await getPaymentInfoFromDatabase(
       'https://xpring.io/johndoe',
       'XRP',
       'TESTNET',

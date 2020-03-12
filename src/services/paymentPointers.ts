@@ -10,7 +10,7 @@ import Address from '../models/address'
  *
  * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
  */
-export default async function getPaymentInfoFromPaymentPointer(
+export default async function getPaymentInfoFromDatabase(
   // TODO:(hbergren) refactor the call signature to take an object rather than 3 params?
   // TODO:(hbergren) Type payment pointer better? `https://...?`
   paymentPointer: string,

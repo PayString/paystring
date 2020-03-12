@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getPaymentInfoFromPaymentPointer from '../services/paymentPointers'
+import getPaymentInfoFromDatabase from '../services/paymentPointers'
 
 /**
  * Resolves inbound requests to a payment pointer to their
@@ -10,6 +10,7 @@ export default async function getPaymentInfo(
   req: Request,
   res: Response,
   next: NextFunction,
+  getPaymentInfoFromPaymentPointer = getPaymentInfoFromDatabase,
 ): Promise<void> {
   // TODO:(hbergren) remove these hardcoded values
   const currency = 'XRP'
@@ -22,6 +23,7 @@ export default async function getPaymentInfo(
    *  `${req.protocol}://${req.hostname}:${Config.publicAPIPort}${req.originalUrl}`
    */
   // TODO(aking): stop hardcoding HTTPS. We should at minimum be using ${req.protocol}
+  // TODO:(hbergren) Write a helper function for this and test it?
   const paymentPointer = `https://${req.hostname}${req.originalUrl}`
 
   // Get the paymentInformation from the database
