@@ -129,17 +129,6 @@ export async function postUser(
   next()
 }
 
-export function putUser(
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
-  // TODO(hbergren): implement user update
-  res.send('TODO: put user')
-  console.log('put user hit')
-  next()
-}
-
 export function deleteUser(
   _req: Request,
   res: Response,

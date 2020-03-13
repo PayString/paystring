@@ -1,4 +1,5 @@
 import knex from '../db/knex'
+import Account from '../models/account'
 import Address from '../models/address'
 
 /**
@@ -30,4 +31,52 @@ export default async function getPaymentInfoFromDatabase(
     })
 
   return paymentInformation
+}
+
+/**
+ * Update a payment pointer for a given account ID.
+ *
+ * @param oldPaymentPointer The old payment pointer.
+ * @param newPaymentPointer The new payment pointer.
+ *
+ * @returns A JSON object with the new payment pointer and the accountID, or `undefined` if nothing could be found for that payment pointer.
+ */
+export async function updatePaymentPointer(
+  oldPaymentPointer: string,
+  newPaymentPointer: string,
+): Promise<Pick<Account, 'id' | 'payment_pointer'> | undefined> {
+  const data = await knex<Account>('account')
+    .where('payment_pointer', oldPaymentPointer)
+    .update({ payment_pointer: newPaymentPointer })
+    .returning(['id', 'payment_pointer'])
+    .then((rows) => rows[0])
+
+  return data
+}
+
+/**
+ * Update addresses for a given account ID.
+ *
+ * @param accountID The account ID of the account to be updated.
+ * @param addresses The object representing destination/address information.
+ *
+ * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
+ */
+// TODO: update types after destructuring Pick in routes/users.ts
+export function updateAddressInformation(
+  addresses: Address[],
+  accountID: string,
+): Pick<Address, 'currency' | 'network' | 'payment_information'>[] {
+  // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
+  // TODO:(hbergren) Remove hardcoded values.
+  const mappedAddresses = addresses.map((address) => ({
+    currency: address.currency.toUpperCase() || 'XRP',
+    network: address.network.toUpperCase() || 'TESTNET',
+    payment_information: address.payment_information,
+  }))
+
+  // TODO: (hbergen) implement knex update
+  console.log(`To implement update for account ${accountID}`)
+
+  return mappedAddresses
 }
