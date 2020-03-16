@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
+import handleHttpError from '../services/errors'
 import getPaymentInfoFromDatabase from '../services/paymentPointers'
 
 /**
@@ -34,13 +35,11 @@ export default async function getPaymentInfo(
   // TODO:(hbergren) Should be <= 2, need to support application/xrpl-json
   // TODO:(hbergren) Should not have a check on XRPL
   if (acceptHeader.length <= 3 || acceptHeader[1] !== 'xrpl') {
-    // TODO:(hbergren) Return res directly instead of next()?
-    res
-      .status(400)
-      .send(
-        'Invalid Accept header. Must be of the form "application/xrpl-{network}+json"',
-      )
-    return next()
+    return handleHttpError(
+      400,
+      'Invalid Accept header. Must be of the form "application/xrpl-{network}+json"',
+      res,
+    )
   }
   // TODO:(hbergren) This should be null
   let network = 'TESTNET'
@@ -62,18 +61,20 @@ export default async function getPaymentInfo(
   // TODO:(hbergren) Set response Content-Type header to be the same as Accept header?
   // Or is `application/json` the appropriate response Content-Type?
   if (paymentInformation === undefined) {
-    res
-      .status(404)
-      .send(
-        `Payment information for ${paymentPointer} in ${currency} on ${network} could not be found.`,
-      )
-
-    return next()
+    return handleHttpError(
+      404,
+      `Payment information for ${paymentPointer} in ${currency} on ${network} could not be found.`,
+      res,
+    )
   }
 
   // TODO:(hbergren) This needs to come from the database.
   paymentInformation.network = `xrpl-${network.toLowerCase()}`
 
-  res.send(paymentInformation)
+  // store response information (or information to be used in other middlewares)
+  res.locals.paymentPointer = paymentPointer
+  res.locals.paymentInformation = paymentInformation
+  res.locals.response = paymentInformation
+
   return next()
 }

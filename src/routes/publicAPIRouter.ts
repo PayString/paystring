@@ -1,21 +1,15 @@
 import * as express from 'express'
 
-import API from './API'
+import sendSuccess from './API'
 import getPaymentInfo from './paymentPointers'
 
 const publicAPIRouter = express.Router()
 
 /**
- * routes for resolving payment pointers to addresses
+ * routes for resolving payment pointers to addresses (and health check)
  */
-publicAPIRouter.get(
-  '/status/health',
-  (_req, res, next) => {
-    res.status(200).send("I'm alive!")
-    next()
-  },
-  API.setStatusToSuccessMiddleware(),
-)
-publicAPIRouter.get('/*', getPaymentInfo, API.setStatusToSuccessMiddleware())
+publicAPIRouter
+  .get('/status/health', sendSuccess)
+  .get('/*', getPaymentInfo, sendSuccess)
 
 export default publicAPIRouter

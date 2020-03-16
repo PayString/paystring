@@ -2,7 +2,7 @@ import * as express from 'express'
 
 import { getUser, postUser, deleteUser } from '../services/users'
 
-import API from './API'
+import sendSuccess from './API'
 import putUser from './users'
 
 const privateAPIRouter = express.Router()
@@ -12,9 +12,9 @@ const privateAPIRouter = express.Router()
  * post payment pointer mappings to the PayID DB
  */
 privateAPIRouter
-  .get('/[$]*', getUser, API.setStatusToSuccessMiddleware())
-  .post('/', express.json(), postUser, API.setStatusToSuccessMiddleware())
-  .put('/', express.json(), putUser, API.setStatusToSuccessMiddleware())
-  .delete('/', deleteUser, API.setStatusToSuccessMiddleware())
+  .get('/[$]*', getUser, sendSuccess)
+  .post('/', express.json(), postUser, sendSuccess)
+  .put('/', express.json(), putUser, sendSuccess)
+  .delete('/', deleteUser, sendSuccess)
 
 export default privateAPIRouter

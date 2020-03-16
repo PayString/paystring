@@ -16,7 +16,7 @@ describe('E2E - publicAPIRouter', function(): void {
   it('Returns a 200 for a GET /status/health', function(done): void {
     request(app.publicAPIExpress)
       .get('/status/health')
-      .expect(200, "I'm alive!", done)
+      .expect(200, 'OK', done)
   })
 
   it('Returns the correct MAINNET address for a known payment pointer', function(done): void {

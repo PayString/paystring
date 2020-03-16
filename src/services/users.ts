@@ -4,6 +4,8 @@ import knex from '../db/knex'
 import Account from '../models/account'
 import Address from '../models/address'
 
+import handleHttpError from './errors'
+
 // TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
 // Stop passing req, res, and next in here and do that stuff on the outside.
 
@@ -20,11 +22,11 @@ export async function getUser(
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
   if (!req.params[0]) {
-    res
-      .status(400)
-      .send(
-        'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
-      )
+    return handleHttpError(
+      400,
+      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      res,
+    )
   }
 
   type AddressRetrieval = Pick<
@@ -46,11 +48,11 @@ export async function getUser(
     .then((rows: AddressRetrieval[]) => rows)
 
   if (addresses.length === 0) {
-    res
-      .status(404)
-      .send(
-        `No PayID information could be found for the payment pointer ${paymentPointer}.`,
-      )
+    return handleHttpError(
+      404,
+      `No PayID information could be found for the payment pointer ${paymentPointer}.`,
+      res,
+    )
   }
 
   // TODO:(hbergren) Does not work for multiple accounts
@@ -60,11 +62,12 @@ export async function getUser(
     delete address.account_id
   })
 
-  res.send({
+  res.locals.response = {
     account_id: accountID,
     addresses,
-  })
-  next()
+  }
+
+  return next()
 }
 
 // TODO:(hbergren) Handle both single user and array of new users
@@ -90,9 +93,12 @@ export async function postUser(
     .returning('id')
     .then((rows) => rows[0])
     .catch((err) => {
-      console.error(err)
-      // TODO:(hbergren) Don't send the whole error to the client leaking information.
-      res.status(500).send(err)
+      return handleHttpError(
+        503,
+        `server could not create account for user ${req.body.payment_pointer}`,
+        res,
+        err,
+      )
     })
 
   type AddressInput = Pick<
@@ -119,16 +125,20 @@ export async function postUser(
     .into<Address>('address')
     .then(() => ({ inserted: true }))
     .catch((err) => {
-      console.error(err)
-      // TODO:(hbergren) Don't send the whole error to the client leaking information.
-      res.status(500).send(err)
+      return handleHttpError(
+        503,
+        `server could not insert addresses for user ${accountID}`,
+        res,
+        err,
+      )
     })
 
-  res.send({
-    message: 'User inserted successfully.',
+  res.locals.response = {
+    message: `User for payment pointer ${req.body.payment_pointer} created successfully.`,
     account_id: accountID,
-  })
-  next()
+  }
+
+  return next()
 }
 
 export function deleteUser(
@@ -137,7 +147,10 @@ export function deleteUser(
   next: NextFunction,
 ): void {
   // TODO(hbergen(: implement user delete
-  res.send('TODO: delete user')
   console.log('delete user hit')
-  next()
+  res.locals.response = {
+    message: 'TODO (hbergren): delete user',
+  }
+
+  return next()
 }

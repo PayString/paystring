@@ -51,11 +51,11 @@ export default async function putUser(
     )
   }
 
-  res.send({
+  res.locals.response = {
     payment_pointer: updatedAccountInfo.payment_pointer,
     account_id: updatedAccountInfo.id,
     addresses: updatedAddresses,
-  })
+  }
 
   return next()
 }

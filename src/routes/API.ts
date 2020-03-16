@@ -1,14 +1,9 @@
 import { Request, Response } from 'express'
 
-export default class API {
-  /**
-   * If middleware functions all execute properly, this function will
-   * set the HTTP code to 200 confirming to the user that all happened as
-   * requested
-   */
-  static setStatusToSuccessMiddleware() {
-    return (req: Request, res: Response): void => {
-      res.status(200)
-    }
+export default function sendSuccess(req: Request, res: Response): void {
+  if (res.locals.response) {
+    res.status(200).json(res.locals.response)
+  } else {
+    res.sendStatus(200)
   }
 }
