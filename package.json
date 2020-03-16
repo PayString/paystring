@@ -8,7 +8,7 @@
     "test": "nyc mocha 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts --fix",
     "lint:watch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
-    "build": "tsc --project . && npm run copySQL",
+    "build": "rm -rf build/db && tsc --project . && npm run copySQL",
     "buildWatch": "tsc --watch --project ."
   },
   "repository": {

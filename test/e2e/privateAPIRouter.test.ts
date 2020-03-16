@@ -15,7 +15,7 @@ describe('E2E - privateAPIRouter', function(): void {
 
   it('Returns a 200 for a private API GET', function(done): void {
     const expectedResponse = {
-      account_id: '223ece9c-2a15-48e1-9df6-d9ac77c5db90',
+      account_id: '69b0d20a-cdef-4bb9-adf9-2109979a12af',
       addresses: [
         {
           currency: 'XRP',
