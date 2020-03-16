@@ -6,8 +6,8 @@ import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
 import getPaymentInfoFromDatabase from '../../src/services/paymentPointers'
 
 describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
+  // Seed the database for our tests.
   before(async function() {
-    // Seed the database for our tests
     await syncDatabaseSchema({ logQueries: false, seedDatabase: true })
   })
 
@@ -15,7 +15,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
     // GIVEN a payment pointer / currency / network tuple known to exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
-      'https://xpring.io/hansbergren',
+      'https://xpring.money/hansbergren',
       'XRP',
       'TESTNET',
     )
@@ -40,8 +40,8 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
     assert.strictEqual(paymentInfo, undefined)
   })
 
+  // Close DB connections after all tests are run
   after(function() {
-    // Close DB connections after all tests are run
     knex.destroy()
   })
 })

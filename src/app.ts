@@ -9,6 +9,7 @@ import Express = require('express')
 
 interface InitializationOptions {
   log: boolean
+  seedDatabase: boolean
 }
 
 export default class App {
@@ -22,11 +23,14 @@ export default class App {
   private initOptions: InitializationOptions
 
   public async init(
-    options: InitializationOptions = { log: true },
+    options: InitializationOptions = { log: true, seedDatabase: false },
   ): Promise<void> {
     this.initOptions = options
     // Execute DDL statements not yet defined on the current database
-    await syncDatabaseSchema({ logQueries: options.log, seedDatabase: false })
+    await syncDatabaseSchema({
+      logQueries: options.log,
+      seedDatabase: options.seedDatabase,
+    })
 
     this.launchPublicAPI()
     this.launchPrivateAPI()
