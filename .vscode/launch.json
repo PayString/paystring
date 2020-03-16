@@ -12,6 +12,38 @@
       "program": "${workspaceFolder}/build/src/index.js",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/build/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Mocha All",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        "--config",
+        "${workspaceFolder}/.mocharc.js",
+        "${workspaceFolder}/test/**/*.test.ts"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Mocha Current File",
+      "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
+      "args": [
+        "--timeout",
+        "999999",
+        "--colors",
+        "--config",
+        "${workspaceFolder}/.mocharc.js",
+        "${file}"
+      ],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen"
     }
   ]
 }
