@@ -15,7 +15,6 @@ export async function getUser(
   next: NextFunction,
 ): Promise<void> {
   const paymentPointer = `https://${req.params[0]}`
-  console.log(paymentPointer)
 
   // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
   // Do that using a regex route param in Express?

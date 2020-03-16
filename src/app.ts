@@ -22,8 +22,9 @@ export default class App {
 
   private initOptions: InitializationOptions
 
+  // TODO: Change the default value of seedDatabase to false
   public async init(
-    options: InitializationOptions = { log: true, seedDatabase: false },
+    options: InitializationOptions = { log: true, seedDatabase: true },
   ): Promise<void> {
     this.initOptions = options
     // Execute DDL statements not yet defined on the current database
