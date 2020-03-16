@@ -23,7 +23,7 @@ describe('E2E - privateAPIRouter', function(): void {
           currency: 'XRP',
           network: 'TESTNET',
           payment_information: {
-            address: 'T7WSFgh6owANWoD2V3WRg6aeBveBzExkpDowirvnLDGL2YW',
+            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
           },
         },
       ],

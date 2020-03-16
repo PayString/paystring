@@ -22,7 +22,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
 
     // THEN we get our seeded value back
     const expectedPaymentInfo = {
-      address: 'T7WSFgh6owANWoD2V3WRg6aeBveBzExkpDowirvnLDGL2YW',
+      address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
     }
     assert.deepEqual(paymentInfo, expectedPaymentInfo)
   })
