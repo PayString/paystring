@@ -14,14 +14,17 @@ export async function getUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const paymentPointer = req.query.payment_pointer
+  const paymentPointer = `https://${req.params[0]}`
+  console.log(paymentPointer)
 
   // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
-  if (!paymentPointer) {
+  // Do that using a regex route param in Express?
+  // Could use a similar regex to the one used by the database.
+  if (!req.params[0]) {
     res
       .status(400)
       .send(
-        'A `payment_pointer` querystring parameter must be provided. This should be run through `encodeURIComponent` or an equivalent.',
+        'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
       )
   }
 

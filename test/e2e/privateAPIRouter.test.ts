@@ -14,10 +14,6 @@ describe('E2E - privateAPIRouter', function(): void {
   })
 
   it('Returns a 200 for a private API GET', function(done): void {
-    // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const encodedPaymentPointer = encodeURIComponent(
-      'https://xpring.money/hansbergren',
-    )
     const expectedResponse = {
       account_id: '223ece9c-2a15-48e1-9df6-d9ac77c5db90',
       addresses: [
@@ -31,10 +27,11 @@ describe('E2E - privateAPIRouter', function(): void {
       ],
     }
 
+    // GIVEN a payment pointer known to resolve to an account on the PayID service
     // WHEN we make a request to /v1/users/ with that payment pointer as a query string parameter
     // THEN We expect back a 200-OK, with the account information
     request(app.privateAPIExpress)
-      .get(`/v1/users/?payment_pointer=${encodedPaymentPointer}`)
+      .get(`/v1/users/$xpring.money/hansbergren`)
       .expect('Content-Type', /json/)
       .expect(200, expectedResponse, done)
   })
