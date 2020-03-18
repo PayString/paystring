@@ -54,6 +54,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
     await app.init({ log: false, seedDatabase: true })
     knex.initialize()
   })
+
   it('Returns a 200 and updated user payload for a private API PUT updating an address', function(done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
@@ -133,6 +134,42 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect('Content-Type', /json/)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(400, errorResponsePayload, done)
+  })
+
+  // Shut down Express application & close DB connections
+  after(function() {
+    app.close()
+    knex.destroy()
+  })
+})
+
+describe('E2E - privateAPIRouter - DELETE API', function(): void {
+  // Initialize DB connection pool & Boot up Express application
+  before(async function() {
+    await app.init({ log: false, seedDatabase: true })
+    knex.initialize()
+  })
+
+  it('Returns a 204 and no payload for a private API DELETE deleting an account', function(done): void {
+    // GIVEN a payment pointer known to resolve to an account on the PayID service
+    const paymentPointer = '$xpring.money/hbergren'
+    const missingPaymentPointerError = {
+      error: 'Not Found',
+      message: `No PayID information could be found for the payment pointer ${paymentPointer}.`,
+      statusCode: 404,
+    }
+
+    // WHEN we make a DELETE request to /v1/users/ with the payment pointer to delete
+    request(app.privateAPIExpress)
+      .delete(`/v1/users/${paymentPointer}`)
+      // THEN we expect back a 204-No Content, indicating successful deletion
+      .expect(204)
+      .then((_res) => {
+        // AND subsequent GET requests to that payment pointer now return a 404
+        request(app.privateAPIExpress)
+          .get(`/v1/users/${paymentPointer}`)
+          .expect(404, missingPaymentPointerError, done)
+      })
   })
 
   // Shut down Express application & close DB connections
