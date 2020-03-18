@@ -12,27 +12,31 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
   })
 
   it('Gets payment information for a known payment pointer', async function() {
-    // GIVEN a payment pointer / currency / network tuple known to exist in the database
+    // GIVEN a payment pointer / payment network / environment tuple known to exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
       'https://xpring.money/hansbergren',
-      'XRP',
+      'XRPL',
       'TESTNET',
     )
 
     // THEN we get our seeded value back
     const expectedPaymentInfo = {
-      address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+      payment_network: 'XRPL',
+      environment: 'TESTNET',
+      details: {
+        address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+      },
     }
     assert.deepEqual(paymentInfo, expectedPaymentInfo)
   })
 
   it('Returns undefined for an unknown payment pointer', async function() {
-    // GIVEN a payment pointer / currency / network tuple known to not exist in the database
+    // GIVEN a payment pointer / payment network / environment tuple known to not exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
       'https://xpring.io/johndoe',
-      'XRP',
+      'XRPL',
       'TESTNET',
     )
 

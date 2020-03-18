@@ -1,6 +1,7 @@
+import 'mocha'
+import { assert } from 'chai'
 import * as request from 'supertest'
 
-import 'mocha'
 import App from '../../src/app'
 import knex from '../../src/db/knex'
 
@@ -24,15 +25,21 @@ describe('E2E - publicAPIRouter', function(): void {
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-mainnet+json'
     const expectedResponse = {
-      address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
-      network: 'xrpl-mainnet',
+      addressDetailType: 'crypto',
+      addressDetails: {
+        address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+      },
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
     request(app.publicAPIExpress)
       .get(paymentPointer)
       .set('Accept', acceptHeader)
-      // THEN we get back the XRP address and network associated with that payment pointer for xrpl-mainnet.
+      // THEN we get back our Accept header as the Content-Type
+      .expect((res) => {
+        assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
+      })
+      // AND we get back the XRP address associated with that payment pointer for xrpl-mainnet.
       .expect(200, expectedResponse, done)
   })
 
@@ -41,15 +48,21 @@ describe('E2E - publicAPIRouter', function(): void {
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedResponse = {
-      address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
-      network: 'xrpl-testnet',
+      addressDetailType: 'crypto',
+      addressDetails: {
+        address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+      },
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicAPIExpress)
       .get(paymentPointer)
       .set('Accept', acceptHeader)
-      // THEN we get back the XRP address and network associated with that payment pointer for xrpl-testnet.
+      // THEN we get back our Accept header as the Content-Type
+      .expect((res) => {
+        assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
+      })
+      // AND we get back the XRP address associated with that payment pointer for xrpl-testnet.
       .expect(200, expectedResponse, done)
   })
 

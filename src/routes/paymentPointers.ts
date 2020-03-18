@@ -2,6 +2,11 @@ import { Request, Response, NextFunction } from 'express'
 
 import handleHttpError from '../services/errors'
 import getPaymentInfoFromDatabase from '../services/paymentPointers'
+import {
+  PaymentInformation,
+  AddressDetailTypes,
+  CryptoAddressDetails,
+} from '../types/publicAPI'
 
 /**
  * Resolves inbound requests to a payment pointer to their
@@ -14,7 +19,7 @@ export default async function getPaymentInfo(
   getPaymentInfoFromPaymentPointer = getPaymentInfoFromDatabase,
 ): Promise<void> {
   // TODO:(hbergren) remove these hardcoded values
-  const currency = 'XRP'
+  const paymentNetwork = 'XRPL'
 
   /**
    * NOTE: if you plan to expose your payment pointer with a port number, you
@@ -37,44 +42,53 @@ export default async function getPaymentInfo(
   if (acceptHeader.length <= 3 || acceptHeader[1] !== 'xrpl') {
     return handleHttpError(
       400,
-      'Invalid Accept header. Must be of the form "application/xrpl-{network}+json"',
+      'Invalid Accept header. Must be of the form "application/xrpl-{environment}+json"',
       res,
     )
   }
   // TODO:(hbergren) This should be null
-  let network = 'TESTNET'
+  let environment = 'TESTNET'
 
-  // TODO: If Accept is just application/json, just return all addresses, for all networks?
-  // We asked for `application/xrpl-{network}+json`
+  // TODO: If Accept is just application/json, just return all addresses, for all environments?
+  // We asked for `application/xrpl-{environment}+json`
   if (acceptHeader[2] !== 'json') {
-    network = acceptHeader[2].toUpperCase()
+    environment = acceptHeader[2].toUpperCase()
   }
 
   // Get the paymentInformation from the database
   const paymentInformation = await getPaymentInfoFromPaymentPointer(
     paymentPointer,
-    currency,
-    network,
+    paymentNetwork,
+    environment,
   )
 
-  // TODO:(hbergren) Distinguish between missing payment pointer in system, and missing address for currency/network.
+  // TODO:(hbergren) Distinguish between missing payment pointer in system, and missing address for paymentNetwork/environment.
   // TODO:(hbergren) Set response Content-Type header to be the same as Accept header?
   // Or is `application/json` the appropriate response Content-Type?
   if (paymentInformation === undefined) {
     return handleHttpError(
       404,
-      `Payment information for ${paymentPointer} in ${currency} on ${network} could not be found.`,
+      `Payment information for ${paymentPointer} in ${paymentNetwork} on ${environment} could not be found.`,
       res,
     )
   }
 
-  // TODO:(hbergren) This needs to come from the database.
-  paymentInformation.network = `xrpl-${network.toLowerCase()}`
+  const paymentNetworkEnvironment = [
+    paymentInformation.payment_network,
+    paymentInformation.environment,
+  ].join('-')
+  const contentType = `application/${paymentNetworkEnvironment}+json`
+  res.set('Content-Type', contentType)
+
+  const response: PaymentInformation = {
+    addressDetailType: AddressDetailTypes.CryptoAddress,
+    addressDetails: paymentInformation.details as CryptoAddressDetails,
+  }
 
   // store response information (or information to be used in other middlewares)
   res.locals.paymentPointer = paymentPointer
   res.locals.paymentInformation = paymentInformation
-  res.locals.response = paymentInformation
+  res.locals.response = response
 
   return next()
 }

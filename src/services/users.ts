@@ -39,15 +39,11 @@ export async function getUser(
 
   type AddressRetrieval = Pick<
     Address,
-    'currency' | 'network' | 'payment_information'
+    'payment_network' | 'environment' | 'details'
   >
 
   const addresses = await knex
-    .select(
-      'address.currency',
-      'address.network',
-      'address.payment_information',
-    )
+    .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin<Account>('account', 'address.account_id', 'account.id')
     .where('account.payment_pointer', paymentPointerUrl)
@@ -104,17 +100,18 @@ export async function postUser(
 
   type AddressInput = Pick<
     Address,
-    'account_id' | 'currency' | 'network' | 'payment_information'
+    'account_id' | 'payment_network' | 'environment' | 'details'
   >
 
+  // TODO: Consolidate this with PUT addresses
   const addresses: AddressInput[] = req.body.addresses.map(
     (address: AddressInput) => ({
       // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
       // TODO:(hbergren) Remove hardcoded values.
       account_id: accountID,
-      currency: address.currency.toUpperCase() || 'XRP',
-      network: address.network.toUpperCase() || 'TESTNET',
-      payment_information: address.payment_information,
+      payment_network: address.payment_network.toUpperCase() || 'XRPL',
+      environment: address.environment.toUpperCase() || 'TESTNET',
+      details: address.details,
     }),
   )
 

@@ -24,9 +24,9 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
       payment_pointer: '$xpring.money/hansbergren',
       addresses: [
         {
-          currency: 'XRP',
-          network: 'TESTNET',
-          payment_information: {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
             address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
           },
         },
@@ -62,9 +62,9 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       payment_pointer: '$xpring.money/hansbergren',
       addresses: [
         {
-          currency: 'XRP',
-          network: 'TESTNET',
-          payment_information: {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
           },
         },
@@ -87,9 +87,9 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       payment_pointer: '$xpring.money/bergren1234',
       addresses: [
         {
-          currency: 'XRP',
-          network: 'TESTNET',
-          payment_information: {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
           },
         },
@@ -118,9 +118,9 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       payment_pointer: '$xpring.money/bergren1234',
       addresses: [
         {
-          currency: 'XRP',
-          network: 'TESTNET',
-          payment_information: {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
           },
         },

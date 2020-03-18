@@ -6,8 +6,8 @@ import Address from '../models/address'
  * Retrieve the payment information for a given payment pointer.
  *
  * @param paymentPointer The Payment Pointer to retrieve payment information for.
- * @param currency The currency used to filter addresses (XRP, BTC, USD)
- * @param network The network used to filter addresses (MAINNET, TESTNET, DEVNET)
+ * @param paymentNetwork The payment network used to filter addresses (XRPL, BTC, ACH)
+ * @param environment The environment used to filter addresses (MAINNET, TESTNET, DEVNET)
  *
  * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
  */
@@ -15,20 +15,28 @@ export default async function getPaymentInfoFromDatabase(
   // TODO:(hbergren) refactor the call signature to take an object rather than 3 params?
   // TODO:(hbergren) Type payment pointer better? `https://...?`
   paymentPointer: string,
-  currency: string,
-  network: string,
-): Promise<Address['payment_information'] | undefined> {
-  // Get the payment_information from the database, given our paymentPointer, currency, and network
+  paymentNetwork: string,
+  environment: string,
+): Promise<
+  Pick<Address, 'payment_network' | 'environment' | 'details'> | undefined
+> {
+  // Get the details from the database, given our paymentPointer, paymentNetwork, and environment
   const paymentInformation = await knex
-    .select('address.payment_information')
+    .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin('account', 'address.account_id', 'account.id')
     .where('account.payment_pointer', paymentPointer)
-    .andWhere('address.currency', currency)
-    .andWhere('address.network', network)
-    .then((rows: Pick<Address, 'payment_information'>[]) => {
-      return rows[0]?.payment_information
-    })
+    .andWhere('address.payment_network', paymentNetwork)
+    .andWhere('address.environment', environment)
+    .then(
+      (
+        rows: Pick<Address, 'payment_network' | 'environment' | 'details'>[],
+      ) => {
+        // TODO(hbergren): More than one row possible?
+        // Throw error if that happens?
+        return rows[0]
+      },
+    )
 
   return paymentInformation
 }
@@ -67,26 +75,30 @@ export async function replaceAddressInformation(
   accountID: string,
   // TODO: This isn't truly an Address array, maybe more of an AddressInput array
   addresses: Address[],
-): Promise<Pick<Address, 'currency' | 'network' | 'payment_information'>[]> {
+): Promise<Pick<Address, 'payment_network' | 'environment' | 'details'>[]> {
   // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
   // TODO:(hbergren) Remove hardcoded values.
   const mappedAddresses = addresses.map((address) => ({
     account_id: accountID,
-    currency: address.currency.toUpperCase() || 'XRP',
-    network: address.network.toUpperCase() || 'TESTNET',
-    payment_information: address.payment_information,
+    payment_network: address.payment_network.toUpperCase() || 'XRPL',
+    environment: address.environment.toUpperCase() || 'TESTNET',
+    details: address.details,
   }))
 
   // Delete existing addresses associated with that user
   await knex<Address>('address')
-    .del()
+    .delete()
     .where('account_id', accountID)
+  // TODO:(hbergren) Record or return the count of deleted addresses?
+  // .then((count) => count)
+
+  // console.log(`Deleted ${deletedAddressCount} addresses in replaceAddressInformation.`)
 
   // Insert new addresses
   const updatedAddresses = await knex
     .insert(mappedAddresses)
     .into<Address>('address')
-    .returning(['currency', 'network', 'payment_information'])
+    .returning(['payment_network', 'environment', 'details'])
     .then((rows) => rows)
 
   return updatedAddresses
