@@ -12,7 +12,7 @@ const privateAPIRouter = express.Router()
  * post payment pointer mappings to the PayID DB
  */
 privateAPIRouter
-  .get('/[$]*', getUser, sendSuccess)
+  .get('/*', getUser, sendSuccess)
   .post('/', express.json(), postUser, sendSuccess)
   .put('/*', express.json(), putUser, sendSuccess)
   .delete('/*', deleteUser, sendSuccess)

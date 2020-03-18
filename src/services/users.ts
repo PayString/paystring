@@ -5,6 +5,7 @@ import Account from '../models/account'
 import Address from '../models/address'
 
 import handleHttpError from './errors'
+import { urlToPaymentPointer, paymentPointerToUrl } from './utils'
 
 // TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
 // Stop passing req, res, and next in here and do that stuff on the outside.
@@ -16,12 +17,12 @@ export async function getUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const paymentPointer = `https://${req.params[0]}`
+  const paymentPointer = req.params[0]
 
   // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!req.params[0]) {
+  if (!paymentPointer) {
     return handleHttpError(
       400,
       'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
@@ -29,21 +30,27 @@ export async function getUser(
     )
   }
 
+  let paymentPointerUrl
+  try {
+    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
+  } catch (err) {
+    return handleHttpError(400, err.message, res, err)
+  }
+
   type AddressRetrieval = Pick<
     Address,
-    'account_id' | 'currency' | 'network' | 'payment_information'
+    'currency' | 'network' | 'payment_information'
   >
 
   const addresses = await knex
     .select(
-      'address.account_id',
       'address.currency',
       'address.network',
       'address.payment_information',
     )
     .from<Address>('address')
     .innerJoin<Account>('account', 'address.account_id', 'account.id')
-    .where('account.payment_pointer', paymentPointer)
+    .where('account.payment_pointer', paymentPointerUrl)
     // .orWhere('account.id', accountID)
     .then((rows: AddressRetrieval[]) => rows)
 
@@ -56,14 +63,8 @@ export async function getUser(
   }
 
   // TODO:(hbergren) Does not work for multiple accounts
-  const accountID = addresses[0].account_id
-  addresses.forEach((address) => {
-    /* eslint-disable-next-line no-param-reassign */
-    delete address.account_id
-  })
-
   res.locals.response = {
-    account_id: accountID,
+    payment_pointer: urlToPaymentPointer(paymentPointerUrl),
     addresses,
   }
 

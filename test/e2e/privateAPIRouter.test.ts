@@ -9,15 +9,19 @@ const app = new App()
 describe('E2E - privateAPIRouter - GET API', function(): void {
   // Initialize DB connection pool & Boot up Express application
   before(async function() {
-    await app.init({ log: false, seedDatabase: true })
+    await app.init({
+      log: false,
+      seedDatabase: true,
+    })
     knex.initialize()
   })
+  // TODO:(hbergren) beforeEach seed the database. That way we always start with a clean slate, and tests aren't interdependent.
 
   it('Returns a 200 for a private API GET', function(done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const expectedResponse = {
-      account_id: '69b0d20a-cdef-4bb9-adf9-2109979a12af',
+      payment_pointer: '$xpring.money/hansbergren',
       addresses: [
         {
           currency: 'XRP',
@@ -29,7 +33,7 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
       ],
     }
 
-    // WHEN we make a request to /v1/users/ with that payment pointer as a query string parameter
+    // WHEN we make a GET request to /v1/users/ with that payment pointer as our user
     request(app.privateAPIExpress)
       .get(`/v1/users/${paymentPointer}`)
       .expect('Content-Type', /json/)
