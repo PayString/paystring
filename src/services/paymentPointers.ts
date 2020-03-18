@@ -63,20 +63,31 @@ export async function updatePaymentPointer(
  * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
  */
 // TODO: update types after destructuring Pick in routes/users.ts
-export function updateAddressInformation(
-  addresses: Address[],
+export async function replaceAddressInformation(
   accountID: string,
-): Pick<Address, 'currency' | 'network' | 'payment_information'>[] {
+  // TODO: This isn't truly an Address array, maybe more of an AddressInput array
+  addresses: Address[],
+): Promise<Pick<Address, 'currency' | 'network' | 'payment_information'>[]> {
   // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
   // TODO:(hbergren) Remove hardcoded values.
   const mappedAddresses = addresses.map((address) => ({
+    account_id: accountID,
     currency: address.currency.toUpperCase() || 'XRP',
     network: address.network.toUpperCase() || 'TESTNET',
     payment_information: address.payment_information,
   }))
 
-  // TODO: (hbergen) implement knex update
-  console.log(`To implement update for account ${accountID}`)
+  // Delete existing addresses associated with that user
+  await knex<Address>('address')
+    .del()
+    .where('account_id', accountID)
 
-  return mappedAddresses
+  // Insert new addresses
+  const updatedAddresses = await knex
+    .insert(mappedAddresses)
+    .into<Address>('address')
+    .returning(['currency', 'network', 'payment_information'])
+    .then((rows) => rows)
+
+  return updatedAddresses
 }

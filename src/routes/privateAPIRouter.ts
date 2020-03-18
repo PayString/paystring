@@ -14,7 +14,7 @@ const privateAPIRouter = express.Router()
 privateAPIRouter
   .get('/[$]*', getUser, sendSuccess)
   .post('/', express.json(), postUser, sendSuccess)
-  .put('/', express.json(), putUser, sendSuccess)
-  .delete('/', deleteUser, sendSuccess)
+  .put('/*', express.json(), putUser, sendSuccess)
+  .delete('/*', deleteUser, sendSuccess)
 
 export default privateAPIRouter
