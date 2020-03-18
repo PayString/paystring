@@ -39,7 +39,7 @@ export default class App {
 
   private launchPublicAPI(): void {
     this.publicAPIExpress = Express()
-    this.publicAPIExpress.get('/*', publicAPIRouter)
+    this.publicAPIExpress.use('/', publicAPIRouter)
 
     this.publicAPIServer = this.publicAPIExpress.listen(
       Config.publicAPIPort,
