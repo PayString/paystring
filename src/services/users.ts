@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 
 import knex from '../db/knex'
-import Account from '../models/account'
-import Address from '../models/address'
+import Account from '../db/models/account'
+import Address from '../db/models/address'
 
 import handleHttpError from './errors'
 import { urlToPaymentPointer, paymentPointerToUrl } from './utils'

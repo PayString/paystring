@@ -1,4 +1,4 @@
-import { CryptoAddressDetails, AchAddressDetails } from '../types/publicAPI'
+import { CryptoAddressDetails, AchAddressDetails } from '../../types/publicAPI'
 
 export default interface Address {
   readonly id: number

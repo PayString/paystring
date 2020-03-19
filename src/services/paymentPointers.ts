@@ -1,6 +1,6 @@
 import knex from '../db/knex'
-import Account from '../models/account'
-import Address from '../models/address'
+import Account from '../db/models/account'
+import Address from '../db/models/address'
 
 /**
  * Retrieve the payment information for a given payment pointer.
