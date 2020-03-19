@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS address (
 	id serial PRIMARY KEY,
-	account_id uuid REFERENCES account(id) NOT NULL,
+	account_id uuid REFERENCES account(id) ON DELETE CASCADE NOT NULL,
 
 	payment_network varchar(5) NOT NULL,
 	environment varchar(20),

@@ -1,9 +1,9 @@
 import * as express from 'express'
 
-import { getUser, postUser, deleteUser } from '../services/users'
+import { getUser, postUser } from '../services/users'
 
 import sendSuccess from './API'
-import putUser from './users'
+import { putUser, deleteUser } from './users'
 
 const privateAPIRouter = express.Router()
 

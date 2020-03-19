@@ -139,49 +139,18 @@ export async function postUser(
   return next()
 }
 
-export async function deleteUser(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  // TODO(hbergren): This absolutely needs to live in middleware
-  const paymentPointer = req.params[0]
-
-  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
-  // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
-  if (!paymentPointer) {
-    return handleHttpError(
-      400,
-      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
-      res,
-    )
-  }
-
-  let paymentPointerUrl: string
-  try {
-    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
-  } catch (err) {
-    return handleHttpError(400, err.message, res, err)
-  }
-
-  const deletedAddressCount = await knex
-    .delete()
-    .from(knex.raw('address USING account'))
-    .where(knex.raw('address.account_id = account.id'))
-    .andWhere('account.payment_pointer', paymentPointerUrl)
-    .then((count) => count)
-
-  console.log(`Deleted ${deletedAddressCount} addresses.`)
-
-  const deletedUserCount = await knex<Account>('account')
+/**
+ * Deletes a user from the database.
+ * (Addresses associated with that user should be removed by a cascading delete.)
+ *
+ * @param paymentPointerUrl The payment pointer associated with the user to delete.
+ */
+export async function removeUser(paymentPointerUrl: string): Promise<void> {
+  await knex<Account>('account')
     .delete()
     .where('payment_pointer', paymentPointerUrl)
-    .then((count) => count)
-
-  console.log(`Deleted ${deletedUserCount} accounts.`)
   // TODO: Add some check that we only deleted a single user? Program would be really broken if that was violated
+  // .then((count) => count)
 
-  res.locals.status = 204
-
-  return next()
+  // console.log(`Deleted ${deletedUserCount} accounts.`)
 }

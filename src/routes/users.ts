@@ -5,9 +5,10 @@ import {
   updatePaymentPointer,
   replaceAddressInformation,
 } from '../services/paymentPointers'
+import { removeUser } from '../services/users'
 import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
 
-export default async function putUser(
+export async function putUser(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -35,7 +36,6 @@ export default async function putUser(
   }
 
   // TODO(dino): validate body params before this
-  // TODO(dino): validate payment pointer before this
   let updatedAccountInfo
   try {
     // TODO(hans): destructure this Pick object
@@ -61,7 +61,6 @@ export default async function putUser(
   let updatedAddresses
   // TODO:(hbergren), only have a single try/catch for all this?
   try {
-    // TODO(hans): implement updateAddressInformation
     updatedAddresses = await replaceAddressInformation(
       updatedAccountInfo.id,
       req.body.addresses,
@@ -79,5 +78,40 @@ export default async function putUser(
     addresses: updatedAddresses,
   }
 
+  return next()
+}
+
+export async function deleteUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  // TODO(hbergren): This absolutely needs to live in middleware
+  const paymentPointer = req.params[0]
+
+  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
+  if (!paymentPointer) {
+    return handleHttpError(
+      400,
+      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      res,
+    )
+  }
+
+  let paymentPointerUrl: string
+  try {
+    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
+  } catch (err) {
+    return handleHttpError(400, err.message, res, err)
+  }
+
+  try {
+    await removeUser(paymentPointerUrl)
+  } catch (err) {
+    return handleHttpError(500, err.message, res, err)
+  }
+
+  res.locals.status = 204 // No Content
   return next()
 }
