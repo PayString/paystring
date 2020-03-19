@@ -4,7 +4,7 @@ import handleHttpError from '../services/errors'
 import getPaymentInfoFromDatabase from '../services/paymentPointers'
 import {
   PaymentInformation,
-  AddressDetailTypes,
+  AddressDetailType,
   CryptoAddressDetails,
 } from '../types/publicAPI'
 
@@ -81,7 +81,7 @@ export default async function getPaymentInfo(
   res.set('Content-Type', contentType)
 
   const response: PaymentInformation = {
-    addressDetailType: AddressDetailTypes.CryptoAddress,
+    addressDetailType: AddressDetailType.CryptoAddress,
     addressDetails: paymentInformation.details as CryptoAddressDetails,
   }
 

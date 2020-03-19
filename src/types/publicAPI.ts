@@ -1,6 +1,6 @@
-export enum AddressDetailTypes {
-  CryptoAddress = 'crypto',
-  AchAddress = 'ach',
+export enum AddressDetailType {
+  CryptoAddress = 'CryptoAddressDetails',
+  AchAddress = 'AchAddressDetails',
 }
 
 export interface CryptoAddressDetails {
@@ -14,7 +14,7 @@ export interface AchAddressDetails {
 }
 
 export interface PaymentInformation {
-  addressDetailType: AddressDetailTypes
+  addressDetailType: AddressDetailType
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
 }

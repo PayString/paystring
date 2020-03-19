@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 
 import handleHttpError from '../services/errors'
 import {
+  selectUser,
   insertUser,
   insertAddresses,
   replaceUser,
@@ -9,6 +10,60 @@ import {
   removeUser,
 } from '../services/users'
 import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
+
+// TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
+// Stop passing req, res, and next in here and do that stuff on the outside.
+
+// TODO:(hbergren) Handle both a single user and an array of users
+// TODO:(hbergren) Should this handle being hit with the UUID identifying the user account as well?
+export async function getUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const paymentPointer = req.params[0]
+
+  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  // Do that using a regex route param in Express?
+  // Could use a similar regex to the one used by the database.
+  if (!paymentPointer) {
+    return handleHttpError(
+      400,
+      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      res,
+    )
+  }
+
+  let paymentPointerUrl
+  try {
+    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
+  } catch (err) {
+    return handleHttpError(400, err.message, res, err)
+  }
+
+  let addresses
+  try {
+    // TODO:(hbergren) Does not work for multiple accounts
+    addresses = await selectUser(paymentPointerUrl)
+  } catch (err) {
+    return handleHttpError(500, err.message, res, err)
+  }
+
+  if (addresses.length === 0) {
+    return handleHttpError(
+      404,
+      `No PayID information could be found for the payment pointer ${paymentPointer}.`,
+      res,
+    )
+  }
+
+  res.locals.response = {
+    payment_pointer: urlToPaymentPointer(paymentPointerUrl),
+    addresses,
+  }
+
+  return next()
+}
 
 // TODO:(hbergren) Handle both single user and array of new users
 // TODO:(hbergren) Any sort of validation? Validate XRP addresses have both X-Address & Classic/DestinationTag?

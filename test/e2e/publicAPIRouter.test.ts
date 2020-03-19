@@ -25,7 +25,7 @@ describe('E2E - publicAPIRouter', function(): void {
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-mainnet+json'
     const expectedResponse = {
-      addressDetailType: 'crypto',
+      addressDetailType: 'CryptoAddressDetails',
       addressDetails: {
         address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
       },
@@ -48,7 +48,7 @@ describe('E2E - publicAPIRouter', function(): void {
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedResponse = {
-      addressDetailType: 'crypto',
+      addressDetailType: 'CryptoAddressDetails',
       addressDetails: {
         address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
       },
