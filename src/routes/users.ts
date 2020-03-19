@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import handleHttpError from '../services/errors'
-import {
-  updatePaymentPointer,
-  replaceAddressInformation,
-} from '../services/paymentPointers'
-import { removeUser } from '../services/users'
+import { replaceUser, replaceAddresses, removeUser } from '../services/users'
 import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
 
 export async function putUser(
@@ -39,7 +35,7 @@ export async function putUser(
   let updatedAccountInfo
   try {
     // TODO(hans): destructure this Pick object
-    updatedAccountInfo = await updatePaymentPointer(
+    updatedAccountInfo = await replaceUser(
       paymentPointerUrl,
       newPaymentPointerUrl,
     )
@@ -61,7 +57,7 @@ export async function putUser(
   let updatedAddresses
   // TODO:(hbergren), only have a single try/catch for all this?
   try {
-    updatedAddresses = await replaceAddressInformation(
+    updatedAddresses = await replaceAddresses(
       updatedAccountInfo.id,
       req.body.addresses,
     )

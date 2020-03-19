@@ -1,5 +1,4 @@
 import knex from '../db/knex'
-import Account from '../db/models/account'
 import Address from '../db/models/address'
 
 /**
@@ -39,67 +38,4 @@ export default async function getPaymentInfoFromDatabase(
     )
 
   return paymentInformation
-}
-
-/**
- * Update a payment pointer for a given account ID.
- *
- * @param oldPaymentPointer The old payment pointer.
- * @param newPaymentPointer The new payment pointer.
- *
- * @returns A JSON object with the new payment pointer and the accountID, or `undefined` if nothing could be found for that payment pointer.
- */
-export async function updatePaymentPointer(
-  oldPaymentPointer: string,
-  newPaymentPointer: string,
-): Promise<Pick<Account, 'id' | 'payment_pointer'> | undefined> {
-  const data = await knex<Account>('account')
-    .where('payment_pointer', oldPaymentPointer)
-    .update({ payment_pointer: newPaymentPointer })
-    .returning(['id', 'payment_pointer'])
-    .then((rows) => rows[0])
-
-  return data
-}
-
-/**
- * Update addresses for a given account ID.
- *
- * @param accountID The account ID of the account to be updated.
- * @param addresses The object representing destination/address information.
- *
- * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
- */
-// TODO: update types after destructuring Pick in routes/users.ts
-export async function replaceAddressInformation(
-  accountID: string,
-  // TODO: This isn't truly an Address array, maybe more of an AddressInput array
-  addresses: Address[],
-): Promise<Pick<Address, 'payment_network' | 'environment' | 'details'>[]> {
-  // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
-  // TODO:(hbergren) Remove hardcoded values.
-  const mappedAddresses = addresses.map((address) => ({
-    account_id: accountID,
-    payment_network: address.payment_network.toUpperCase() || 'XRPL',
-    environment: address.environment.toUpperCase() || 'TESTNET',
-    details: address.details,
-  }))
-
-  // Delete existing addresses associated with that user
-  await knex<Address>('address')
-    .delete()
-    .where('account_id', accountID)
-  // TODO:(hbergren) Record or return the count of deleted addresses?
-  // .then((count) => count)
-
-  // console.log(`Deleted ${deletedAddressCount} addresses in replaceAddressInformation.`)
-
-  // Insert new addresses
-  const updatedAddresses = await knex
-    .insert(mappedAddresses)
-    .into<Address>('address')
-    .returning(['payment_network', 'environment', 'details'])
-    .then((rows) => rows)
-
-  return updatedAddresses
 }

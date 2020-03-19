@@ -140,6 +140,77 @@ export async function postUser(
 }
 
 /**
+ * The information retrieved from or inserted into the database for a given address.
+ */
+type AddressInformation = Pick<
+  Address,
+  'payment_network' | 'environment' | 'details'
+>
+
+/**
+ * Update a payment pointer for a given account ID.
+ *
+ * @param oldPaymentPointerUrl The old payment pointer.
+ * @param newPaymentPointerUrl The new payment pointer.
+ *
+ * @returns A JSON object with the new payment pointer and the accountID, or `undefined` if nothing could be found for that payment pointer.
+ */
+export async function replaceUser(
+  oldPaymentPointerUrl: string,
+  newPaymentPointerUrl: string,
+): Promise<Pick<Account, 'id' | 'payment_pointer'> | undefined> {
+  const data = await knex<Account>('account')
+    .where('payment_pointer', oldPaymentPointerUrl)
+    .update({ payment_pointer: newPaymentPointerUrl })
+    .returning(['id', 'payment_pointer'])
+    .then((rows) => rows[0])
+
+  return data
+}
+
+/**
+ * Update addresses for a given account ID.
+ *
+ * @param accountID The account ID of the account to be updated.
+ * @param addresses The object representing destination/address information.
+ *
+ * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
+ */
+// TODO: update types after destructuring Pick in routes/users.ts
+export async function replaceAddresses(
+  accountID: string,
+  // TODO: This isn't truly an Address array, maybe more of an AddressInput array
+  addresses: Address[],
+): Promise<AddressInformation[]> {
+  // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
+  // TODO:(hbergren) Remove hardcoded values.
+  const mappedAddresses = addresses.map((address) => ({
+    account_id: accountID,
+    payment_network: address.payment_network.toUpperCase() || 'XRPL',
+    environment: address.environment.toUpperCase() || 'TESTNET',
+    details: address.details,
+  }))
+
+  // Delete existing addresses associated with that user
+  await knex<Address>('address')
+    .delete()
+    .where('account_id', accountID)
+  // TODO:(hbergren) Record or return the count of deleted addresses?
+  // .then((count) => count)
+
+  // console.log(`Deleted ${deletedAddressCount} addresses in replaceAddressInformation.`)
+
+  // Insert new addresses
+  const updatedAddresses = await knex
+    .insert(mappedAddresses)
+    .into<Address>('address')
+    .returning(['payment_network', 'environment', 'details'])
+    .then((rows) => rows)
+
+  return updatedAddresses
+}
+
+/**
  * Deletes a user from the database.
  * (Addresses associated with that user should be removed by a cascading delete.)
  *
