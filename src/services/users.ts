@@ -67,78 +67,6 @@ export async function getUser(
   return next()
 }
 
-// TODO:(hbergren) Handle both single user and array of new users
-// TODO:(hbergren) Any sort of validation? Validate XRP addresses have both X-Address & Classic/DestinationTag?
-// TODO:(hbergren) Any sort of validation on the payment pointer? Check the domain name to make sure it's owned by that organization?
-// TODO:(hbergren) Use joi to validate the `req.body`. All required properties present, and match some sort of validation.
-export async function postUser(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
-  // TODO:(hbergren) Handle an array or users as well
-  // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
-  // Or do checks in JS to ensure no constraints are violated.
-  const accountID = await knex
-    .insert({
-      // TODO:(hbergren) Do some preprocessing here? Don't pass req directly?
-      payment_pointer: req.body.payment_pointer,
-      // TODO:(hbergren) Make this organization field calculated from the API key used, not hardcoded
-      organization: 'xpring',
-    })
-    .into<Account>('account')
-    .returning('id')
-    .then((rows) => rows[0])
-    .catch((err) => {
-      return handleHttpError(
-        503,
-        `server could not create account for user ${req.body.payment_pointer}`,
-        res,
-        err,
-      )
-    })
-
-  type AddressInput = Pick<
-    Address,
-    'account_id' | 'payment_network' | 'environment' | 'details'
-  >
-
-  // TODO: Consolidate this with PUT addresses
-  const addresses: AddressInput[] = req.body.addresses.map(
-    (address: AddressInput) => ({
-      // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
-      // TODO:(hbergren) Remove hardcoded values.
-      account_id: accountID,
-      payment_network: address.payment_network.toUpperCase() || 'XRPL',
-      environment: address.environment.toUpperCase() || 'TESTNET',
-      details: address.details,
-    }),
-  )
-
-  // TODO:(hbergren) Should this return anything?
-  // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
-  // Or do checks in JS to ensure no constraints are violated.
-  await knex
-    .insert(addresses)
-    .into<Address>('address')
-    .then(() => ({ inserted: true }))
-    .catch((err) => {
-      return handleHttpError(
-        503,
-        `server could not insert addresses for user ${accountID}`,
-        res,
-        err,
-      )
-    })
-
-  res.locals.response = {
-    message: `User for payment pointer ${req.body.payment_pointer} created successfully.`,
-    account_id: accountID,
-  }
-
-  return next()
-}
-
 /**
  * The information retrieved from or inserted into the database for a given address.
  */
@@ -146,6 +74,63 @@ type AddressInformation = Pick<
   Address,
   'payment_network' | 'environment' | 'details'
 >
+
+/**
+ * Inserts a new user/payment_pointer into the Account table on the PayID service.
+ *
+ * @param paymentPointerUrl The payment pointer to insert in the users table.
+ * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
+ *
+ * @returns The account id used by the database as a primary key to reference this user.
+ */
+// TODO(hbergren): Type paymentPointerUrl better
+// TODO:(hbergren): Remove default value of `xpring` for organization
+export async function insertUser(
+  paymentPointerUrl: string,
+  organization = 'xpring',
+): Promise<string> {
+  // TODO:(hbergren) Handle an array of users as well
+  // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
+  // Or do checks in JS to ensure no constraints are violated.
+  const accountID = await knex
+    .insert({
+      payment_pointer: paymentPointerUrl,
+      organization,
+    })
+    .into<Account>('account')
+    .returning('id')
+    .then((rows) => rows[0])
+
+  return accountID
+}
+
+/**
+ * Inserts new addresses into the database for a given account id.
+ *
+ * @param accountID The database account id associated with the payment pointer to insert new addresses for.
+ * @param addresses The addresses to insert into the database.
+ */
+export async function insertAddresses(
+  accountID: string,
+  addresses: AddressInformation[],
+): Promise<void> {
+  // TODO(hbergren): Consolidate this with PUT addresses
+  const mappedAddresses = addresses.map((address) => ({
+    // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
+    // TODO:(hbergren) Remove hardcoded values.
+    account_id: accountID,
+    payment_network: address.payment_network.toUpperCase() || 'XRPL',
+    environment: address.environment.toUpperCase() || 'TESTNET',
+    details: address.details,
+  }))
+
+  // TODO:(hbergren) Should this return anything?
+  // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
+  // Or do checks in JS to ensure no constraints are violated.
+  await knex.insert(mappedAddresses).into<Address>('address')
+  // TODO:(hbergren) Verify that the number of inserted addresses matches the input address array length?
+  // .then((count) => count[0])
+}
 
 /**
  * Update a payment pointer for a given account ID.

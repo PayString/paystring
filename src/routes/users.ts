@@ -1,8 +1,73 @@
 import { Request, Response, NextFunction } from 'express'
 
 import handleHttpError from '../services/errors'
-import { replaceUser, replaceAddresses, removeUser } from '../services/users'
+import {
+  insertUser,
+  insertAddresses,
+  replaceUser,
+  replaceAddresses,
+  removeUser,
+} from '../services/users'
 import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
+
+// TODO:(hbergren) Handle both single user and array of new users
+// TODO:(hbergren) Any sort of validation? Validate XRP addresses have both X-Address & Classic/DestinationTag?
+// TODO:(hbergren) Any sort of validation on the payment pointer? Check the domain name to make sure it's owned by that organization?
+// TODO:(hbergren) Use joi to validate the `req.body`. All required properties present, and match some sort of validation.
+export async function postUser(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  // Do that using a regex route param in Express?
+  // Could use a similar regex to the one used by the database.
+  const paymentPointer = req.body.payment_pointer
+  if (!paymentPointer) {
+    return handleHttpError(
+      400,
+      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      res,
+    )
+  }
+
+  let paymentPointerUrl: string
+  try {
+    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
+  } catch (err) {
+    return handleHttpError(400, err.message, res, err)
+  }
+
+  // TODO:(hbergren) It's weird that you can successfully insert a user, but fail to insert associated addresses.
+  // That means that a failed POST request could have still had side-effects and inserted data into the database.
+  // That probably shouldn't be possible. This might be a problem for the PUT request as well.
+  let accountID: string
+  try {
+    accountID = await insertUser(paymentPointerUrl)
+  } catch (err) {
+    return handleHttpError(
+      503,
+      `The server could not create an account for the payment pointer ${paymentPointer}`,
+      res,
+      err,
+    )
+  }
+
+  try {
+    // TODO(hbergren): Some sort of address validation before we pass this along?
+    await insertAddresses(accountID, req.body.addresses)
+  } catch (err) {
+    return handleHttpError(
+      503,
+      `server could not insert addresses for user ${paymentPointer}`,
+      res,
+      err,
+    )
+  }
+
+  res.locals.status = 201 // Created
+  return next()
+}
 
 export async function putUser(
   req: Request,
