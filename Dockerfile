@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:12-alpine
 LABEL maintainer="Austin King <aking@ripple.com>"
 ADD . / payid/
 RUN (cd payid/; npm cache clean --force;)
