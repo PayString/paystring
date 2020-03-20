@@ -66,6 +66,71 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
   })
 })
 
+describe('E2E - privateAPIRouter - POST API', function(): void {
+  // Initialize DB connection pool & Boot up Express application
+  before(async function() {
+    await app.init({
+      log: false,
+      seedDatabase: true,
+    })
+    knex.initialize()
+  })
+
+  it('Returns a 201 when creating a new user', function(done): void {
+    // GIVEN a user with a payment pointer known to not exist on the PayID service
+    const userInformation = {
+      payment_pointer: '$xpring.money/johndoe',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /v1/users with that user information
+    request(app.privateAPIExpress)
+      .post(`/v1/users`)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/)
+      // THEN we expect back a 201 - CREATED
+      .expect(201, done)
+  })
+
+  it('Returns a 409 - Conflict when attempting to create a user that already exists', function(done): void {
+    // GIVEN a user with a payment pointer known already on the PayID service
+    const userInformation = {
+      payment_pointer: '$xpring.money/hansbergren',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /v1/users with that user information
+    request(app.privateAPIExpress)
+      .post(`/v1/users`)
+      .send(userInformation)
+      .expect('Content-Type', /json/)
+      // THEN we expect back a 409 - CONFLICT
+      .expect(409, done)
+  })
+
+  // Shut down Express application & close DB connections
+  after(function() {
+    app.close()
+    knex.destroy()
+  })
+})
+
 describe('E2E - privateAPIRouter - PUT API', function(): void {
   // Initialize DB connection pool & Boot up Express application
   before(async function() {
@@ -188,6 +253,17 @@ describe('E2E - privateAPIRouter - DELETE API', function(): void {
           .get(`/v1/users/${paymentPointer}`)
           .expect(404, missingPaymentPointerError, done)
       })
+  })
+
+  it('Returns a 204  when attempting to delete an account that does not exist', function(done): void {
+    // GIVEN a payment pointer known to not exist on the PayID service
+    const paymentPointer = '$xpring.money/johndoe'
+
+    // WHEN we make a DELETE request to /v1/users/ with the payment pointer to delete
+    request(app.privateAPIExpress)
+      .delete(`/v1/users/${paymentPointer}`)
+      // THEN we expect back a 204 - No Content
+      .expect(204, done)
   })
 
   // Shut down Express application & close DB connections
