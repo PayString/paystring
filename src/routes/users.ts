@@ -180,6 +180,21 @@ export async function putUser(
       statusCode = 201
     }
   } catch (err) {
+    // TODO(hbergren): This leaks database stuff into this file
+    // This probably means error handling should be done in the data access layer
+    if (
+      err.message.includes(
+        'violates unique constraint "account_payment_pointer_key"',
+      )
+    ) {
+      return handleHttpError(
+        409,
+        `There already exists a user with the payment pointer ${paymentPointer}`,
+        res,
+        err,
+      )
+    }
+
     return handleHttpError(
       500,
       `Error updating payment pointer for account ${req.query.payment_pointer}.`,

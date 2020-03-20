@@ -245,6 +245,58 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(400, errorResponsePayload, done)
   })
 
+  it('Returns a 409 - Conflict when attempting to update a user to a payment pointer that already exists', function(done): void {
+    // GIVEN a payment pointer known to resolve to an account on the PayID service
+    const paymentPointer = '$xpring.money/hansbergren'
+    const updatedInformation = {
+      // AND a request to update that payment pointer to one known to already exist on the PayID Service
+      payment_pointer: '$xpring.money/hbergren',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    request(app.privateAPIExpress)
+      .put(`/v1/users/${paymentPointer}`)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/)
+      // THEN we expect back a 409 - CONFLICT
+      .expect(409, done)
+  })
+
+  it('Returns a 409 - Conflict when attempting to create a user that already exists', function(done): void {
+    // GIVEN a payment pointer known to not exist on the PayID service
+    const paymentPointer = '$xpring.money/janedoe'
+    const updatedInformation = {
+      // AND a request to update that payment pointer to one known to already exist on the PayID Service
+      payment_pointer: '$xpring.money/hbergren',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    request(app.privateAPIExpress)
+      .put(`/v1/users/${paymentPointer}`)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/)
+      // THEN we expect back a 409 - CONFLICT
+      .expect(409, done)
+  })
+
   // Shut down Express application & close DB connections
   after(function() {
     app.close()
