@@ -169,18 +169,15 @@ export async function putUser(
 
   // TODO:(hbergren) Remove all these try/catches. This is ridiculous
   // TODO(dino): validate body params before this
-  let updatedAccountInfo
+  let accountID
+  let statusCode = 200
   try {
-    // TODO(hans): destructure this Pick object
-    updatedAccountInfo = await replaceUser(
-      paymentPointerUrl,
-      newPaymentPointerUrl,
-    )
+    accountID = await replaceUser(paymentPointerUrl, newPaymentPointerUrl)
 
-    // TODO:(hbergren), this should create the user if they didn't exist
-    // Can we just hit the POST implementation?
-    if (updatedAccountInfo === undefined) {
-      return handleHttpError(404, `User for ${paymentPointer} not found.`, res)
+    // If there was no user to update, create a new user
+    if (accountID === undefined) {
+      accountID = await insertUser(newPaymentPointerUrl)
+      statusCode = 201
     }
   } catch (err) {
     return handleHttpError(
@@ -195,10 +192,7 @@ export async function putUser(
   // TODO:(hbergren), only have a single try/catch for all this?
   // TODO:(hbergren) This should be the same database operation/transaction as replace/insert user
   try {
-    updatedAddresses = await replaceAddresses(
-      updatedAccountInfo.id,
-      req.body.addresses,
-    )
+    updatedAddresses = await replaceAddresses(accountID, req.body.addresses)
   } catch (err) {
     return handleHttpError(
       500,
@@ -207,8 +201,9 @@ export async function putUser(
     )
   }
 
+  res.locals.status = statusCode
   res.locals.response = {
-    payment_pointer: urlToPaymentPointer(updatedAccountInfo.payment_pointer),
+    payment_pointer: urlToPaymentPointer(newPaymentPointerUrl),
     addresses: updatedAddresses,
   }
 

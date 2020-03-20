@@ -103,14 +103,14 @@ export async function insertAddresses(
 export async function replaceUser(
   oldPaymentPointerUrl: string,
   newPaymentPointerUrl: string,
-): Promise<Pick<Account, 'id' | 'payment_pointer'> | undefined> {
-  const data = await knex<Account>('account')
+): Promise<string | undefined> {
+  const accountID = await knex<Account>('account')
     .where('payment_pointer', oldPaymentPointerUrl)
     .update({ payment_pointer: newPaymentPointerUrl })
-    .returning(['id', 'payment_pointer'])
-    .then((rows) => rows[0])
+    .returning(['id'])
+    .then((rows) => rows[0]?.id)
 
-  return data
+  return accountID
 }
 
 /**

@@ -188,6 +188,32 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(200, updatedInformation, done)
   })
 
+  it('Returns a 201 and inserted user payload for a private API PUT creating a new user', function(done): void {
+    // GIVEN a payment pointer known to not exist on the PayID service
+    const paymentPointer = '$xpring.money/johndoe'
+    const insertedInformation = {
+      payment_pointer: '$xpring.money/johnjoejr',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /v1/users/ with the information to insert
+    request(app.privateAPIExpress)
+      .put(`/v1/users/${paymentPointer}`)
+      .send(insertedInformation)
+      .expect('Content-Type', /json/)
+      // THEN we expect back a 201 - CREATED, with the inserted user information
+      // Note that the payment pointer inserted is that of the request body, not the URL path
+      .expect(201, insertedInformation, done)
+  })
+
   it('Returns a 400 - Bad Request with an error payload for a request with a malformed payment pointer', function(done): void {
     // GIVEN a payment pointer known to be in a bad format (missing $) and an expected error response payload
     const badPaymentPointer = 'xpring.money/hansbergren'
