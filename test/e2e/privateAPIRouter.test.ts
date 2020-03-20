@@ -17,7 +17,7 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
   })
   // TODO:(hbergren) beforeEach seed the database. That way we always start with a clean slate, and tests aren't interdependent.
 
-  it('Returns a 200 for a private API GET', function(done): void {
+  it('Returns a 200 and correct information for a user known to exist', function(done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const expectedResponse = {
@@ -37,8 +37,26 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
     request(app.privateAPIExpress)
       .get(`/v1/users/${paymentPointer}`)
       .expect('Content-Type', /json/)
-      // THEN We expect back a 200-OK, with the account information
+      // THEN We expect back a 200 - OK, with the account information
       .expect(200, expectedResponse, done)
+  })
+
+  it('Returns a 404 for an unknown payment pointer', function(done): void {
+    // GIVEN a payment pointer known to not exist on the PayID service
+    const paymentPointer = '$xpring.money/johndoe'
+    const expectedErrorResponse = {
+      statusCode: 404,
+      error: 'Not Found',
+      message:
+        'No PayID information could be found for the payment pointer $xpring.money/johndoe.',
+    }
+
+    // WHEN we make a GET request to /v1/users/ with that payment pointer as our user
+    request(app.privateAPIExpress)
+      .get(`/v1/users/${paymentPointer}`)
+      .expect('Content-Type', /json/)
+      // THEN We expect back a 404 - Not Found, with the expected error response object
+      .expect(404, expectedErrorResponse, done)
   })
 
   // Shut down Express application & close DB connections
@@ -55,7 +73,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
     knex.initialize()
   })
 
-  it('Returns a 200 and updated user payload for a private API PUT updating an address', function(done): void {
+  it('Returns a 200 and updated user payload when updating an address', function(done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const updatedInformation = {
@@ -80,7 +98,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(200, updatedInformation, done)
   })
 
-  it('Returns a 200 and updated user payload for a private API PUT updating a payment pointer', function(done): void {
+  it('Returns a 200 and updated user payload when updating a payment pointer', function(done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const updatedInformation = {
@@ -105,7 +123,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(200, updatedInformation, done)
   })
 
-  it('Returns a 400 - Bad Request with an error payload for a private API PUT with a bad payment pointer', function(done): void {
+  it('Returns a 400 - Bad Request with an error payload for a request with a malformed payment pointer', function(done): void {
     // GIVEN a payment pointer known to be in a bad format (missing $) and an expected error response payload
     const badPaymentPointer = 'xpring.money/hansbergren'
     const errorResponsePayload = {
@@ -150,7 +168,7 @@ describe('E2E - privateAPIRouter - DELETE API', function(): void {
     knex.initialize()
   })
 
-  it('Returns a 204 and no payload for a private API DELETE deleting an account', function(done): void {
+  it('Returns a 204 and no payload when deleting an account', function(done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hbergren'
     const missingPaymentPointerError = {

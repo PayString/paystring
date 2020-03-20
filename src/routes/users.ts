@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 
 import handleHttpError from '../services/errors'
 import {
-  selectUser,
+  selectAddresses,
   insertUser,
   insertAddresses,
   replaceUser,
@@ -44,7 +44,7 @@ export async function getUser(
   let addresses
   try {
     // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await selectUser(paymentPointerUrl)
+    addresses = await selectAddresses(paymentPointerUrl)
   } catch (err) {
     return handleHttpError(500, err.message, res, err)
   }
@@ -101,7 +101,7 @@ export async function postUser(
     accountID = await insertUser(paymentPointerUrl)
   } catch (err) {
     return handleHttpError(
-      503,
+      500,
       `The server could not create an account for the payment pointer ${paymentPointer}`,
       res,
       err,
@@ -113,7 +113,7 @@ export async function postUser(
     await insertAddresses(accountID, req.body.addresses)
   } catch (err) {
     return handleHttpError(
-      503,
+      500,
       `server could not insert addresses for user ${paymentPointer}`,
       res,
       err,
@@ -129,6 +129,7 @@ export async function putUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this paymentPointer / HttpError out into middleware?
   const paymentPointer = req.params[0]
   // TODO:(hbergren) More validation? Assert that the payment pointer is `$` and of a certain form?
@@ -151,6 +152,7 @@ export async function putUser(
     return handleHttpError(400, err.message, res, err)
   }
 
+  // TODO:(hbergren) Remove all these try/catches. This is ridiculous
   // TODO(dino): validate body params before this
   let updatedAccountInfo
   try {
@@ -176,6 +178,7 @@ export async function putUser(
 
   let updatedAddresses
   // TODO:(hbergren), only have a single try/catch for all this?
+  // TODO:(hbergren) This should be the same database operation/transaction as replace/insert user
   try {
     updatedAddresses = await replaceAddresses(
       updatedAccountInfo.id,

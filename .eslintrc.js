@@ -91,8 +91,11 @@ module.exports = {
         mocha: true, // Global variables for mocha
       },
       rules: {
-        // For our Mocha test files, the pattern has been to have unnamed functions
+        // For our Mocha test files, the pattern is to have unnamed functions
         'func-names': 'off',
+        // It's reasonable to have hooks for single cases for when the describe block grows
+        // and more tests get added to that case.
+        'mocha/no-hooks-for-single-case': 'off',
       }
     },
   ],

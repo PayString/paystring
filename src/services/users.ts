@@ -18,7 +18,7 @@ type AddressInformation = Pick<
  *
  * @returns An array of the addresses associated with that payment pointer.
  */
-export async function selectUser(
+export async function selectAddresses(
   // TODO(hbergren): Type paymentPointer better?
   paymentPointerUrl: string,
   // TODO(hbergren): remove default value
