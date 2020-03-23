@@ -70,7 +70,13 @@ module.exports = {
     // Allow unused parameters that start with an underscore.
     // This is the convention in TypeScript, to opt out of the "noUnusedParameters" compiler check.
     // This makes refactoring and building easier, as you can define stub functions that don't use all their arguments.
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    // Also allow unused rest/destructuring parameters, since that's an easy way to remove properties from an object.
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      { argsIgnorePattern: '^_', ignoreRestSiblings: true },
+    ],
+    // For functions in particular, I generally like to define helper functions at the bottom of a file.
+    '@typescript-eslint/no-use-before-define': ['error', { functions: false }],
 
     /* IMPORT PLUGIN RULES */
     //
@@ -96,7 +102,7 @@ module.exports = {
         // It's reasonable to have hooks for single cases for when the describe block grows
         // and more tests get added to that case.
         'mocha/no-hooks-for-single-case': 'off',
-      }
+      },
     },
   ],
 }

@@ -2,11 +2,9 @@ import { Request, Response, NextFunction } from 'express'
 
 import handleHttpError from '../services/errors'
 import {
-  selectAddresses,
+  selectUser,
   insertUser,
-  insertAddresses,
   replaceUser,
-  replaceAddresses,
   removeUser,
 } from '../services/users'
 import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
@@ -44,7 +42,7 @@ export async function getUser(
   let addresses
   try {
     // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await selectAddresses(paymentPointerUrl)
+    addresses = await selectUser(paymentPointerUrl)
   } catch (err) {
     return handleHttpError(500, err.message, res, err)
   }
@@ -93,12 +91,8 @@ export async function postUser(
     return handleHttpError(400, err.message, res, err)
   }
 
-  // TODO:(hbergren) It's weird that you can successfully insert a user, but fail to insert associated addresses.
-  // That means that a failed POST request could have still had side-effects and inserted data into the database.
-  // That probably shouldn't be possible. This might be a problem for the PUT request as well.
-  let accountID: string
   try {
-    accountID = await insertUser(paymentPointerUrl)
+    await insertUser(paymentPointerUrl, req.body.addresses)
   } catch (err) {
     // TODO(hbergren): This leaks database stuff into this file
     // This probably means error handling should be done in the data access layer
@@ -118,18 +112,6 @@ export async function postUser(
     return handleHttpError(
       500,
       `The server could not create an account for the payment pointer ${paymentPointer}`,
-      res,
-      err,
-    )
-  }
-
-  try {
-    // TODO(hbergren): Some sort of address validation before we pass this along?
-    await insertAddresses(accountID, req.body.addresses)
-  } catch (err) {
-    return handleHttpError(
-      500,
-      `server could not insert addresses for user ${paymentPointer}`,
       res,
       err,
     )
@@ -169,14 +151,20 @@ export async function putUser(
 
   // TODO:(hbergren) Remove all these try/catches. This is ridiculous
   // TODO(dino): validate body params before this
-  let accountID
+  let updatedAddresses
   let statusCode = 200
   try {
-    accountID = await replaceUser(paymentPointerUrl, newPaymentPointerUrl)
-
-    // If there was no user to update, create a new user
-    if (accountID === undefined) {
-      accountID = await insertUser(newPaymentPointerUrl)
+    // TODO:(hbergren) Remove this ridiculous nesting.
+    updatedAddresses = await replaceUser(
+      paymentPointerUrl,
+      newPaymentPointerUrl,
+      req.body.addresses,
+    )
+    if (updatedAddresses === null) {
+      updatedAddresses = await insertUser(
+        newPaymentPointerUrl,
+        req.body.addresses,
+      )
       statusCode = 201
     }
   } catch (err) {
@@ -200,19 +188,6 @@ export async function putUser(
       `Error updating payment pointer for account ${req.query.payment_pointer}.`,
       res,
       err,
-    )
-  }
-
-  let updatedAddresses
-  // TODO:(hbergren), only have a single try/catch for all this?
-  // TODO:(hbergren) This should be the same database operation/transaction as replace/insert user
-  try {
-    updatedAddresses = await replaceAddresses(accountID, req.body.addresses)
-  } catch (err) {
-    return handleHttpError(
-      500,
-      `Error updating addresses for account ${req.body.account_id}.`,
-      res,
     )
   }
 

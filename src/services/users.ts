@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+import { Transaction } from 'knex'
+
 import knex from '../db/knex'
 import Account from '../db/models/account'
 import Address from '../db/models/address'
@@ -12,70 +15,146 @@ type AddressInformation = Pick<
 
 /**
  * Retrieve the addresses associated with a given users payment pointer.
- *
  * @param paymentPointerUrl The payment pointer (user) for which to retrieve addresses.
  * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns An array of the addresses associated with that payment pointer.
  */
-export async function selectAddresses(
-  // TODO(hbergren): Type paymentPointer better?
+// TODO(hbergren): Type paymentPointerUrl better?
+// TODO(hbergren): remove default value for organization
+export async function selectUser(
   paymentPointerUrl: string,
-  // TODO(hbergren): remove default value
   organization = 'xpring',
 ): Promise<AddressInformation[]> {
-  const addresses = await knex
+  const addresses: AddressInformation[] = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin<Account>('account', 'address.account_id', 'account.id')
     .where('account.payment_pointer', paymentPointerUrl)
     .andWhere('account.organization', organization)
-    .then((rows: AddressInformation[]) => rows)
 
   return addresses
 }
 
 /**
  * Inserts a new user/payment_pointer into the Account table on the PayID service.
- *
  * @param paymentPointerUrl The payment pointer to insert in the users table.
+ * @param addresses The addresses for that payment pointer to insert into the database.
  * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
- * @returns The account id used by the database as a primary key to reference this user.
+ * @returns The addresses inserted for this user
  */
 // TODO(hbergren): Type paymentPointerUrl better
 // TODO:(hbergren): Remove default value of `xpring` for organization
+// TODO:(hbergren) Accept an array of users (insertUsers?)
 export async function insertUser(
   paymentPointerUrl: string,
+  addresses: AddressInformation[],
   organization = 'xpring',
-): Promise<string> {
-  // TODO:(hbergren) Handle an array of users as well
+): Promise<AddressInformation[]> {
   // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
-  // Or do checks in JS to ensure no constraints are violated.
-  const accountID = await knex
-    .insert({
-      payment_pointer: paymentPointerUrl,
-      organization,
-    })
-    .into<Account>('account')
-    .returning('id')
-    .then((rows) => rows[0])
+  // Or do checks in JS to ensure no constraints are violated. Or both.
+  return knex.transaction(async (transaction: Transaction) => {
+    const insertedAddresses = await knex
+      .insert({
+        payment_pointer: paymentPointerUrl,
+        organization,
+      })
+      .into<Account>('account')
+      .transacting(transaction)
+      .returning('id')
+      .then(async (ids) => {
+        const accountID = ids[0]
+        const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
+        return insertAddresses(mappedAddresses, transaction)
+      })
+      .then(transaction.commit)
+      .catch(transaction.rollback)
 
-  return accountID
+    return insertedAddresses
+  })
 }
 
 /**
- * Inserts new addresses into the database for a given account id.
+ * Update a payment pointer and addresses associated with that payment pointer for a given account ID.
+ * @param oldPaymentPointerUrl The old payment pointer.
+ * @param newPaymentPointerUrl The new payment pointer.
+ * @param addresses The array of destination/address information to associate with this user.
  *
- * @param accountID The database account id associated with the payment pointer to insert new addresses for.
- * @param addresses The addresses to insert into the database.
+ * @returns The updated addresses for a given payment pointer.
  */
-export async function insertAddresses(
-  accountID: string,
+export async function replaceUser(
+  oldPaymentPointerUrl: string,
+  newPaymentPointerUrl: string,
   addresses: AddressInformation[],
 ): Promise<void> {
-  // TODO(hbergren): Consolidate this with PUT addresses
-  const mappedAddresses = addresses.map((address) => ({
+  return knex.transaction(async (transaction: Transaction) => {
+    const updatedAddresses = await knex<Account>('account')
+      .where('payment_pointer', oldPaymentPointerUrl)
+      .update({ payment_pointer: newPaymentPointerUrl })
+      .transacting(transaction)
+      .returning('id')
+      .then(async (ids) => {
+        const accountID = ids[0]
+        if (accountID === undefined) return null
+
+        // Delete existing addresses associated with that user
+        await knex<Address>('address')
+          .delete()
+          .where('account_id', accountID)
+          .transacting(transaction)
+
+        const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
+        return insertAddresses(mappedAddresses, transaction)
+      })
+      .then(transaction.commit)
+      .catch(transaction.rollback)
+
+    return updatedAddresses
+  })
+}
+
+/**
+ * Deletes a user from the database. Addresses associated with that user should be removed by a cascading delete.
+ * @param paymentPointerUrl The payment pointer associated with the user to delete.
+ */
+export async function removeUser(paymentPointerUrl: string): Promise<void> {
+  await knex<Account>('account')
+    .delete()
+    .where('payment_pointer', paymentPointerUrl)
+    .then((count) => {
+      if (count <= 1) return
+
+      // If we deleted more than one user, all bets are off, because multiple users could have the same payment pointer.
+      // This should be impossible thanks to our unique constraint,
+      // but this would mean that payment pointer resolution (and thus who gets transferred value) is non-deterministic.
+      // Thus, we log an error and immediately kill the program.
+      console.error(
+        `We deleted ${count} accounts with the payment pointer ${paymentPointerUrl}, which should be impossible due to our unique constraint.`,
+      )
+      process.exit(1)
+    })
+}
+
+/*
+ * HELPER FUNCTIONS
+ */
+interface DatabaseAddress extends AddressInformation {
+  account_id: string
+}
+
+/**
+ * Maps an array of AddressInformation objects into an array of DatabaseAddress objects, with an 'account_id'.
+ * @param addresses An array of addresses with information we want to insert into the database.
+ * @param accountID the account ID to add to all the addresses to allow inserting the addresses into the database.
+ *
+ * @returns A new array of addresses, where each address has a new property 'account_id'.
+ */
+function addAccountIDToAddresses(
+  addresses: AddressInformation[],
+  accountID: string,
+): DatabaseAddress[] {
+  return addresses.map((address) => ({
     // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
     // TODO:(hbergren) Remove hardcoded values.
     account_id: accountID,
@@ -83,90 +162,23 @@ export async function insertAddresses(
     environment: address.environment.toUpperCase() || 'TESTNET',
     details: address.details,
   }))
-
-  // TODO:(hbergren) Should this return anything?
-  // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
-  // Or do checks in JS to ensure no constraints are violated.
-  await knex.insert(mappedAddresses).into<Address>('address')
-  // TODO:(hbergren) Verify that the number of inserted addresses matches the input address array length?
-  // .then((count) => count[0])
 }
 
 /**
- * Update a payment pointer for a given account ID.
+ * Given an array of address objects and a transaction, insert the addresses into the database.
+ * @param addresses An array of DatabaseAddress objects to insert into the database.
+ * @param transaction The transaction to wrap this statement with. Used to ensure that when we insert/update a user, we maintain consistent data.
  *
- * @param oldPaymentPointerUrl The old payment pointer.
- * @param newPaymentPointerUrl The new payment pointer.
- *
- * @returns A JSON object with the new payment pointer and the accountID, or `undefined` if nothing could be found for that payment pointer.
+ * @returns An array of the inserted addresses.
  */
-export async function replaceUser(
-  oldPaymentPointerUrl: string,
-  newPaymentPointerUrl: string,
-): Promise<string | undefined> {
-  const accountID = await knex<Account>('account')
-    .where('payment_pointer', oldPaymentPointerUrl)
-    .update({ payment_pointer: newPaymentPointerUrl })
-    .returning(['id'])
-    .then((rows) => rows[0]?.id)
-
-  return accountID
-}
-
-/**
- * Update addresses for a given account ID.
- *
- * @param accountID The account ID of the account to be updated.
- * @param addresses The object representing destination/address information.
- *
- * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
- */
-// TODO: update types after destructuring Pick in routes/users.ts
-export async function replaceAddresses(
-  accountID: string,
-  // TODO: This isn't truly an Address array, maybe more of an AddressInput array
-  addresses: Address[],
+async function insertAddresses(
+  addresses: DatabaseAddress[],
+  transaction: Transaction,
 ): Promise<AddressInformation[]> {
-  // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
-  // TODO:(hbergren) Remove hardcoded values.
-  const mappedAddresses = addresses.map((address) => ({
-    account_id: accountID,
-    payment_network: address.payment_network.toUpperCase() || 'XRPL',
-    environment: address.environment.toUpperCase() || 'TESTNET',
-    details: address.details,
-  }))
-
-  // Delete existing addresses associated with that user
-  await knex<Address>('address')
-    .delete()
-    .where('account_id', accountID)
-  // TODO:(hbergren) Record or return the count of deleted addresses?
-  // .then((count) => count)
-
-  // console.log(`Deleted ${deletedAddressCount} addresses in replaceAddressInformation.`)
-
-  // Insert new addresses
-  const updatedAddresses = await knex
-    .insert(mappedAddresses)
+  // TODO:(hbergren) Verify that the number of inserted addresses matches the input address array length?
+  return knex
+    .insert(addresses)
     .into<Address>('address')
+    .transacting(transaction)
     .returning(['payment_network', 'environment', 'details'])
-    .then((rows) => rows)
-
-  return updatedAddresses
-}
-
-/**
- * Deletes a user from the database.
- * (Addresses associated with that user should be removed by a cascading delete.)
- *
- * @param paymentPointerUrl The payment pointer associated with the user to delete.
- */
-export async function removeUser(paymentPointerUrl: string): Promise<void> {
-  await knex<Account>('account')
-    .delete()
-    .where('payment_pointer', paymentPointerUrl)
-  // TODO: Add some check that we only deleted a single user? Program would be really broken if that was violated
-  // .then((count) => count)
-
-  // console.log(`Deleted ${deletedUserCount} accounts.`)
 }

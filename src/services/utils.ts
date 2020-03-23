@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-use-before-define */
-
 // CONSTANTS
 const HTTPS = 'https://'
 const WELL_KNOWN = '/.well-known/pay'

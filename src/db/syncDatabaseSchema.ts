@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable consistent-return */
-/* eslint-disable @typescript-eslint/no-use-before-define */
 /* eslint-disable no-console */
 import * as fs from 'fs'
 import * as path from 'path'
