@@ -25,7 +25,7 @@
   "dependencies": {
     "boom": "^7.3.0",
     "express": "^4.17.1",
-    "knex": "^0.20.12",
+    "knex": "^0.20.13",
     "pg": "^7.18.2",
     "reduct": "^3.3.1",
     "typescript": "^3.8.3"
