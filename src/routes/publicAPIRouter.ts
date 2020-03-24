@@ -1,7 +1,7 @@
 import * as express from 'express'
 
-import sendSuccess from './API'
-import getPaymentInfo from './paymentPointers'
+import getPaymentInfo from '../middlewares/paymentPointers'
+import sendSuccess from '../middlewares/shared'
 
 const publicAPIRouter = express.Router()
 

@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
 
-import handleHttpError from '../services/errors'
 import {
   selectUser,
   insertUser,
@@ -8,6 +7,8 @@ import {
   removeUser,
 } from '../services/users'
 import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
+
+import handleHttpError from './errors'
 
 // TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
 // Stop passing req, res, and next in here and do that stuff on the outside.

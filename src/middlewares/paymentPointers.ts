@@ -1,12 +1,13 @@
 import { Request, Response, NextFunction } from 'express'
 
-import handleHttpError from '../services/errors'
 import getPaymentInfoFromDatabase from '../services/paymentPointers'
 import {
   PaymentInformation,
   AddressDetailType,
   CryptoAddressDetails,
 } from '../types/publicAPI'
+
+import handleHttpError from './errors'
 
 /**
  * Resolves inbound requests to a payment pointer to their
