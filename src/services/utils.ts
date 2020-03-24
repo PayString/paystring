@@ -10,6 +10,7 @@ const WELL_KNOWN = '/.well-known/pay'
  * @returns A payment pointer in the https format.
  */
 // TODO(hbergren): Move these conversion functions into xpring-common-js and take a dependency on that
+// TODO(hbergren): This function is completely unused now. Remove?
 export function paymentPointerToUrl(paymentPointer: string): string {
   // TODO(hbergren): More validation? (Payment pointer is a semi-valid URL?)
   if (!paymentPointer.startsWith('$')) {

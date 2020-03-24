@@ -15,22 +15,22 @@ type AddressInformation = Pick<
 
 /**
  * Retrieve the addresses associated with a given users payment pointer.
- * @param paymentPointerUrl The payment pointer (user) for which to retrieve addresses.
+ * @param paymentPointer The payment pointer (user) for which to retrieve addresses.
  * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns An array of the addresses associated with that payment pointer.
  */
-// TODO(hbergren): Type paymentPointerUrl better?
+// TODO(hbergren): Type paymentPointer better?
 // TODO(hbergren): remove default value for organization
 export async function selectUser(
-  paymentPointerUrl: string,
+  paymentPointer: string,
   organization = 'xpring',
 ): Promise<AddressInformation[]> {
   const addresses: AddressInformation[] = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin<Account>('account', 'address.account_id', 'account.id')
-    .where('account.payment_pointer', paymentPointerUrl)
+    .where('account.payment_pointer', paymentPointer)
     .andWhere('account.organization', organization)
 
   return addresses
@@ -38,17 +38,17 @@ export async function selectUser(
 
 /**
  * Inserts a new user/payment_pointer into the Account table on the PayID service.
- * @param paymentPointerUrl The payment pointer to insert in the users table.
+ * @param paymentPointer The payment pointer to insert in the users table.
  * @param addresses The addresses for that payment pointer to insert into the database.
  * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns The addresses inserted for this user
  */
-// TODO(hbergren): Type paymentPointerUrl better
+// TODO(hbergren): Type paymentPointer better
 // TODO:(hbergren): Remove default value of `xpring` for organization
 // TODO:(hbergren) Accept an array of users (insertUsers?)
 export async function insertUser(
-  paymentPointerUrl: string,
+  paymentPointer: string,
   addresses: AddressInformation[],
   organization = 'xpring',
 ): Promise<AddressInformation[]> {
@@ -57,7 +57,7 @@ export async function insertUser(
   return knex.transaction(async (transaction: Transaction) => {
     const insertedAddresses = await knex
       .insert({
-        payment_pointer: paymentPointerUrl,
+        payment_pointer: paymentPointer,
         organization,
       })
       .into<Account>('account')
@@ -77,21 +77,21 @@ export async function insertUser(
 
 /**
  * Update a payment pointer and addresses associated with that payment pointer for a given account ID.
- * @param oldPaymentPointerUrl The old payment pointer.
- * @param newPaymentPointerUrl The new payment pointer.
+ * @param oldPaymentPointer The old payment pointer.
+ * @param newPaymentPointer The new payment pointer.
  * @param addresses The array of destination/address information to associate with this user.
  *
  * @returns The updated addresses for a given payment pointer.
  */
 export async function replaceUser(
-  oldPaymentPointerUrl: string,
-  newPaymentPointerUrl: string,
+  oldPaymentPointer: string,
+  newPaymentPointer: string,
   addresses: AddressInformation[],
 ): Promise<void> {
   return knex.transaction(async (transaction: Transaction) => {
     const updatedAddresses = await knex<Account>('account')
-      .where('payment_pointer', oldPaymentPointerUrl)
-      .update({ payment_pointer: newPaymentPointerUrl })
+      .where('payment_pointer', oldPaymentPointer)
+      .update({ payment_pointer: newPaymentPointer })
       .transacting(transaction)
       .returning('id')
       .then(async (ids) => {
@@ -116,12 +116,12 @@ export async function replaceUser(
 
 /**
  * Deletes a user from the database. Addresses associated with that user should be removed by a cascading delete.
- * @param paymentPointerUrl The payment pointer associated with the user to delete.
+ * @param paymentPointer The payment pointer associated with the user to delete.
  */
-export async function removeUser(paymentPointerUrl: string): Promise<void> {
+export async function removeUser(paymentPointer: string): Promise<void> {
   await knex<Account>('account')
     .delete()
-    .where('payment_pointer', paymentPointerUrl)
+    .where('payment_pointer', paymentPointer)
     .then((count) => {
       if (count <= 1) return
 
@@ -130,7 +130,7 @@ export async function removeUser(paymentPointerUrl: string): Promise<void> {
       // but this would mean that payment pointer resolution (and thus who gets transferred value) is non-deterministic.
       // Thus, we log an error and immediately kill the program.
       console.error(
-        `We deleted ${count} accounts with the payment pointer ${paymentPointerUrl}, which should be impossible due to our unique constraint.`,
+        `We deleted ${count} accounts with the payment pointer ${paymentPointer}, which should be impossible due to our unique constraint.`,
       )
       process.exit(1)
     })

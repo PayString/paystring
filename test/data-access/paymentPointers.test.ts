@@ -15,7 +15,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
     // GIVEN a payment pointer / payment network / environment tuple known to exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
-      'https://xpring.money/hansbergren',
+      '$xpring.money/hansbergren',
       'XRPL',
       'TESTNET',
     )
@@ -35,7 +35,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
     // GIVEN a payment pointer / payment network / environment tuple known to not exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
-      'https://xpring.io/johndoe',
+      '$xpring.io/johndoe',
       'XRPL',
       'TESTNET',
     )

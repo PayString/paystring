@@ -6,7 +6,6 @@ import {
   replaceUser,
   removeUser,
 } from '../services/users'
-import { urlToPaymentPointer, paymentPointerToUrl } from '../services/utils'
 
 import handleHttpError from './errors'
 
@@ -20,6 +19,7 @@ export async function getUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  // TODO:(dino) Validate paymentPointer
   const paymentPointer = req.params[0]
 
   // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
@@ -33,17 +33,10 @@ export async function getUser(
     )
   }
 
-  let paymentPointerUrl
-  try {
-    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
-  } catch (err) {
-    return handleHttpError(400, err.message, res, err)
-  }
-
   let addresses
   try {
     // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await selectUser(paymentPointerUrl)
+    addresses = await selectUser(paymentPointer)
   } catch (err) {
     return handleHttpError(500, err.message, res, err)
   }
@@ -57,7 +50,7 @@ export async function getUser(
   }
 
   res.locals.response = {
-    payment_pointer: urlToPaymentPointer(paymentPointerUrl),
+    payment_pointer: paymentPointer,
     addresses,
   }
 
@@ -73,9 +66,9 @@ export async function postUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  // TODO:(hbergren) Any validation? Assert that the payment pointer is `https://` and of a certain form?
   // Do that using a regex route param in Express?
-  // Could use a similar regex to the one used by the database.
+  // Could use a similar regex to the one used by the database. Also look at validation in the conversion functions.
   const paymentPointer = req.body.payment_pointer
   if (!paymentPointer) {
     return handleHttpError(
@@ -85,15 +78,8 @@ export async function postUser(
     )
   }
 
-  let paymentPointerUrl: string
   try {
-    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
-  } catch (err) {
-    return handleHttpError(400, err.message, res, err)
-  }
-
-  try {
-    await insertUser(paymentPointerUrl, req.body.addresses)
+    await insertUser(paymentPointer, req.body.addresses)
   } catch (err) {
     // TODO(hbergren): This leaks database stuff into this file
     // This probably means error handling should be done in the data access layer
@@ -130,10 +116,12 @@ export async function putUser(
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this paymentPointer / HttpError out into middleware?
   const paymentPointer = req.params[0]
+  const newPaymentPointer = req?.body?.payment_pointer
+  const addresses = req?.body?.addresses
   // TODO:(hbergren) More validation? Assert that the payment pointer is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!paymentPointer) {
+  if (!paymentPointer || !newPaymentPointer) {
     return handleHttpError(
       400,
       'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
@@ -141,13 +129,13 @@ export async function putUser(
     )
   }
 
-  let paymentPointerUrl
-  let newPaymentPointerUrl
-  try {
-    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
-    newPaymentPointerUrl = paymentPointerToUrl(req.body.payment_pointer)
-  } catch (err) {
-    return handleHttpError(400, err.message, res, err)
+  // TODO:(dino) move this to validation
+  if (!paymentPointer.startsWith('$') || !newPaymentPointer.startsWith('$')) {
+    return handleHttpError(
+      400,
+      'Bad input. Payment pointers must start with "$"',
+      res,
+    )
   }
 
   // TODO:(hbergren) Remove all these try/catches. This is ridiculous
@@ -157,15 +145,12 @@ export async function putUser(
   try {
     // TODO:(hbergren) Remove this ridiculous nesting.
     updatedAddresses = await replaceUser(
-      paymentPointerUrl,
-      newPaymentPointerUrl,
-      req.body.addresses,
+      paymentPointer,
+      newPaymentPointer,
+      addresses,
     )
     if (updatedAddresses === null) {
-      updatedAddresses = await insertUser(
-        newPaymentPointerUrl,
-        req.body.addresses,
-      )
+      updatedAddresses = await insertUser(newPaymentPointer, addresses)
       statusCode = 201
     }
   } catch (err) {
@@ -194,7 +179,7 @@ export async function putUser(
 
   res.locals.status = statusCode
   res.locals.response = {
-    payment_pointer: urlToPaymentPointer(newPaymentPointerUrl),
+    payment_pointer: newPaymentPointer,
     addresses: updatedAddresses,
   }
 
@@ -219,15 +204,8 @@ export async function deleteUser(
     )
   }
 
-  let paymentPointerUrl: string
   try {
-    paymentPointerUrl = paymentPointerToUrl(paymentPointer)
-  } catch (err) {
-    return handleHttpError(400, err.message, res, err)
-  }
-
-  try {
-    await removeUser(paymentPointerUrl)
+    await removeUser(paymentPointer)
   } catch (err) {
     return handleHttpError(500, err.message, res, err)
   }

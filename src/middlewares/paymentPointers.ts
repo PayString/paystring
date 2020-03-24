@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import getPaymentInfoFromDatabase from '../services/paymentPointers'
+import { urlToPaymentPointer } from '../services/utils'
 import {
   PaymentInformation,
   AddressDetailType,
@@ -30,7 +31,13 @@ export default async function getPaymentInfo(
    */
   // TODO(aking): stop hardcoding HTTPS. We should at minimum be using ${req.protocol}
   // TODO:(hbergren) Write a helper function for this and test it?
-  const paymentPointer = `https://${req.hostname}${req.originalUrl}`
+  const paymentPointerUrl = `https://${req.hostname}${req.originalUrl}`
+  let paymentPointer: string
+  try {
+    paymentPointer = urlToPaymentPointer(paymentPointerUrl)
+  } catch (err) {
+    return handleHttpError(400, err.message, res, err)
+  }
 
   // TODO:(hbergren) Assert this is some sort of json header?
   // TODO:(hbergren) Label this magical regex (splits `application/xrpl-mainnet+json` => ['application', 'xrpl', 'mainnet', 'json'])
@@ -69,7 +76,7 @@ export default async function getPaymentInfo(
   if (paymentInformation === undefined) {
     return handleHttpError(
       404,
-      `Payment information for ${paymentPointer} in ${paymentNetwork} on ${environment} could not be found.`,
+      `Payment information for ${paymentPointerUrl} in ${paymentNetwork} on ${environment} could not be found.`,
       res,
     )
   }

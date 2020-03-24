@@ -14,10 +14,11 @@ CREATE TABLE IF NOT EXISTS account (
 	CONSTRAINT payment_pointer_length_nonzero CHECK(length(payment_pointer) > 0),
 	CONSTRAINT organization_length_nonzero CHECK(length(organization) > 0),
 
-	-- This is a black magic URL regex from https://mathiasbynens.be/demo/url-regex
+	-- This is a black magic payment pointer regex from https://mathiasbynens.be/demo/url-regex
 	-- It is an adaptation of the 'stephenhay' implementation, which was the shortest URL regex I could find.
 	-- Also, that implementation had no false negatives, which is important, as we never want to prevent a valid URL from being used.
 	--
-	-- This regex requires payment pointers of the form `https://example.com/...`
-	CONSTRAINT payment_pointer_valid_url CHECK(payment_pointer ~* '^(?:https://)[^\s/$.?#].[^\s]*/[^\s]+$')
+	-- This regex requires payment pointers of the form `$[subdomain].example.com/[path]`
+	-- @^(https?|ftp)://[^\s/$.?#].[^\s]*
+	CONSTRAINT payment_pointer_valid_url CHECK(payment_pointer ~* '^(?:\$)[^\s/$.?#].+\.[^\s]+$')
 );
