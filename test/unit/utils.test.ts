@@ -7,8 +7,8 @@ import {
   urlToPaymentPointer,
 } from '../../src/services/utils'
 
-describe('paymentPointerToUrl', function(): void {
-  it('throws an error on inputs that clearly are not payment pointers', function(): void {
+describe('paymentPointerToUrl', function (): void {
+  it('throws an error on inputs that clearly are not payment pointers', function (): void {
     // GIVEN a badly formed payment pointer (no leading $)
     const paymentPointer = 'hansbergren.example.com'
     const expectedErrorMessage =
@@ -21,7 +21,7 @@ describe('paymentPointerToUrl', function(): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('throws an error on inputs that are not ASCII', function(): void {
+  it('throws an error on inputs that are not ASCII', function (): void {
     // GIVEN a badly formed payment pointer (non-ASCII)
     // Note that this is a real TLD that exists
     const paymentPointer = '$hansbergren.example.संगठन'
@@ -34,7 +34,7 @@ describe('paymentPointerToUrl', function(): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('handles a subdomained payment pointer', function(): void {
+  it('handles a subdomained payment pointer', function (): void {
     // GIVEN a payment pointer with a subdomain
     const paymentPointer = '$hansbergren.example.com'
     const expectedUrl = 'https://hansbergren.example.com/.well-known/pay'
@@ -46,7 +46,7 @@ describe('paymentPointerToUrl', function(): void {
     assert.strictEqual(actualUrl, expectedUrl)
   })
 
-  it('handles a payment pointer with no subdomain or path', function(): void {
+  it('handles a payment pointer with no subdomain or path', function (): void {
     // GIVEN a payment pointer without a subdomain
     const paymentPointer = '$example.com'
     const expectedUrl = 'https://example.com/.well-known/pay'
@@ -58,7 +58,7 @@ describe('paymentPointerToUrl', function(): void {
     assert.strictEqual(actualUrl, expectedUrl)
   })
 
-  it('handles a payment pointer with a path', function(): void {
+  it('handles a payment pointer with a path', function (): void {
     // GIVEN a payment pointer with a path
     const paymentPointer = '$example.com/hansbergren'
     const expectedUrl = 'https://example.com/hansbergren'
@@ -71,8 +71,8 @@ describe('paymentPointerToUrl', function(): void {
   })
 })
 
-describe('urlToPaymentPointer', function(): void {
-  it('throws an error on inputs that clearly are not payment pointer URLs', function(): void {
+describe('urlToPaymentPointer', function (): void {
+  it('throws an error on inputs that clearly are not payment pointer URLs', function (): void {
     // GIVEN a badly formed payment pointer URL (no leading https://)
     const url = 'http://hansbergren.example.com'
     const expectedErrorMessage =
@@ -85,7 +85,7 @@ describe('urlToPaymentPointer', function(): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('throws an error on inputs that are not ASCII', function(): void {
+  it('throws an error on inputs that are not ASCII', function (): void {
     // GIVEN a badly formed payment pointer URL (non-ASCII)
     // Note that this is a real TLD that exists
     const url = 'https://hansbergren.example.संगठन'
@@ -98,7 +98,7 @@ describe('urlToPaymentPointer', function(): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('handles a "well known" subdomained payment pointer URL', function(): void {
+  it('handles a "well known" subdomained payment pointer URL', function (): void {
     // GIVEN a "well known" payment pointer URL with a subdomain
     const url = 'https://hansbergren.example.com/.well-known/pay'
     const expectedPaymentPointer = '$hansbergren.example.com'
@@ -110,7 +110,7 @@ describe('urlToPaymentPointer', function(): void {
     assert.strictEqual(actualPaymentPointer, expectedPaymentPointer)
   })
 
-  it('handles a "well known" payment pointer URL with no subdomain', function(): void {
+  it('handles a "well known" payment pointer URL with no subdomain', function (): void {
     // GIVEN a "well known" payment pointer URL with no subdomain
     const url = 'https://example.com/.well-known/pay'
     const expectedPaymentPointer = '$example.com'
@@ -122,7 +122,7 @@ describe('urlToPaymentPointer', function(): void {
     assert.strictEqual(actualPaymentPointer, expectedPaymentPointer)
   })
 
-  it('handles a payment pointer URL with a path', function(): void {
+  it('handles a payment pointer URL with a path', function (): void {
     // GIVEN a payment pointer URL with a subdomain
     const url = 'https://example.com/hansbergren'
     const expectedPaymentPointer = '$example.com/hansbergren'

@@ -5,13 +5,13 @@ import knex from '../../src/db/knex'
 import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
 import getPaymentInfoFromDatabase from '../../src/services/paymentPointers'
 
-describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
+describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
   // Seed the database for our tests.
-  before(async function() {
+  before(async function () {
     await syncDatabaseSchema({ logQueries: false, seedDatabase: true })
   })
 
-  it('Gets payment information for a known payment pointer', async function() {
+  it('Gets payment information for a known payment pointer', async function () {
     // GIVEN a payment pointer / payment network / environment tuple known to exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
@@ -31,7 +31,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
     assert.deepEqual(paymentInfo, expectedPaymentInfo)
   })
 
-  it('Returns undefined for an unknown payment pointer', async function() {
+  it('Returns undefined for an unknown payment pointer', async function () {
     // GIVEN a payment pointer / payment network / environment tuple known to not exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
@@ -45,7 +45,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function(): void {
   })
 
   // Close DB connections after all tests are run
-  after(function() {
+  after(function () {
     knex.destroy()
   })
 })

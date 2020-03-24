@@ -7,34 +7,32 @@ import knex from '../../src/db/knex'
 
 const app = new App()
 
-describe('E2E - publicAPIRouter - health check endpoint', function(): void {
+describe('E2E - publicAPIRouter - health check endpoint', function (): void {
   // Boot up Express application and initialize DB connection pool
-  before(async function() {
+  before(async function () {
     await app.init({ log: false, seedDatabase: true })
     knex.initialize()
   })
 
-  it('Returns a 200 for a GET /status/health', function(done): void {
-    request(app.publicAPIExpress)
-      .get('/status/health')
-      .expect(200, 'OK', done)
+  it('Returns a 200 for a GET /status/health', function (done): void {
+    request(app.publicAPIExpress).get('/status/health').expect(200, 'OK', done)
   })
 
   // Shut down Express application and close DB connections
-  after(function() {
+  after(function () {
     app.close()
     knex.destroy()
   })
 })
 
-describe('E2E - publicAPIRouter - GET API', function(): void {
+describe('E2E - publicAPIRouter - GET API', function (): void {
   // Boot up Express application and initialize DB connection pool
-  before(async function() {
+  before(async function () {
     await app.init({ log: false, seedDatabase: true })
     knex.initialize()
   })
 
-  it('Returns the correct MAINNET address for a known payment pointer', function(done): void {
+  it('Returns the correct MAINNET address for a known payment pointer', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-mainnet address
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-mainnet+json'
@@ -57,7 +55,7 @@ describe('E2E - publicAPIRouter - GET API', function(): void {
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns the correct TESTNET address for a known payment pointer', function(done): void {
+  it('Returns the correct TESTNET address for a known payment pointer', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-testnet+json'
@@ -80,7 +78,7 @@ describe('E2E - publicAPIRouter - GET API', function(): void {
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns a 404 with the correct error response object for an unknown payment pointer', function(done): void {
+  it('Returns a 404 with the correct error response object for an unknown payment pointer', function (done): void {
     // GIVEN a payment pointer known to not exist in the database
     const paymentPointer = '/johndoe'
     const acceptHeader = 'application/xrpl-testnet+json'
@@ -101,7 +99,7 @@ describe('E2E - publicAPIRouter - GET API', function(): void {
       .expect(404, expectedErrorResponse, done)
   })
 
-  it('Returns a 404 for an payment pointer without the relevant associated address', function(done): void {
+  it('Returns a 404 for an payment pointer without the relevant associated address', function (done): void {
     // GIVEN a known payment pointer that exists but does not have an associated devnet XRP address
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-devnet+json'
@@ -123,7 +121,7 @@ describe('E2E - publicAPIRouter - GET API', function(): void {
   })
 
   // Shut down Express application and close DB connections
-  after(function() {
+  after(function () {
     app.close()
     knex.destroy()
   })

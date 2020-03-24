@@ -6,9 +6,9 @@ import knex from '../../src/db/knex'
 
 const app = new App()
 
-describe('E2E - privateAPIRouter - GET API', function(): void {
+describe('E2E - privateAPIRouter - GET API', function (): void {
   // Initialize DB connection pool & Boot up Express application
-  before(async function() {
+  before(async function () {
     await app.init({
       log: false,
       seedDatabase: true,
@@ -17,7 +17,7 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
   })
   // TODO:(hbergren) beforeEach seed the database. That way we always start with a clean slate, and tests aren't interdependent.
 
-  it('Returns a 200 and correct information for a user known to exist', function(done): void {
+  it('Returns a 200 and correct information for a user known to exist', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const expectedResponse = {
@@ -41,7 +41,7 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns a 404 for an unknown payment pointer', function(done): void {
+  it('Returns a 404 for an unknown payment pointer', function (done): void {
     // GIVEN a payment pointer known to not exist on the PayID service
     const paymentPointer = '$xpring.money/johndoe'
     const expectedErrorResponse = {
@@ -60,15 +60,15 @@ describe('E2E - privateAPIRouter - GET API', function(): void {
   })
 
   // Shut down Express application & close DB connections
-  after(function() {
+  after(function () {
     app.close()
     knex.destroy()
   })
 })
 
-describe('E2E - privateAPIRouter - POST API', function(): void {
+describe('E2E - privateAPIRouter - POST API', function (): void {
   // Initialize DB connection pool & Boot up Express application
-  before(async function() {
+  before(async function () {
     await app.init({
       log: false,
       seedDatabase: true,
@@ -76,7 +76,7 @@ describe('E2E - privateAPIRouter - POST API', function(): void {
     knex.initialize()
   })
 
-  it('Returns a 201 when creating a new user', function(done): void {
+  it('Returns a 201 when creating a new user', function (done): void {
     // GIVEN a user with a payment pointer known to not exist on the PayID service
     const userInformation = {
       payment_pointer: '$xpring.money/johndoe',
@@ -100,7 +100,7 @@ describe('E2E - privateAPIRouter - POST API', function(): void {
       .expect(201, done)
   })
 
-  it('Returns a 409 - Conflict when attempting to create a user that already exists', function(done): void {
+  it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
     // GIVEN a user with a payment pointer known already on the PayID service
     const userInformation = {
       payment_pointer: '$xpring.money/hansbergren',
@@ -125,20 +125,20 @@ describe('E2E - privateAPIRouter - POST API', function(): void {
   })
 
   // Shut down Express application & close DB connections
-  after(function() {
+  after(function () {
     app.close()
     knex.destroy()
   })
 })
 
-describe('E2E - privateAPIRouter - PUT API', function(): void {
+describe('E2E - privateAPIRouter - PUT API', function (): void {
   // Initialize DB connection pool & Boot up Express application
-  before(async function() {
+  before(async function () {
     await app.init({ log: false, seedDatabase: true })
     knex.initialize()
   })
 
-  it('Returns a 200 and updated user payload when updating an address', function(done): void {
+  it('Returns a 200 and updated user payload when updating an address', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const updatedInformation = {
@@ -163,7 +163,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(200, updatedInformation, done)
   })
 
-  it('Returns a 200 and updated user payload when updating a payment pointer', function(done): void {
+  it('Returns a 200 and updated user payload when updating a payment pointer', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const updatedInformation = {
@@ -188,7 +188,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(200, updatedInformation, done)
   })
 
-  it('Returns a 201 and inserted user payload for a private API PUT creating a new user', function(done): void {
+  it('Returns a 201 and inserted user payload for a private API PUT creating a new user', function (done): void {
     // GIVEN a payment pointer known to not exist on the PayID service
     const paymentPointer = '$xpring.money/johndoe'
     const insertedInformation = {
@@ -214,7 +214,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(201, insertedInformation, done)
   })
 
-  it('Returns a 400 - Bad Request with an error payload for a request with a malformed payment pointer', function(done): void {
+  it('Returns a 400 - Bad Request with an error payload for a request with a malformed payment pointer', function (done): void {
     // GIVEN a payment pointer known to be in a bad format (missing $) and an expected error response payload
     const badPaymentPointer = 'xpring.money/hansbergren'
     const errorResponsePayload = {
@@ -245,7 +245,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(400, errorResponsePayload, done)
   })
 
-  it('Returns a 409 - Conflict when attempting to update a user to a payment pointer that already exists', function(done): void {
+  it('Returns a 409 - Conflict when attempting to update a user to a payment pointer that already exists', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const updatedInformation = {
@@ -271,7 +271,7 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
       .expect(409, done)
   })
 
-  it('Returns a 409 - Conflict when attempting to create a user that already exists', function(done): void {
+  it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
     // GIVEN a payment pointer known to not exist on the PayID service
     const paymentPointer = '$xpring.money/janedoe'
     const updatedInformation = {
@@ -298,20 +298,20 @@ describe('E2E - privateAPIRouter - PUT API', function(): void {
   })
 
   // Shut down Express application & close DB connections
-  after(function() {
+  after(function () {
     app.close()
     knex.destroy()
   })
 })
 
-describe('E2E - privateAPIRouter - DELETE API', function(): void {
+describe('E2E - privateAPIRouter - DELETE API', function (): void {
   // Initialize DB connection pool & Boot up Express application
-  before(async function() {
+  before(async function () {
     await app.init({ log: false, seedDatabase: true })
     knex.initialize()
   })
 
-  it('Returns a 204 and no payload when deleting an account', function(done): void {
+  it('Returns a 204 and no payload when deleting an account', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hbergren'
     const missingPaymentPointerError = {
@@ -333,7 +333,7 @@ describe('E2E - privateAPIRouter - DELETE API', function(): void {
       })
   })
 
-  it('Returns a 204  when attempting to delete an account that does not exist', function(done): void {
+  it('Returns a 204  when attempting to delete an account that does not exist', function (done): void {
     // GIVEN a payment pointer known to not exist on the PayID service
     const paymentPointer = '$xpring.money/johndoe'
 
@@ -345,7 +345,7 @@ describe('E2E - privateAPIRouter - DELETE API', function(): void {
   })
 
   // Shut down Express application & close DB connections
-  after(function() {
+  after(function () {
     app.close()
     knex.destroy()
   })
