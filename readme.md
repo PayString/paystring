@@ -2,23 +2,23 @@
 
 With PayID, you can use human-readable addresses to transmit value in the currency of your choice.
 
-The PayID network allows participants to reach one another through a standardized address called a [Payment Pointer](https://paymentpointers.org/). For example, `$wallet.com/alice ` maps to the corresponding URL `https://wallet.com/alice`.
+The PayID network allows participants to reach one another through a standardized address called a [Payment Pointer](https://paymentpointers.org/). For example, `$wallet.com/alice` maps to the corresponding URL `https://wallet.com/alice`.
 
-If you make an HTTP GET request that follows the PayID protocol, and has a valid Accept request header, it resolves to an address on the underlying payment network. PayID is a network-agnostic protocol, capable of sending payments in BTC, ETH, XRP, as well as fiat networks like ACH.
+Make an HTTP GET request that follows the PayID protocol, and it resolves to an address on the underlying payment network. PayID is a payment-network-agnostic protocol, capable of sending payments in BTC, ETH, XRP, or fiat networks like ACH.
 
-An example valid request header is `Accept: application/xrpl-mainnet+json`, which indicates the XRP Ledger Mainnet payment network and the JSON format of the payload.
+Each request must have a valid `Accept` request HTTP header. For example: `Accept: application/xrpl-mainnet+json` indicates the XRP Ledger Mainnet payment network and the JSON format of the response payload.
 
 
 Table of Contents
 =================
 
 * [Web standards](#web-standards)
-* [Travel Rule compliance](#travel-rule-compliance)
+* [Extensions and Travel Rule compliance](#extensions-and-travel-rule-compliance)
 * [PayID integration and the Private PayID API](#payid-integration-and-the-private-payid-api)
-* [Query users and manage payments with the PayID Public API](query-users-and-manage-payments-with-the-payid-public-api)
+* [Query users and manage payments with the PayID Public API](#query-users-and-manage-payments-with-the-payid-public-api)
 
 ## Web standards
-PayID uses existing web standards and infrastructure, including HTTP, DNS, and [Payment Pointers](https://paymentpointers.org/). Each institution exposes its users through its domain, creating a decentralized network where institutions maintain sovereignty over their own users. Each institution is empowered to participate in the network by deploying its own server with its own users. Additionally, a user who prefers to self-custody their cryptocurrency can deploy a personal PayID server, as described in [Set up a PayID server](set-up-a-payid-server).
+PayID uses existing web standards and infrastructure, including HTTP, DNS, and [Payment Pointers](https://paymentpointers.org/). Each institution supports its users through its domain, creating a decentralized network where institutions maintain sovereignty over their own users. Each institution is empowered to participate in the network by deploying its own server with its own users. Additionally, a user who prefers to self-custody their cryptocurrency can deploy a personal PayID server, as described in [Set up a PayID server](#set-up-a-payid-server).
 
 PayID does not rely on any consensus protocols, greatly simplifying infrastructure demands.
 
@@ -26,13 +26,13 @@ PayID does not rely on any consensus protocols, greatly simplifying infrastructu
 PayID is built on the most successful decentralized network in history: the web. PayID is fully peer-to-peer with no central counterparty. Anyone can set up their own personal PayID server so they have no counterparty risk.
 
 ### Protocol abstraction
-PayID fully abstracts away underlying payment rail details from end users.  A user only needs to keep track of a single PayID rather than a complex address for each network. Service operators can manage the underlying addresses behind the scenes according to their own security and privacy best practices without requiring the end user to take any action.
+PayID fully abstracts away underlying payment rail details from end users. A user only needs to keep track of a single PayID rather than a complex address for each network. Service operators can manage the underlying addresses behind the scenes according to their own security and privacy best practices without requiring the end user to take any action.
 
 ## Extensions and Travel Rule compliance
 
 PayID is a highly extensible and flexible open standard. Of relevance for many crypto services, PayID can be extended to provide a simple solution for [Travel Rule](https://www.fatf-gafi.org/media/fatf/documents/recommendations/RBA-VA-VASPs.pdf) compliance. Financial institutions can communicate regulatory requirements and the corresponding necessary data using PayID's standard REST API.
 
-PayID improves the user experience of sending cryptocurrency payments, and it also provides a platform for present day features like Travel Rule compliance and future features like subscriptions and pull payments. To accelerate mainstream cryptocurrency adoption, we must build on top of systems like PayID that integrate well with traditional financial infrastructure.
+PayID improves the user experience of sending cryptocurrency payments, and it also provides a platform for present-day features like Travel Rule compliance and future features like subscriptions and pull payments. To achieve mainstream cryptocurrency adoption, we must build on top of PayID and other systems that integrate well with traditional financial infrastructure.
 
 PayID provides an abstraction layer so that users can send payments to human-readable addresses while virtual asset service providers (VASPs) can meet the necessary compliance requirements in the background.
 
@@ -45,8 +45,8 @@ Features and integrations on the roadmap include:
 
 * Invoices and receipts
 * Additional payment rail standards
-* Payment requests ([W3C Standard](https://www.w3.org/TR/payment-request/)) integration
-* Advanced payment types support: pull, push, streaming, subscription
+* Payment request ([W3C Standard](https://www.w3.org/TR/payment-request/)) integration
+* Advanced payment type support: pull, push, streaming, subscription
 * PayID forwarding and redirection
 
 ## PayID integration and the Private PayID API
@@ -77,7 +77,7 @@ You can then use the Private PayID API to:
 
 #### Demo
 
-For demonstration purposes, once you have set up your PayID server, you can get access the Private PayID API using these cURL commands.
+For demonstration purposes, once you have set up your PayID server, you can access the Private PayID API using these cURL commands.
 
 **Get user information for an existing user**
 
@@ -107,7 +107,7 @@ curl --location --request POST 'http://127.0.0.1:8081/v1/users' \
 }'
 ```
 
-Then, run this command to get information about the newly created user.
+Then, run this command to get information about the newly-created user.
 
 ```
 curl --location --request GET 'http://127.0.0.1:8080/dino' --header 'Accept: application/xrpl-testnet+json'
@@ -115,7 +115,7 @@ curl --location --request GET 'http://127.0.0.1:8080/dino' --header 'Accept: app
 
 ### Create and manage users with the Private PayID API
 
-When you have your open source server set up, you can create and manage users with the Private Pay API.
+When you have your open source server set up, you can create and manage users with the Private PayID API.
 
 #### API endpoint
 Substitute your own domain for `{{http(s)}}{{host}}`. If running locally, you can use  `http://127.0.0.1:8081/`.
@@ -298,7 +298,7 @@ curl --location --request PUT '127.0.0.1/v1/users/${{payid_private_host_no_trans
 #### Delete a user
 
 ```
-{{http(s)}}{{host}}{{private_port}}/v1/users/:payment_pointer
+{{http(s)}}{{host}}{{private_port}}/v1/users/{:payment_pointer}
 ```
 
 ##### Response
@@ -368,9 +368,9 @@ A single user can have multiple destinations, because the same user can have add
 |------|-------------|
 |`payment_pointer`| Payment pointer address |
 |`addresses` |Object that includes payment address information for one or more payment networks.|
-|`addresses.payment_network`| A payment network, like the BTC ledger, the XRPL, or ACH. |
+|`addresses.payment_network`| A payment network, like the bitcoin network, the XRPL, or ACH. |
 |`addresses.environment`| "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.|
-|`address.details`| Actual payment information for this address. Needs to be in the form `CryptoAddressDetails` or `AchAddressDetails`.|
+|`address.details`| Actual payment information for this address. Must be in the form `CryptoAddressDetails` or `AchAddressDetails`.|
 
 #### Example error schema
 
@@ -400,8 +400,7 @@ The different header options are shown here, with example values.
 | Currency | Header | Response |
 |:--------|:-------|:---------|
 | BTC     | application/btc+json   | { <br>address: '1BvBMSEYstWetAu4m4GFg7xJaNVN2'<br> }      |
-| XRP     | application/xrpl-mainnet+json   | { <br> address: '
-XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'} |
+| XRP     | application/xrpl-mainnet+json   | { <br>address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'<br> } |
 | ACH     | application/ach+json   | { <br> account: '363023456079',<br>routing: '011302838'<br>}  |
 | ILP     | application/spsp4+json | { <br> destination_account: 'g.institution.alice',<br> shared_secret: 'Anofne0Slxjv0Aj4malghem'<br>  } |
 
@@ -410,7 +409,6 @@ XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'} |
 #### Payment
 
 This example demonstrates a payment to `https://institution.com/alice`.
-
 
 ```
 const axios = require('axios')
