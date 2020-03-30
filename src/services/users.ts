@@ -2,8 +2,7 @@
 import { Transaction } from 'knex'
 
 import knex from '../db/knex'
-import Account from '../db/models/account'
-import Address from '../db/models/address'
+import { Account, Address } from '../types/database'
 
 /**
  * The information retrieved from or inserted into the database for a given address.

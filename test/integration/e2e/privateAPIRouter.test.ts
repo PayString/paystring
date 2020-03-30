@@ -1,19 +1,15 @@
 import * as request from 'supertest'
 import 'mocha'
 
-import App from '../../src/app'
-import knex from '../../src/db/knex'
+import App from '../../../src/app'
 
-const app = new App()
+import { appSetup, appCleanup } from './helpers'
+
+let app: App
 
 describe('E2E - privateAPIRouter - GET API', function (): void {
-  // Initialize DB connection pool & Boot up Express application
   before(async function () {
-    await app.init({
-      log: false,
-      seedDatabase: true,
-    })
-    knex.initialize()
+    app = await appSetup()
   })
   // TODO:(hbergren) beforeEach seed the database. That way we always start with a clean slate, and tests aren't interdependent.
 
@@ -59,21 +55,14 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
       .expect(404, expectedErrorResponse, done)
   })
 
-  // Shut down Express application & close DB connections
-  after(function () {
-    app.close()
-    knex.destroy()
+  after(async function () {
+    await appCleanup(app)
   })
 })
 
 describe('E2E - privateAPIRouter - POST API', function (): void {
-  // Initialize DB connection pool & Boot up Express application
   before(async function () {
-    await app.init({
-      log: false,
-      seedDatabase: true,
-    })
-    knex.initialize()
+    app = await appSetup()
   })
 
   it('Returns a 201 when creating a new user', function (done): void {
@@ -124,18 +113,14 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .expect(409, done)
   })
 
-  // Shut down Express application & close DB connections
-  after(function () {
-    app.close()
-    knex.destroy()
+  after(async function () {
+    await appCleanup(app)
   })
 })
 
 describe('E2E - privateAPIRouter - PUT API', function (): void {
-  // Initialize DB connection pool & Boot up Express application
   before(async function () {
-    await app.init({ log: false, seedDatabase: true })
-    knex.initialize()
+    app = await appSetup()
   })
 
   it('Returns a 200 and updated user payload when updating an address', function (done): void {
@@ -297,18 +282,14 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .expect(409, done)
   })
 
-  // Shut down Express application & close DB connections
-  after(function () {
-    app.close()
-    knex.destroy()
+  after(async function () {
+    await appCleanup(app)
   })
 })
 
 describe('E2E - privateAPIRouter - DELETE API', function (): void {
-  // Initialize DB connection pool & Boot up Express application
   before(async function () {
-    await app.init({ log: false, seedDatabase: true })
-    knex.initialize()
+    app = await appSetup()
   })
 
   it('Returns a 204 and no payload when deleting an account', function (done): void {
@@ -344,9 +325,7 @@ describe('E2E - privateAPIRouter - DELETE API', function (): void {
       .expect(204, done)
   })
 
-  // Shut down Express application & close DB connections
-  after(function () {
-    app.close()
-    knex.destroy()
+  after(async function () {
+    await appCleanup(app)
   })
 })

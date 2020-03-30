@@ -1,10 +1,10 @@
 import * as knexInit from 'knex'
 
-import databaseConfiguration from './databaseConfiguration'
+import config from '../config'
 
 const knex = knexInit({
   client: 'pg',
-  connection: databaseConfiguration,
+  connection: config.database.connection,
   pool: {
     /* eslint-disable */
     afterCreate(conn: any, done: Function): void {

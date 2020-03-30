@@ -6,7 +6,7 @@ import {
   PaymentInformation,
   AddressDetailType,
   CryptoAddressDetails,
-} from '../types/publicAPI'
+} from '../types/publicApi'
 
 import handleHttpError from './errors'
 

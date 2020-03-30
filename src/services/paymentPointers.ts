@@ -1,5 +1,5 @@
 import knex from '../db/knex'
-import Address from '../db/models/address'
+import { Address } from '../types/database'
 
 /**
  * Retrieve the payment information for a given payment pointer.

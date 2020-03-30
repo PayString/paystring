@@ -1,16 +1,11 @@
 import { Server } from 'http'
 
+import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
 import privateAPIRouter from './routes/privateAPIRouter'
 import publicAPIRouter from './routes/publicAPIRouter'
-import { Config, Version } from './services/config'
 
 import Express = require('express')
-
-interface InitializationOptions {
-  log: boolean
-  seedDatabase: boolean
-}
 
 export default class App {
   // Exposed for testing purposes
@@ -20,43 +15,30 @@ export default class App {
   private publicAPIServer: Server
   private privateAPIServer: Server
 
-  private initOptions: InitializationOptions
-
-  // TODO: Change the default value of seedDatabase to false
-  public async init(
-    options: InitializationOptions = { log: true, seedDatabase: false },
-  ): Promise<void> {
-    this.initOptions = options
+  public async init(initConfig = config): Promise<void> {
     // Execute DDL statements not yet defined on the current database
-    await syncDatabaseSchema({
-      logQueries: options.log,
-      seedDatabase: options.seedDatabase,
-    })
+    await syncDatabaseSchema(initConfig.database)
 
-    this.launchPublicAPI()
-    this.launchPrivateAPI()
+    this.launchPublicAPI(initConfig.app)
+    this.launchPrivateAPI(initConfig.app)
   }
 
-  private launchPublicAPI(): void {
+  private launchPublicAPI(appConfig = config.app): void {
     this.publicAPIExpress = Express()
     this.publicAPIExpress.use('/', publicAPIRouter)
 
     this.publicAPIServer = this.publicAPIExpress.listen(
-      Config.publicAPIPort,
-      () =>
-        this.initOptions.log &&
-        console.log(`Public API listening on ${Config.publicAPIPort}`),
+      appConfig.publicAPIPort,
+      () => console.log(`Public API listening on ${appConfig.publicAPIPort}`),
     )
   }
 
-  private launchPrivateAPI(): void {
+  private launchPrivateAPI(appConfig = config.app): void {
     this.privateAPIExpress = Express()
-    this.privateAPIExpress.use(`${Version.V1}/users`, privateAPIRouter)
+    this.privateAPIExpress.use(`${appConfig.version}/users`, privateAPIRouter)
     this.privateAPIServer = this.privateAPIExpress.listen(
-      Config.privateAPIPort,
-      () =>
-        this.initOptions.log &&
-        console.log(`Private API listening on ${Config.privateAPIPort}`),
+      appConfig.privateAPIPort,
+      () => console.log(`Private API listening on ${appConfig.privateAPIPort}`),
     )
   }
 

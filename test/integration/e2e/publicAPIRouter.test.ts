@@ -2,34 +2,30 @@ import 'mocha'
 import { assert } from 'chai'
 import * as request from 'supertest'
 
-import App from '../../src/app'
-import knex from '../../src/db/knex'
+import App from '../../../src/app'
 
-const app = new App()
+import { appSetup, appCleanup } from './helpers'
+
+let app: App
 
 describe('E2E - publicAPIRouter - health check endpoint', function (): void {
-  // Boot up Express application and initialize DB connection pool
   before(async function () {
-    await app.init({ log: false, seedDatabase: true })
-    knex.initialize()
+    app = await appSetup()
   })
 
   it('Returns a 200 for a GET /status/health', function (done): void {
     request(app.publicAPIExpress).get('/status/health').expect(200, 'OK', done)
   })
 
-  // Shut down Express application and close DB connections
-  after(function () {
-    app.close()
-    knex.destroy()
+  after(async function () {
+    await appCleanup(app)
   })
 })
 
 describe('E2E - publicAPIRouter - GET API', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
-    await app.init({ log: false, seedDatabase: true })
-    knex.initialize()
+    app = await appSetup()
   })
 
   it('Returns the correct MAINNET address for a known payment pointer', function (done): void {
@@ -121,8 +117,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
   })
 
   // Shut down Express application and close DB connections
-  after(function () {
-    app.close()
-    knex.destroy()
+  after(async function () {
+    await appCleanup(app)
   })
 })

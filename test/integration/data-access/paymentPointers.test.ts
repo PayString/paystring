@@ -1,14 +1,19 @@
 import 'mocha'
 import { assert } from 'chai'
 
-import knex from '../../src/db/knex'
-import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
-import getPaymentInfoFromDatabase from '../../src/services/paymentPointers'
+import config from '../../../src/config'
+import knex from '../../../src/db/knex'
+import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
+import getPaymentInfoFromDatabase from '../../../src/services/paymentPointers'
+import structuredClone from '../e2e/helpers'
 
 describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
   // Seed the database for our tests.
   before(async function () {
-    await syncDatabaseSchema({ logQueries: false, seedDatabase: true })
+    const testConfig = structuredClone(config)
+    testConfig.database.options.logQueries = false
+    testConfig.database.options.seedDatabase = true
+    await syncDatabaseSchema(testConfig.database)
   })
 
   it('Gets payment information for a known payment pointer', async function () {
@@ -45,7 +50,7 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
   })
 
   // Close DB connections after all tests are run
-  after(function () {
-    knex.destroy()
+  after(async function () {
+    await knex.destroy()
   })
 })
