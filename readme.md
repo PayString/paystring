@@ -515,6 +515,22 @@ Interface CryptoAddressDetails {
 }
 ```
 
+## Use Xpring SDK with PayID
+
+[Xpring SDK](https://www.xpring.io/docs) can be used to simplify the process of developing with PayID. Currently only the Node.js version is available, and Java and Swift will soon be available.
+
+### Demo
+
+This demo uses PayID to resolve an address on the specified payment network, which is XRP Ledger in this case.
+
+To execute this demo:
+
+1. Clone the [Xpring SDK repo](https://github.com/xpring-eng/Xpring-SDK-Demo/).
+2. Change to the `Xpring-SDK-Demo/node` directory.
+3. Run `npm i` to install the dependencies.
+4. Run `node src/index-payid.js` to execute the demo.
+
+View [index-payid.js](https://github.com/xpring-eng/Xpring-SDK-Demo/blob/master/node/src/index-payid.js).
 
 #### AchAddressDetails
 
