@@ -85,7 +85,9 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .post(`/v1/users`)
       .send(userInformation)
       .expect('Content-Type', /text\/plain/)
-      // THEN we expect back a 201 - CREATED
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/v1/users/${userInformation.payment_pointer}`)
+      // AND we expect back a 201 - CREATED
       .expect(201, done)
   })
 
@@ -194,8 +196,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .put(`/v1/users/${paymentPointer}`)
       .send(insertedInformation)
       .expect('Content-Type', /json/)
-      // THEN we expect back a 201 - CREATED, with the inserted user information
+      // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the payment pointer inserted is that of the request body, not the URL path
+      .expect('Location', `/v1/users/${insertedInformation.payment_pointer}`)
+      // AND we expect back a 201 - CREATED, with the inserted user information
       .expect(201, insertedInformation, done)
   })
 

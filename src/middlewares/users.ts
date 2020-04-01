@@ -104,7 +104,9 @@ export async function postUser(
     )
   }
 
+  // Set HTTP status and save the payment pointer to generate the Location header in later middleware
   res.locals.status = 201 // Created
+  res.locals.payment_pointer = paymentPointer
   return next()
 }
 
@@ -175,6 +177,11 @@ export async function putUser(
       res,
       err,
     )
+  }
+
+  // If the status code is 201 - Created, we need to set a Location header later with the payment pointer
+  if (statusCode === 201) {
+    res.locals.payment_pointer = newPaymentPointer
   }
 
   res.locals.status = statusCode
