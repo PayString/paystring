@@ -1,0 +1,15 @@
+version: 1
+update_configs:
+  # Keep package.json (& lockfiles) up to date as soon as
+  # new versions are published to the npm registry
+  - package_manager: 'javascript'
+    directory: '/'
+    update_schedule: 'live'
+    # Specify which update pull requests should be merged automatically.
+    automerged_updates:
+      - match:
+          dependency_type: 'development'
+          update_type: 'semver:minor'
+    # Specify how Dependabot should update your package manifest (e.g. package.json, Gemfile etc), as opposed to your lockfile.
+    # For PayID, it's reasonable to have package.json just match the currently used versions.
+    version_requirement_updates: 'increase_versions'
