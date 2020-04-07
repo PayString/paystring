@@ -1,19 +1,25 @@
 {
   "compileOnSave": true,
   "compilerOptions": {
+    // Basic Options
     "project": ".",
     "outDir": "./build",
     "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
-    "strict": true,
-    "strictPropertyInitialization": false,
     "downlevelIteration": true,
+    // Source Map Stuff
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+
+    // Checks
+    "strict": true,
+    // Checks not in "strict" mode
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true
   },
-  "includes": [
-    "src/**/*.ts"
-  ]
+  "includes": ["src/**/*.ts"]
 }
