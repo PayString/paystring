@@ -6,13 +6,17 @@ import {
   PaymentInformation,
   AddressDetailType,
   CryptoAddressDetails,
-} from '../types/publicApi'
+} from '../types/publicAPI'
 
 import handleHttpError from './errors'
 
 /**
  * Resolves inbound requests to a payment pointer to their
  * respective ledger addresses or other payment information required.
+ *
+ * @param req Contains payment pointer and payment network header
+ * @param res Stores payment information to be returned to the client
+ * @param next Passses req/res to next middleware
  */
 export default async function getPaymentInfo(
   req: Request,
@@ -27,11 +31,11 @@ export default async function getPaymentInfo(
    * NOTE: if you plan to expose your payment pointer with a port number, you
    * should use:
    *  const paymentPointerUrl =
-   *  `${req.protocol}://${req.hostname}:${Config.publicAPIPort}${req.originalUrl}`
+   *  `${req.protocol}://${req.hostname}:${Config.publicAPIPort}${req.url}`
    */
   // TODO(aking): stop hardcoding HTTPS. We should at minimum be using ${req.protocol}
   // TODO:(hbergren) Write a helper function for this and test it?
-  const paymentPointerUrl = `https://${req.hostname}${req.originalUrl}`
+  const paymentPointerUrl = `https://${req.hostname}${req.url}`
   let paymentPointer: string
   try {
     paymentPointer = urlToPaymentPointer(paymentPointerUrl)
@@ -76,7 +80,7 @@ export default async function getPaymentInfo(
   if (paymentInformation === undefined) {
     return handleHttpError(
       404,
-      `Payment information for ${paymentPointerUrl} in ${paymentNetwork} on ${environment} could not be found.`,
+      `Payment information for ${paymentPointer} in ${paymentNetwork} on ${environment} could not be found.`,
       res,
     )
   }

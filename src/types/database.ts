@@ -1,4 +1,4 @@
-import { CryptoAddressDetails, AchAddressDetails } from './publicApi'
+import { CryptoAddressDetails, AchAddressDetails } from './publicAPI'
 
 /**
  * Model of the Account table schema for the database.
