@@ -11,7 +11,6 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
   // Seed the database for our tests.
   before(async function () {
     const testConfig = structuredClone(config)
-    testConfig.database.options.logQueries = false
     testConfig.database.options.seedDatabase = true
     await syncDatabaseSchema(testConfig.database)
   })

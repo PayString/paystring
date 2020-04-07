@@ -17,7 +17,6 @@ const config = {
       database: process.env.DB_NAME || 'database_development',
     },
     options: {
-      logQueries: process.env.DB_LOG === 'true' || false,
       seedDatabase: process.env.DB_SEED === 'true' || false,
     },
   },
@@ -25,6 +24,7 @@ const config = {
     publicAPIPort: Number(process.env.PUBLIC_API_PORT) || 8080,
     privateAPIPort: Number(process.env.PRIVATE_API_PORT) || 8081,
     version: process.env.VERSION || Version.V1,
+    log_level: process.env.LOG_LEVEL || 'INFO',
   },
 }
 

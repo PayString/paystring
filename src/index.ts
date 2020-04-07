@@ -1,5 +1,6 @@
 import App from './app'
 import config from './config'
+import logger from './utils/logger'
 
 function run(): void {
   if (require.main === module) {
@@ -7,7 +8,7 @@ function run(): void {
     try {
       app.init(config)
     } catch (e) {
-      console.error(e)
+      logger.fatal(e)
       process.exit(1)
     }
   }

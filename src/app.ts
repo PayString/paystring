@@ -4,6 +4,7 @@ import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
 import privateAPIRouter from './routes/privateAPIRouter'
 import publicAPIRouter from './routes/publicAPIRouter'
+import logger from './utils/logger'
 
 import Express = require('express')
 
@@ -29,7 +30,7 @@ export default class App {
 
     this.publicAPIServer = this.publicAPIExpress.listen(
       appConfig.publicAPIPort,
-      () => console.log(`Public API listening on ${appConfig.publicAPIPort}`),
+      () => logger.info(`Public API listening on ${appConfig.publicAPIPort}`),
     )
   }
 
@@ -38,7 +39,7 @@ export default class App {
     this.privateAPIExpress.use(`${appConfig.version}/users`, privateAPIRouter)
     this.privateAPIServer = this.privateAPIExpress.listen(
       appConfig.privateAPIPort,
-      () => console.log(`Private API listening on ${appConfig.privateAPIPort}`),
+      () => logger.info(`Private API listening on ${appConfig.privateAPIPort}`),
     )
   }
 

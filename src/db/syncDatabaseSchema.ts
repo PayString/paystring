@@ -6,6 +6,7 @@ import * as path from 'path'
 import { Client } from 'pg'
 
 import config from '../config'
+import logger from '../utils/logger'
 
 /**
  * Syncs the database schema with our database (optionally seeds with test values).
@@ -53,9 +54,9 @@ async function executeSQLFile(
   const client = new Client(databaseConfig.connection)
   client.connect()
 
-  if (databaseConfig.options.logQueries) console.log(`Executing query:\n${sql}`)
+  logger.debug(`Executing query:\n${sql}`)
   await client.query(sql).catch((err: Error) => {
-    console.error('error running query', file, err.message)
+    logger.fatal('error running query', file, err.message)
 
     // If we can't execute our SQL, our app is in an indeterminate state, so kill it.
     process.exit(1)

@@ -3,6 +3,7 @@ import { Transaction } from 'knex'
 
 import knex from '../db/knex'
 import { Account, Address } from '../types/database'
+import logger from '../utils/logger'
 
 /**
  * The information retrieved from or inserted into the database for a given address.
@@ -128,7 +129,7 @@ export async function removeUser(paymentPointer: string): Promise<void> {
       // This should be impossible thanks to our unique constraint,
       // but this would mean that payment pointer resolution (and thus who gets transferred value) is non-deterministic.
       // Thus, we log an error and immediately kill the program.
-      console.error(
+      logger.fatal(
         `We deleted ${count} accounts with the payment pointer ${paymentPointer}, which should be impossible due to our unique constraint.`,
       )
       process.exit(1)

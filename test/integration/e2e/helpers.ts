@@ -23,7 +23,6 @@ export async function appSetup(): Promise<App> {
 
   // Deep cloning the configuration so we don't mutate the global shared configuration
   const testConfig = structuredClone(config)
-  testConfig.database.options.logQueries = false
   testConfig.database.options.seedDatabase = true
 
   await app.init(testConfig)

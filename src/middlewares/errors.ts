@@ -1,5 +1,7 @@
 import { Response } from 'express'
 
+import logger from '../utils/logger'
+
 import Boom = require('boom')
 
 export default function handleHttpError(
@@ -10,9 +12,9 @@ export default function handleHttpError(
 ): void {
   // logging for our debugging purposes
   if (errorCode >= 500) {
-    console.error(errorCode, ':', msg, err)
+    logger.error(errorCode, ':', msg, err)
   } else {
-    console.log(errorCode, ':', msg)
+    logger.warn(errorCode, ':', msg)
   }
 
   // error code matching
