@@ -6,24 +6,6 @@ import { MessageType } from '../types/publicAPI'
 
 import handleHttpError from './errors'
 
-export default function getInvoice(
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
-  let invoice
-  try {
-    invoice = generateInvoice(
-      res.locals.paymentInformation,
-      res.locals.complianceData,
-    )
-  } catch (err) {
-    return handleHttpError(500, 'Server could not generate invoice.', res, err)
-  }
-  res.locals.response = wrapMessage(invoice, MessageType.Invoice)
-  return next()
-}
-
 /**
  * Parses off the /invoice path and nonce query parameter from the request URL.
  *
@@ -41,5 +23,27 @@ export function parseInvoicePath(
     return handleHttpError(400, 'Missing nonce query parameter.', res)
   }
   req.url = req.path.slice(0, req.path.length - pathToStrip.length)
+
+  res.locals.nonce = req.query.nonce
+  return next()
+}
+
+export default function getInvoice(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  let invoice
+  try {
+    invoice = generateInvoice(
+      res.locals.nonce,
+      res.locals.paymentPointer,
+      res.locals.paymentInformation,
+      res.locals.complianceData,
+    )
+  } catch (err) {
+    return handleHttpError(500, 'Server could not generate invoice.', res, err)
+  }
+  res.locals.response = wrapMessage(invoice, MessageType.Invoice)
   return next()
 }

@@ -1,11 +1,12 @@
 import { mockComplianceData } from '../data/travelRuleData'
 import { Compliance } from '../types/publicAPI'
+import logger from '../utils/logger'
 
 export function parseComplianceData(complianceData: unknown): Compliance {
-  console.log(`validate compliance data: ${complianceData}`)
+  logger.info(`validate compliance data: ${complianceData}`)
   return mockComplianceData
 }
 
 export function handleComplianceData(complianceData: Compliance): void {
-  console.log(`handle compliance data: ${complianceData}`)
+  logger.info(`handle compliance data: ${complianceData}`)
 }

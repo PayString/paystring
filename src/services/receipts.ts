@@ -1,11 +1,12 @@
 import { mockReceipt } from '../data/travelRuleData'
 import { Receipt } from '../types/publicAPI'
+import logger from '../utils/logger'
 
 export function parseReceipt(receipt: unknown): Receipt {
-  console.log(`validate receipt: ${receipt}`)
+  logger.info(`validate receipt: ${receipt}`)
   return mockReceipt
 }
 
 export function handleReceipt(receipt: Receipt): void {
-  console.log(`handle receipt: ${receipt}`)
+  logger.info(`handle receipt: ${receipt}`)
 }

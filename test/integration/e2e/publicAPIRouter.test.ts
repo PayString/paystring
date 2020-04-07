@@ -1,17 +1,22 @@
 import 'mocha'
+
 import { assert } from 'chai'
 import * as request from 'supertest'
 
 import App from '../../../src/app'
 import {
-  mockInvoice,
   mockInvoiceWithComplianceHashes,
   mockComplianceData,
 } from '../../../src/data/travelRuleData'
 import { wrapMessage } from '../../../src/services/signatureWrapper'
-import { MessageType } from '../../../src/types/publicAPI'
+import {
+  MessageType,
+  AddressDetailType,
+  ComplianceType,
+  Invoice,
+} from '../../../src/types/publicAPI'
 
-import { appSetup, appCleanup } from './helpers'
+import { appSetup, appCleanup, isExpectedInvoice } from './helpers'
 
 let app: App
 
@@ -121,19 +126,34 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .expect(404, expectedErrorResponse, done)
   })
 
-  // TODO(dino): implement this to not use mock data
   it('Returns a mock invoice on GET /invoice', function (done): void {
     // GIVEN a payment pointer known to have a testnet address
     const paymentPointer = '/hbergren'
     const acceptHeader = 'application/xrpl-testnet+json'
-    const expectedResponse = wrapMessage(mockInvoice, MessageType.Invoice)
+
+    const TIME_TO_EXPIRY = 60 * 60 * 1000
+    const expectedInvoice: Invoice = {
+      nonce: '123',
+      expirationTime: Date.now() + TIME_TO_EXPIRY,
+      paymentInformation: {
+        addressDetailType: AddressDetailType.CryptoAddress,
+        addressDetails: {
+          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+        },
+        paymentPointer: '$127.0.0.1/hbergren',
+      },
+      complianceRequirements: [ComplianceType.TravelRule],
+      complianceHashes: [],
+    }
+    const expectedResponse = wrapMessage(expectedInvoice, MessageType.Invoice)
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice
     request(app.publicAPIExpress)
       .get(`${paymentPointer}/invoice?nonce=123`)
       .set('Accept', acceptHeader)
       // THEN we get back a 200 - OK with the invoice
-      .expect(200, expectedResponse, done)
+      .expect(isExpectedInvoice(expectedResponse))
+      .expect(200, done)
   })
 
   // TODO(dino): implement this to not use mock data

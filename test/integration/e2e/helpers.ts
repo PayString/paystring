@@ -1,8 +1,12 @@
 import * as v8 from 'v8'
 
+import { assert } from 'chai'
+import * as request from 'supertest'
+
 import App from '../../../src/app'
 import config from '../../../src/config'
 import knex from '../../../src/db/knex'
+import { SignatureWrapper, Invoice } from '../../../src/types/publicAPI'
 
 /**
  * Deep clones an object *properly*.
@@ -39,4 +43,32 @@ export async function appSetup(): Promise<App> {
 export async function appCleanup(app?: App): Promise<void> {
   if (app) app.close()
   await knex.destroy()
+}
+
+/**
+ * A custom helper to check if an Invoice is equivalent to our expected response (and thus has a valid expiration time).
+ *
+ * @param expectedResponse The expected invoice output (which contains an older expiration time)
+ * @returns
+ */
+export function isExpectedInvoice(expectedResponse: SignatureWrapper) {
+  return (res: request.Response): void => {
+    const {
+      expirationTime: expectedExpirationTime,
+      ...expectedResponseWithoutExpirationTime
+    } = expectedResponse.message as Invoice
+    const { expirationTime, ...responseWithoutExpirationTime } = res.body
+      .message as Invoice
+    const expirationTimeDelta = expirationTime - expectedExpirationTime
+
+    assert(
+      expirationTime > expectedExpirationTime,
+      'Expiration time is a valid time',
+    )
+    assert(expirationTimeDelta < 5, 'Expiration is within expected delta')
+    assert.deepEqual(
+      expectedResponseWithoutExpirationTime,
+      responseWithoutExpirationTime,
+    )
+  }
 }
