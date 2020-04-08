@@ -48,7 +48,7 @@ curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice?nonce=
                                         "amount": "100",
                                         "scale": 1
                                 },
-                                "timestamp": "2020-03-20T07:09:00"
+                                "timestamp": "1586361979654"
                         },
                         "beneficiary": {
                                 "institutionName": "xpring"
