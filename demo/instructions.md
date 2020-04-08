@@ -32,7 +32,7 @@ curl --location --request GET 'http://127.0.0.1:8080/exampleUser/invoice?nonce=1
 
 The returned JSON object is our payment invoice. In this example, the institution is a VASP and has listed any laws that must be complied with in the `complianceRequirements` field of the invoice. Specifically, as the originator of the payment we are being asked to comply with the Travel Rule. In order to do that, we'll POST the compliance data to the same URL in order to upgrade our invoice.
 ```
-curl --location --request POST 'https://***REMOVED***/dino/invoice?nonce=123456' \
+curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice?nonce=123456' \
 --header 'Content-Type: application/json' \
 --data-raw '{
         "messageType": "compliance",
@@ -65,7 +65,7 @@ curl --location --request POST 'https://***REMOVED***/dino/invoice?nonce=123456'
 
 Upon submission of this data, the beneficiary should identify that we have fulfilled all compliance requirements and send us an upgraded invoice. This upgraded invoice cryptographically correlates our submission of compliance data through the complianceHashes field. Now that we have been informed of all compliance requirements, and fulfilled them, we can submit our transaction on ledger and POST back the receipt of payment.
 ```
-curl --location --request POST 'https://***REMOVED***/dino/receipt' \
+curl --location --request POST 'http://127.0.0.1:8080/exampleUser/receipt' \
 --header 'Content-Type: application/json' \
 --data-raw '{
   "invoiceHash": "8743b52063cd84097a65d1633f5c74f5",
