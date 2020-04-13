@@ -4,7 +4,7 @@ import { assert } from 'chai'
 import config from '../../../src/config'
 import knex from '../../../src/db/knex'
 import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
-import getPaymentInfoFromDatabase from '../../../src/services/paymentPointers'
+import getPaymentInfoFromDatabase from '../../../src/services/payIds'
 import structuredClone from '../e2e/helpers'
 
 describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
