@@ -77,6 +77,39 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
           },
         },
+        {
+          payment_network: 'BTC',
+          environment: 'TESTNET',
+          details: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /v1/users with that user information
+    request(app.privateAPIExpress)
+      .post(`/v1/users`)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/v1/users/${userInformation.payment_pointer}`)
+      // AND we expect back a 201 - CREATED
+      .expect(201, done)
+  })
+
+  it('Returns a 201 when creating a new user with an address without an environment (ACH)', function (done): void {
+    // GIVEN a user with a payment pointer known to not exist on the PayID service
+    const userInformation = {
+      payment_pointer: '$xpring.money/janedoe',
+      addresses: [
+        {
+          payment_network: 'ACH',
+          details: {
+            accountNumber: '000123456789',
+            routingNumber: '123456789',
+          },
+        },
       ],
     }
 

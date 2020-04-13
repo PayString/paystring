@@ -20,7 +20,7 @@ export interface Address {
   account_id: string
 
   payment_network: string
-  environment: string
+  environment?: string
   details: CryptoAddressDetails | AchAddressDetails
 
   readonly created_at: Date

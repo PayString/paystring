@@ -156,10 +156,9 @@ function addAccountIDToAddresses(
 ): DatabaseAddress[] {
   return addresses.map((address) => ({
     // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
-    // TODO:(hbergren) Remove hardcoded values.
     account_id: accountID,
-    payment_network: address.payment_network.toUpperCase() || 'XRPL',
-    environment: address.environment.toUpperCase() || 'TESTNET',
+    payment_network: address.payment_network.toUpperCase(),
+    environment: address.environment?.toUpperCase(),
     details: address.details,
   }))
 }
