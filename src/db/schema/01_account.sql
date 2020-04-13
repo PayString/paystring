@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS account (
 	-- It is an adaptation of the 'stephenhay' implementation, which was the shortest URL regex I could find.
 	-- Also, that implementation had no false negatives, which is important, as we never want to prevent a valid URL from being used.
 	--
-	-- This regex requires payment pointers of the form `$[subdomain].example.com/[path]`
-	-- @^(https?|ftp)://[^\s/$.?#].[^\s]*
+	-- This regex requires payment pointers of the form `$[subdomain.]example.com[/path]`
 	CONSTRAINT payment_pointer_valid_url CHECK(payment_pointer ~* '^(?:\$)[^\s/$.?#].+\.[^\s]+$')
 );
