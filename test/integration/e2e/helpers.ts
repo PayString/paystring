@@ -65,7 +65,7 @@ export function isExpectedInvoice(expectedResponse: SignatureWrapper) {
       expirationTime > expectedExpirationTime,
       'Expiration time is a valid time',
     )
-    assert(expirationTimeDelta < 5, 'Expiration is within expected delta')
+    assert(expirationTimeDelta < 1000, 'Expiration is within expected delta')
     assert.deepEqual(
       expectedResponseWithoutExpirationTime,
       responseWithoutExpirationTime,
