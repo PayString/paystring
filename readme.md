@@ -58,13 +58,15 @@ Once you have set up a PayID server, anyone can use the PayID Public API to quer
 ### Set up a PayID server
 Participating institutions can use Xpring’s open source reference implementation of the PayID server. You might be able to ease the deployment process by connecting your PayID server to your existing user database so that it can respond to incoming GET requests.
 
-To set up your server, first ensure you have Docker installed, and then run these commands. You will create a local docker image.
+To set up your own demo server, first ensure you have Docker installed, and then run these commands. You will create a local docker image.
 
 ```
 git clone git@github.com:xpring-eng/payid.git
 cd payid
 ./demo/run_payid_demo.sh
 ```
+
+You can also set up your PayID server using [AWS and NGINX][aws-deploy.md].
 
 You can then use the Private PayID API to:
 
