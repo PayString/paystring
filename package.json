@@ -6,6 +6,7 @@
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
     "start": "node build/src/index.js",
     "test": "nyc mocha 'test/**/*.test.ts'",
+    "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
     "lint": "eslint . --ext .ts --fix",
     "lint:watch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
     "build": "rm -rf build && tsc --project . && npm run copySQL",
