@@ -13,14 +13,14 @@ import {
  * successfully.
  *
  * @param nonce Used to correlate invoices/compliance/receipts
- * @param paymentPointer Payment pointer of the user receiving funds
+ * @param payId PayID of the user receiving funds
  * @param paymentInformation Payment details (e.g. Crypto, ACH) of the user receiving funds
  * @param complianceData Compliance data of sender to satisfy any legal requirements
  * @returns A valid Invoice to be sent to the client
  */
 export default function generateInvoice(
   nonce: string,
-  paymentPointer: string,
+  payId: string,
   paymentInformation: PaymentInformation,
   complianceData?: Compliance,
 ): Invoice {
@@ -37,7 +37,7 @@ export default function generateInvoice(
     expirationTime: Date.now() + TIME_TO_EXPIRY,
     paymentInformation: {
       ...paymentInformation,
-      paymentPointer,
+      payId,
     },
     complianceRequirements: [ComplianceType.TravelRule],
     complianceHashes: [],

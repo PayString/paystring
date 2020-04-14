@@ -140,7 +140,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
         addressDetails: {
           address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
         },
-        paymentPointer: '$127.0.0.1/hbergren',
+        payId: '$127.0.0.1/hbergren',
       },
       complianceRequirements: [ComplianceType.TravelRule],
       complianceHashes: [],

@@ -30,14 +30,14 @@ export interface PaymentInformation {
   addressDetailType: AddressDetailType
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
-  paymentPointer?: string
+  payId?: string
 }
 
 /**
  * Invoice should always contain the payment pointer.
  */
 export interface InvoicePaymentInformation extends PaymentInformation {
-  paymentPointer: string
+  payId: string
 }
 
 /**
