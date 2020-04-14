@@ -42,7 +42,8 @@ export const mockInvoice: Invoice = {
       address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
     },
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
-    payId: '$xpring.money/dino',
+    payId: 'alice$xpring.money',
+
   },
   complianceRequirements: [ComplianceType.TravelRule],
   memo: 'please send me travel rule data',
@@ -58,7 +59,7 @@ export const mockInvoiceWithComplianceHashes: Invoice = {
       address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
     },
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
-    payId: '$xpring.money/dino',
+    payId: 'alice$xpring.money',
   },
   complianceRequirements: [ComplianceType.TravelRule],
   memo: 'thanks for travel rule data, here is your new invoice',
