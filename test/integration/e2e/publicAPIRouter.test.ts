@@ -86,6 +86,53 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .expect(200, expectedResponse, done)
   })
 
+  it('Returns the correct address for a known payment pointer and a non-XRPL header', function (done): void {
+    // GIVEN a payment pointer known to have an associated btc-testnet address
+    const paymentPointer = '/hbergren'
+    const acceptHeader = 'application/btc-testnet+json'
+    const expectedResponse = {
+      addressDetailType: 'CryptoAddressDetails',
+      addressDetails: {
+        address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
+      },
+    }
+
+    // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
+    request(app.publicAPIExpress)
+      .get(paymentPointer)
+      .set('Accept', acceptHeader)
+      // THEN we get back our Accept header as the Content-Type
+      .expect((res) => {
+        assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
+      })
+      // AND we get back the BTC address associated with that payment pointer for btc-testnet.
+      .expect(200, expectedResponse, done)
+  })
+
+  it('Returns the correct address for a known payment pointer and an ACH header (no environment)', function (done): void {
+    // GIVEN a payment pointer known to have an associated ACH address
+    const paymentPointer = '/hbergren'
+    const acceptHeader = 'application/ach+json'
+    const expectedResponse = {
+      addressDetailType: 'AchAddressDetails',
+      addressDetails: {
+        accountNumber: '000123456789',
+        routingNumber: '123456789',
+      },
+    }
+
+    // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
+    request(app.publicAPIExpress)
+      .get(paymentPointer)
+      .set('Accept', acceptHeader)
+      // THEN we get back our Accept header as the Content-Type
+      .expect((res) => {
+        assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
+      })
+      // AND we get back the ACH account information associated with that payment pointer for ACH.
+      .expect(200, expectedResponse, done)
+  })
+
   it('Returns a 404 with the correct error response object for an unknown payment pointer', function (done): void {
     // GIVEN a payment pointer known to not exist in the database
     const paymentPointer = '/johndoe'

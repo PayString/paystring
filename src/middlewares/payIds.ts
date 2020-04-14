@@ -6,6 +6,7 @@ import {
   PaymentInformation,
   AddressDetailType,
   CryptoAddressDetails,
+  AchAddressDetails,
 } from '../types/publicAPI'
 
 import handleHttpError from './errors'
@@ -22,11 +23,10 @@ export default async function getPaymentInfo(
   req: Request,
   res: Response,
   next: NextFunction,
+  // TODO:(hbergren) Why is this passed in? Do we use this parameter anywhere?
+  // Or is this just us doing Dependency Injection?
   getPaymentInfoFromPaymentPointer = getPaymentInfoFromDatabase,
 ): Promise<void> {
-  // TODO:(hbergren) remove these hardcoded values
-  const paymentNetwork = 'XRPL'
-
   /**
    * NOTE: if you plan to expose your payment pointer with a port number, you
    * should use:
@@ -43,30 +43,34 @@ export default async function getPaymentInfo(
     return handleHttpError(400, err.message, res, err)
   }
 
-  // TODO:(hbergren) Assert this is some sort of json header?
-  // TODO:(hbergren) Label this magical regex (splits `application/xrpl-mainnet+json` => ['application', 'xrpl', 'mainnet', 'json'])
-  // TODO:(hbergren) Refactor this parsing library to a static method or even a utils class.
+  // TODO:(hbergren) Refactor this parsing to a static method or even a utils class.
   // If you do that, then you can easily unit test this bit of logic. You can then change out the implementation of the method easily since it will be encapsulated.
-  const acceptHeader = req?.get('Accept')?.split(/\/|-|\+/) || []
+  const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/
+  const validatedAcceptHeader = ACCEPT_HEADER_REGEX.exec(
+    req.get('Accept') || '',
+  )
 
-  // TODO:(hbergren) Should be <= 2, need to support application/xrpl-json
-  // TODO:(hbergren) Should not have a check on XRPL
-  if (acceptHeader.length <= 3 || acceptHeader[1] !== 'xrpl') {
+  if (!validatedAcceptHeader) {
     return handleHttpError(
       400,
-      'Invalid Accept header. Must be of the form "application/xrpl-{environment}+json"',
+      `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
+      Examples:
+      - 'Accept: application/xrpl-mainnet+json'
+      - 'Accept: application/btc-testnet+json'
+      - 'Accept: application/ach+json'
+      `,
       res,
     )
   }
-  // TODO:(hbergren) This should be null
-  let environment = 'TESTNET'
+
+  const [acceptHeader, paymentNetwork, environment] = validatedAcceptHeader.map(
+    (elem) => {
+      // Our DB stores paymentNetwork and environment in all uppercase
+      return elem?.toUpperCase()
+    },
+  )
 
   // TODO: If Accept is just application/json, just return all addresses, for all environments?
-  // We asked for `application/xrpl-{environment}+json`
-  if (acceptHeader[2] !== 'json') {
-    environment = acceptHeader[2].toUpperCase()
-  }
-
   // Get the paymentInformation from the database
   const paymentInformation = await getPaymentInfoFromPaymentPointer(
     paymentPointer,
@@ -75,8 +79,6 @@ export default async function getPaymentInfo(
   )
 
   // TODO:(hbergren) Distinguish between missing payment pointer in system, and missing address for paymentNetwork/environment.
-  // TODO:(hbergren) Set response Content-Type header to be the same as Accept header?
-  // Or is `application/json` the appropriate response Content-Type?
   if (paymentInformation === undefined) {
     return handleHttpError(
       404,
@@ -85,19 +87,23 @@ export default async function getPaymentInfo(
     )
   }
 
-  const paymentNetworkEnvironment = [
-    paymentInformation.payment_network,
-    paymentInformation.environment,
-  ].join('-')
-  const contentType = `application/${paymentNetworkEnvironment}+json`
-  res.set('Content-Type', contentType)
+  // TODO:(hbergren) See what happens if you pass multiple accept headers with different quality ratings.
+  res.set('Content-Type', acceptHeader)
 
-  const response: PaymentInformation = {
+  // TODO:(hbergren) Create a helper function for this?
+  let response: PaymentInformation = {
     addressDetailType: AddressDetailType.CryptoAddress,
     addressDetails: paymentInformation.details as CryptoAddressDetails,
   }
+  if (paymentNetwork === 'ACH') {
+    response = {
+      addressDetailType: AddressDetailType.AchAddress,
+      addressDetails: paymentInformation.details as AchAddressDetails,
+    }
+  }
 
   // store response information (or information to be used in other middlewares)
+// TODO:(hbergren), come up with a less hacky way to pipe around data than global state.
   res.locals.payId = paymentPointer
   res.locals.paymentInformation = response
   res.locals.response = response

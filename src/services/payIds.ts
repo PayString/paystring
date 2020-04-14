@@ -26,7 +26,13 @@ export default async function getPaymentInfoFromDatabase(
     .innerJoin('account', 'address.account_id', 'account.id')
     .where('account.payment_pointer', paymentPointer)
     .andWhere('address.payment_network', paymentNetwork)
-    .andWhere('address.environment', environment)
+    .andWhere((builder) => {
+      if (environment) {
+        builder.where('address.environment', environment)
+      } else {
+        builder.whereNull('address.environment')
+      }
+    })
     .then(
       (
         rows: Pick<Address, 'payment_network' | 'environment' | 'details'>[],

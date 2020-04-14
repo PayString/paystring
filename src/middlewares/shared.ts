@@ -22,7 +22,6 @@ export default function sendSuccess(req: Request, res: Response): void {
   if (res.locals.response) {
     res.status(status).json(res.locals.response)
   } else {
-    // TODO(hbergren): This returns a text/plain response, should it be JSON for consistency?
     res.sendStatus(status)
   }
 }
