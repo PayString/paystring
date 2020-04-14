@@ -9,7 +9,7 @@ import handleHttpError from './errors'
 /**
  * Parses off the /invoice path and nonce query parameter from the request URL.
  *
- * @param req Contains request URL, which is the payment pointer + /invoice + nonce
+ * @param req Contains request URL, which is the PayID + /invoice + nonce
  * @param res Used for erroring on missing nonce
  * @param next Passses req/res to next middleware
  */
@@ -37,7 +37,7 @@ export default function getInvoice(
   try {
     invoice = generateInvoice(
       res.locals.nonce,
-      res.locals.paymentPointer,
+      res.locals.payId,
       res.locals.paymentInformation,
       res.locals.complianceData,
     )

@@ -98,7 +98,7 @@ export default async function getPaymentInfo(
   }
 
   // store response information (or information to be used in other middlewares)
-  res.locals.paymentPointer = paymentPointer
+  res.locals.payId = paymentPointer
   res.locals.paymentInformation = response
   res.locals.response = response
 
