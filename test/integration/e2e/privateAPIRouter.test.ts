@@ -17,7 +17,7 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
     const paymentPointer = '$xpring.money/hansbergren'
     const expectedResponse = {
-      payment_pointer: '$xpring.money/hansbergren',
+      pay_id: '$xpring.money/hansbergren',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -44,7 +44,7 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
       statusCode: 404,
       error: 'Not Found',
       message:
-        'No PayID information could be found for the payment pointer $xpring.money/johndoe.',
+        'No information could be found for the PayID $xpring.money/johndoe.',
     }
 
     // WHEN we make a GET request to /v1/users/ with that payment pointer as our user
@@ -68,7 +68,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 201 when creating a new user', function (done): void {
     // GIVEN a user with a payment pointer known to not exist on the PayID service
     const userInformation = {
-      payment_pointer: '$xpring.money/johndoe',
+      pay_id: '$xpring.money/johndoe',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -93,7 +93,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .send(userInformation)
       .expect('Content-Type', /text\/plain/)
       // THEN we expect the Location header to be set to the path of the created user resource
-      .expect('Location', `/v1/users/${userInformation.payment_pointer}`)
+      .expect('Location', `/v1/users/${userInformation.pay_id}`)
       // AND we expect back a 201 - CREATED
       .expect(201, done)
   })
@@ -101,7 +101,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 201 when creating a new user with an address without an environment (ACH)', function (done): void {
     // GIVEN a user with a payment pointer known to not exist on the PayID service
     const userInformation = {
-      payment_pointer: '$xpring.money/janedoe',
+      pay_id: '$xpring.money/janedoe',
       addresses: [
         {
           payment_network: 'ACH',
@@ -119,7 +119,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .send(userInformation)
       .expect('Content-Type', /text\/plain/)
       // THEN we expect the Location header to be set to the path of the created user resource
-      .expect('Location', `/v1/users/${userInformation.payment_pointer}`)
+      .expect('Location', `/v1/users/${userInformation.pay_id}`)
       // AND we expect back a 201 - CREATED
       .expect(201, done)
   })
@@ -127,7 +127,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
     // GIVEN a user with a payment pointer known already on the PayID service
     const userInformation = {
-      payment_pointer: '$xpring.money/hansbergren',
+      pay_id: '$xpring.money/hansbergren',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -160,9 +160,9 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
   it('Returns a 200 and updated user payload when updating an address', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const paymentPointer = '$xpring.money/hansbergren'
+    const payId = '$xpring.money/hansbergren'
     const updatedInformation = {
-      payment_pointer: '$xpring.money/hansbergren',
+      pay_id: '$xpring.money/hansbergren',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -176,7 +176,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${paymentPointer}`)
+      .put(`/v1/users/${payId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect back a 200-OK, with the updated user information
@@ -185,9 +185,9 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
   it('Returns a 200 and updated user payload when updating a payment pointer', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const paymentPointer = '$xpring.money/hansbergren'
+    const payId = '$xpring.money/hansbergren'
     const updatedInformation = {
-      payment_pointer: '$xpring.money/bergren1234',
+      pay_id: '$xpring.money/bergren1234',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -201,7 +201,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${paymentPointer}`)
+      .put(`/v1/users/${payId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect back a 200-OK, with the updated user information
@@ -210,9 +210,9 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
   it('Returns a 201 and inserted user payload for a private API PUT creating a new user', function (done): void {
     // GIVEN a payment pointer known to not exist on the PayID service
-    const paymentPointer = '$xpring.money/johndoe'
+    const payId = '$xpring.money/johndoe'
     const insertedInformation = {
-      payment_pointer: '$xpring.money/johnjoejr',
+      pay_id: '$xpring.money/johnjoejr',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -226,27 +226,27 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
     // WHEN we make a PUT request to /v1/users/ with the information to insert
     request(app.privateAPIExpress)
-      .put(`/v1/users/${paymentPointer}`)
+      .put(`/v1/users/${payId}`)
       .send(insertedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the payment pointer inserted is that of the request body, not the URL path
-      .expect('Location', `/v1/users/${insertedInformation.payment_pointer}`)
+      .expect('Location', `/v1/users/${insertedInformation.pay_id}`)
       // AND we expect back a 201 - CREATED, with the inserted user information
       .expect(201, insertedInformation, done)
   })
 
   it('Returns a 400 - Bad Request with an error payload for a request with a malformed payment pointer', function (done): void {
     // GIVEN a payment pointer known to be in a bad format (missing $) and an expected error response payload
-    const badPaymentPointer = 'xpring.money/hansbergren'
+    const badPayId = 'xpring.money/hansbergren'
     const errorResponsePayload = {
       error: 'Bad Request',
-      message: 'Bad input. Payment pointers must start with "$"',
+      message: 'Bad input. PayIDs must contain a "$"',
       statusCode: 400,
     }
 
     const updatedInformation = {
-      payment_pointer: '$xpring.money/bergren1234',
+      pay_id: '$xpring.money/bergren1234',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -260,7 +260,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${badPaymentPointer}`)
+      .put(`/v1/users/${badPayId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
@@ -269,10 +269,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
   it('Returns a 409 - Conflict when attempting to update a user to a payment pointer that already exists', function (done): void {
     // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const paymentPointer = '$xpring.money/hansbergren'
+    const payId = '$xpring.money/hansbergren'
     const updatedInformation = {
       // AND a request to update that payment pointer to one known to already exist on the PayID Service
-      payment_pointer: '$xpring.money/hbergren',
+      pay_id: '$xpring.money/hbergren',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -286,7 +286,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${paymentPointer}`)
+      .put(`/v1/users/${payId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect back a 409 - CONFLICT
@@ -295,10 +295,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
   it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
     // GIVEN a payment pointer known to not exist on the PayID service
-    const paymentPointer = '$xpring.money/janedoe'
+    const payId = '$xpring.money/janedoe'
     const updatedInformation = {
       // AND a request to update that payment pointer to one known to already exist on the PayID Service
-      payment_pointer: '$xpring.money/hbergren',
+      pay_id: '$xpring.money/hbergren',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -312,7 +312,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${paymentPointer}`)
+      .put(`/v1/users/${payId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect back a 409 - CONFLICT
@@ -334,7 +334,7 @@ describe('E2E - privateAPIRouter - DELETE API', function (): void {
     const paymentPointer = '$xpring.money/hbergren'
     const missingPaymentPointerError = {
       error: 'Not Found',
-      message: `No PayID information could be found for the payment pointer ${paymentPointer}.`,
+      message: `No information could be found for the PayID ${paymentPointer}.`,
       statusCode: 404,
     }
 

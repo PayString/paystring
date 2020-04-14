@@ -20,15 +20,15 @@ export async function getUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(dino) Validate paymentPointer
-  const paymentPointer = req.params[0]
+  const payId = req.params[0]
 
   // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!paymentPointer) {
+  if (!payId) {
     return handleHttpError(
       400,
-      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      'A `payId` must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
       res,
     )
   }
@@ -36,7 +36,7 @@ export async function getUser(
   let addresses
   try {
     // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await selectUser(paymentPointer)
+    addresses = await selectUser(payId)
   } catch (err) {
     return handleHttpError(500, err.message, res, err)
   }
@@ -44,13 +44,13 @@ export async function getUser(
   if (addresses.length === 0) {
     return handleHttpError(
       404,
-      `No PayID information could be found for the payment pointer ${paymentPointer}.`,
+      `No information could be found for the PayID ${payId}.`,
       res,
     )
   }
 
   res.locals.response = {
-    payment_pointer: paymentPointer,
+    pay_id: payId,
     addresses,
   }
 
@@ -69,17 +69,17 @@ export async function postUser(
   // TODO:(hbergren) Any validation? Assert that the payment pointer is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database. Also look at validation in the conversion functions.
-  const paymentPointer = req.body.payment_pointer
-  if (!paymentPointer) {
+  const payId = req.body.pay_id
+  if (!payId) {
     return handleHttpError(
       400,
-      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      'A `pay_id` must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
       res,
     )
   }
 
   try {
-    await insertUser(paymentPointer, req.body.addresses)
+    await insertUser(payId, req.body.addresses)
   } catch (err) {
     // TODO(hbergren): This leaks database stuff into this file
     // This probably means error handling should be done in the data access layer
@@ -90,7 +90,7 @@ export async function postUser(
     ) {
       return handleHttpError(
         409,
-        `There already exists a user with the payment pointer ${paymentPointer}`,
+        `There already exists a user with the PayId ${payId}`,
         res,
         err,
       )
@@ -98,7 +98,7 @@ export async function postUser(
 
     return handleHttpError(
       500,
-      `The server could not create an account for the payment pointer ${paymentPointer}`,
+      `The server could not create an account for the PayID ${payId}`,
       res,
       err,
     )
@@ -106,7 +106,7 @@ export async function postUser(
 
   // Set HTTP status and save the payment pointer to generate the Location header in later middleware
   res.locals.status = 201 // Created
-  res.locals.payment_pointer = paymentPointer
+  res.locals.pay_id = payId
   return next()
 }
 
@@ -116,14 +116,14 @@ export async function putUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
-  // TODO(hbergren): pull this paymentPointer / HttpError out into middleware?
-  const paymentPointer = req.params[0]
-  const newPaymentPointer = req?.body?.payment_pointer
+  // TODO(hbergren): pull this PayID / HttpError out into middleware?
+  const payId = req.params[0]
+  const newPayId = req?.body?.pay_id
   const addresses = req?.body?.addresses
   // TODO:(hbergren) More validation? Assert that the payment pointer is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!paymentPointer || !newPaymentPointer) {
+  if (!payId|| !newPayId) {
     return handleHttpError(
       400,
       'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
@@ -132,10 +132,10 @@ export async function putUser(
   }
 
   // TODO:(dino) move this to validation
-  if (!paymentPointer.startsWith('$') || !newPaymentPointer.startsWith('$')) {
+  if (!payId.includes('$') || !newPayId.includes('$')) {
     return handleHttpError(
       400,
-      'Bad input. Payment pointers must start with "$"',
+      'Bad input. PayIDs must contain a "$"',
       res,
     )
   }
@@ -147,12 +147,12 @@ export async function putUser(
   try {
     // TODO:(hbergren) Remove this ridiculous nesting.
     updatedAddresses = await replaceUser(
-      paymentPointer,
-      newPaymentPointer,
+      payId,
+      newPayId,
       addresses,
     )
     if (updatedAddresses === null) {
-      updatedAddresses = await insertUser(newPaymentPointer, addresses)
+      updatedAddresses = await insertUser(newPayId, addresses)
       statusCode = 201
     }
   } catch (err) {
@@ -165,7 +165,7 @@ export async function putUser(
     ) {
       return handleHttpError(
         409,
-        `There already exists a user with the payment pointer ${paymentPointer}`,
+        `There already exists a user with the payment pointer ${payId}`,
         res,
         err,
       )
@@ -173,7 +173,7 @@ export async function putUser(
 
     return handleHttpError(
       500,
-      `Error updating payment pointer for account ${req.query.payment_pointer}.`,
+      `Error updating payment pointer for account ${req.query.pay_id}.`,
       res,
       err,
     )
@@ -181,12 +181,12 @@ export async function putUser(
 
   // If the status code is 201 - Created, we need to set a Location header later with the payment pointer
   if (statusCode === 201) {
-    res.locals.payment_pointer = newPaymentPointer
+    res.locals.pay_id = newPayId
   }
 
   res.locals.status = statusCode
   res.locals.response = {
-    payment_pointer: newPaymentPointer,
+    pay_id: newPayId,
     addresses: updatedAddresses,
   }
 
@@ -199,20 +199,20 @@ export async function deleteUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO(hbergren): This absolutely needs to live in middleware
-  const paymentPointer = req.params[0]
+  const payId = req.params[0]
 
   // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
   // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
-  if (!paymentPointer) {
+  if (!payId) {
     return handleHttpError(
       400,
-      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      'A `pay_id` must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
       res,
     )
   }
 
   try {
-    await removeUser(paymentPointer)
+    await removeUser(payId)
   } catch (err) {
     return handleHttpError(500, err.message, res, err)
   }

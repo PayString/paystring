@@ -13,7 +13,7 @@ export default function sendSuccess(req: Request, res: Response): void {
       '',
       version,
       userPath,
-      res.locals.payment_pointer,
+      res.locals.pay_id,
     ].join('/')
 
     res.location(locationHeader)
