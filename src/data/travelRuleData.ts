@@ -43,7 +43,6 @@ export const mockInvoice: Invoice = {
     },
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
     payId: 'alice$xpring.money',
-
   },
   complianceRequirements: [ComplianceType.TravelRule],
   memo: 'please send me travel rule data',

@@ -9,12 +9,7 @@ export default function sendSuccess(req: Request, res: Response): void {
     // And for PUT commands, the path could potentially hold more after `userPath`.
     const [, version, userPath] = req.originalUrl.split('/')
 
-    const locationHeader = [
-      '',
-      version,
-      userPath,
-      res.locals.pay_id,
-    ].join('/')
+    const locationHeader = ['', version, userPath, res.locals.pay_id].join('/')
 
     res.location(locationHeader)
   }

@@ -123,7 +123,7 @@ export async function putUser(
   // TODO:(hbergren) More validation? Assert that the payment pointer is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!payId|| !newPayId) {
+  if (!payId || !newPayId) {
     return handleHttpError(
       400,
       'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
@@ -133,11 +133,7 @@ export async function putUser(
 
   // TODO:(dino) move this to validation
   if (!payId.includes('$') || !newPayId.includes('$')) {
-    return handleHttpError(
-      400,
-      'Bad input. PayIDs must contain a "$"',
-      res,
-    )
+    return handleHttpError(400, 'Bad input. PayIDs must contain a "$"', res)
   }
 
   // TODO:(hbergren) Remove all these try/catches. This is ridiculous
@@ -146,11 +142,7 @@ export async function putUser(
   let statusCode = 200
   try {
     // TODO:(hbergren) Remove this ridiculous nesting.
-    updatedAddresses = await replaceUser(
-      payId,
-      newPayId,
-      addresses,
-    )
+    updatedAddresses = await replaceUser(payId, newPayId, addresses)
     if (updatedAddresses === null) {
       updatedAddresses = await insertUser(newPayId, addresses)
       statusCode = 201
