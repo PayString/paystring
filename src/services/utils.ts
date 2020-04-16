@@ -1,58 +1,45 @@
 // CONSTANTS
 const HTTPS = 'https://'
-const WELL_KNOWN = '/.well-known/pay'
 
 /**
- * Converts a Payment Pointer from `$` representation to `https://` representation
+ * Converts a PayID from `$` representation to `https://` representation
  *
- * @param paymentPointer The payment pointer to convert.
+ * @param payId The PayID to convert.
  *
- * @returns A payment pointer in the https format.
+ * @returns A PayID in the https format.
  */
 // TODO(hbergren): Move these conversion functions into xpring-common-js and take a dependency on that
 // TODO(hbergren): This function is completely unused now. Remove?
-export function paymentPointerToUrl(paymentPointer: string): string {
-  // TODO(hbergren): More validation? (Payment pointer is a semi-valid URL?)
-  if (!paymentPointer.startsWith('$')) {
+export function payIdToUrl(payId: string): string {
+  // TODO(hbergren): More validation? (PayID is a semi-valid URL?)
+  if (!payId.includes('$')) {
     // TODO(hbergren): Throw a custom error object like we do in xpring-common-js
-    throw new Error('Bad input. Payment pointers must start with "$"')
+    throw new Error('Bad input. PayIDs must include a "$"')
   }
 
-  if (!isASCII(paymentPointer)) {
-    throw new Error('Bad input. Payment pointers must be ASCII.')
+  if (!isASCII(payId)) {
+    throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
-  // If the payment pointer is in the form `$example.com` or `$example.com/`
-  const paths = paymentPointer.split('/')
-  if (paths[1] === undefined || paths[1].length === 0) {
-    return HTTPS + paths[0].substring(1) + WELL_KNOWN
-  }
-
-  // Otherwise, payment pointer should be in the form `$example.com/hbergren`
-  return HTTPS + paymentPointer.substring(1)
+  // Otherwise, PayId should be in the form `alice$example.com`
+  return HTTPS + payId.substring(1)
 }
 
 /**
- * Converts a Payment Pointer from `https://...` representation to `$...` representation
+ * Converts a PayID from `https://...` representation to `user$...` representation
  *
- * @param url The url to convert to a payment pointer.
+ * @param url The url to convert to a PayId.
  *
- * @returns A payment pointer in the $ format.
+ * @returns A PayID in the $ format.
  */
-export function urlToPaymentPointer(url: string): string {
+export function urlToPayId(url: string): string {
   // TODO:(hbergren) More validation or type-guards?
   if (!url.startsWith(HTTPS)) {
-    throw new Error('Bad input. Payment pointer URLs must be HTTPS.')
+    throw new Error('Bad input. PayID URLs must be HTTPS.')
   }
 
   if (!isASCII(url)) {
-    throw new Error('Bad input. Payment pointers must be ASCII.')
-  }
-
-  // If the URL is of the form `https://{url}/.well-known/pay`, return `${url}`
-
-  if (url.endsWith(WELL_KNOWN)) {
-    return `$${url.slice(HTTPS.length, -WELL_KNOWN.length)}`
+    throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
   // Otherwise, just replace the https:// string with the $
