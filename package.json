@@ -8,6 +8,7 @@
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
     "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
+    "lintNoFix": "eslint . --ext .ts",
     "lint": "eslint . --ext .ts --fix",
     "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
     "build": "rm -rf build && tsc --project . && npm run copySQL",
