@@ -43,14 +43,32 @@ export default async function getPaymentInfo(
     return handleHttpError(400, err.message, res, err)
   }
 
+  // This overload isn't mentioned in the express documentation, but if there are no
+  // args provided, an array of types sorted by preference is returned
+  // https://github.com/jshttp/accepts/blob/master/index.js#L96
+  const acceptHeaderTypes = req.accepts()
+
+  if (!acceptHeaderTypes.length) {
+    return handleHttpError(
+      400,
+      `Missing Accept header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
+      Examples:
+      - 'Accept: application/xrpl-mainnet+json'
+      - 'Accept: application/btc-testnet+json'
+      - 'Accept: application/ach+json'
+      `,
+      res,
+    )
+  }
+
+  // TODO:(tkalaw) Make this work with multiple types
+  const headerType = acceptHeaderTypes[0]
   // TODO:(hbergren) Refactor this parsing to a static method or even a utils class.
   // If you do that, then you can easily unit test this bit of logic. You can then change out the implementation of the method easily since it will be encapsulated.
   const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/
-  const validatedAcceptHeader = ACCEPT_HEADER_REGEX.exec(
-    req.get('Accept') || '',
-  )
+  const validatedAcceptHeader = ACCEPT_HEADER_REGEX.exec(headerType)
 
-  if (!validatedAcceptHeader) {
+  if (!validatedAcceptHeader || acceptHeaderTypes.length > 1) {
     return handleHttpError(
       400,
       `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
