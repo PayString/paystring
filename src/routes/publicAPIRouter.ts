@@ -4,7 +4,7 @@ import receiveComplianceData from '../middlewares/compliance'
 import getInvoice, { parseInvoicePath } from '../middlewares/invoices'
 import getPaymentInfo from '../middlewares/payIds'
 import receiveReceipt from '../middlewares/receipts'
-import sendSuccess from '../middlewares/shared'
+import sendSuccess from '../middlewares/sendSuccess'
 
 const publicAPIRouter = express.Router()
 

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getPaymentInfoFromDatabase from '../services/payIds'
+import getPaymentInfoFromDatabase from '../data-access/payIds'
 import { urlToPayId } from '../services/utils'
 import {
   PaymentInformation,

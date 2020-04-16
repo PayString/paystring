@@ -5,7 +5,7 @@ import {
   insertUser,
   replaceUser,
   removeUser,
-} from '../services/users'
+} from '../data-access/users'
 
 import handleHttpError from './errors'
 
