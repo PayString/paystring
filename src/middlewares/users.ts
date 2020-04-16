@@ -85,7 +85,7 @@ export async function postUser(
     // This probably means error handling should be done in the data access layer
     if (
       err.message.includes(
-        'violates unique constraint "account_payment_pointer_key"',
+        'violates unique constraint "account_pay_id_key"',
       )
     ) {
       return handleHttpError(
@@ -152,7 +152,7 @@ export async function putUser(
     // This probably means error handling should be done in the data access layer
     if (
       err.message.includes(
-        'violates unique constraint "account_payment_pointer_key"',
+        'violates unique constraint "account_pay_id_key"',
       )
     ) {
       return handleHttpError(

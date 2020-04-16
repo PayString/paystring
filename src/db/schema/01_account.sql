@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS account (
 	id uuid PRIMARY KEY DEFAULT(gen_random_uuid()),
-	payment_pointer varchar(200) UNIQUE NOT NULL,
+	pay_id varchar(200) UNIQUE NOT NULL,
 	organization varchar(50) NOT NULL,
 
 	-- AUDIT COLUMNS
@@ -11,13 +11,14 @@ CREATE TABLE IF NOT EXISTS account (
 	updated_at timestamp with time zone NOT NULL DEFAULT(CURRENT_TIMESTAMP),
 
 	-- CONSTRAINTS
-	CONSTRAINT payment_pointer_length_nonzero CHECK(length(payment_pointer) > 0),
+	CONSTRAINT pay_id_length_nonzero CHECK(length(pay_id) > 0),
 	CONSTRAINT organization_length_nonzero CHECK(length(organization) > 0),
 
-	-- This is a black magic payment pointer regex from https://mathiasbynens.be/demo/url-regex
+	-- This is a black magic PayID regex from https://mathiasbynens.be/demo/url-regex
 	-- It is an adaptation of the 'stephenhay' implementation, which was the shortest URL regex I could find.
 	-- Also, that implementation had no false negatives, which is important, as we never want to prevent a valid URL from being used.
 	--
-	-- This regex requires payment pointers of the form `$[subdomain.]example.com[/path]`
-	CONSTRAINT payment_pointer_valid_url CHECK(payment_pointer ~* '^(?:\$)[^\s/$.?#].+\.[^\s]+$')
+	-- This regex requires PayIDs of the form `user$[subdomain.]example.com[/path]`
+      -- TODO(aking): update this to reflect the new format
+	CONSTRAINT pay_id_valid_url CHECK(pay_id ~* '^(?:\$)[^\s/$.?#].+\.[^\s]+$')
 );

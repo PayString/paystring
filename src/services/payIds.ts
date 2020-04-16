@@ -2,29 +2,29 @@ import knex from '../db/knex'
 import { Address } from '../types/database'
 
 /**
- * Retrieve the payment information for a given payment pointer.
+ * Retrieve the payment information for a given PayID.
  *
- * @param paymentPointer The Payment Pointer to retrieve payment information for.
+ * @param payId The PayID to retrieve payment information for.
  * @param paymentNetwork The payment network used to filter addresses (XRPL, BTC, ACH)
  * @param environment The environment used to filter addresses (MAINNET, TESTNET, DEVNET)
  *
- * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that payment pointer.
+ * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that PayID.
  */
 export default async function getPaymentInfoFromDatabase(
   // TODO:(hbergren) refactor the call signature to take an object rather than 3 params?
-  // TODO:(hbergren) Type payment pointer better? `https://...?`
-  paymentPointer: string,
+  // TODO:(hbergren) Type PayID better? `https://...?`
+  payId: string,
   paymentNetwork: string,
   environment: string,
 ): Promise<
   Pick<Address, 'payment_network' | 'environment' | 'details'> | undefined
 > {
-  // Get the details from the database, given our paymentPointer, paymentNetwork, and environment
+  // Get the details from the database, given our payId, paymentNetwork, and environment
   const paymentInformation = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin('account', 'address.account_id', 'account.id')
-    .where('account.payment_pointer', paymentPointer)
+    .where('account.pay_id', payId)
     .andWhere('address.payment_network', paymentNetwork)
     .andWhere((builder) => {
       if (environment) {

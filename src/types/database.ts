@@ -5,7 +5,7 @@ import { CryptoAddressDetails, AchAddressDetails } from './publicAPI'
  */
 export interface Account {
   readonly id: string
-  payment_pointer: string
+  pay_id: string
   readonly organization: string
 
   readonly created_at: Date
