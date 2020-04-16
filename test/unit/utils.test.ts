@@ -2,17 +2,13 @@ import { assert } from 'chai'
 
 import 'mocha'
 
-import {
-  payIdToUrl,
-  urlToPayId,
-} from '../../src/services/utils'
+import { payIdToUrl, urlToPayId } from '../../src/services/utils'
 
 describe('payIdToUrl', function (): void {
   it('throws an error on inputs that clearly are not payment pointers', function (): void {
     // GIVEN a badly formed payment pointer (no leading $)
     const paymentPointer = 'hansbergren.example.com'
-    const expectedErrorMessage =
-      'Bad input. PayIDs must include a "$"'
+    const expectedErrorMessage = 'Bad input. PayIDs must include a "$"'
 
     // WHEN we attempt converting it to a URL
     const badConversion = (): string => payIdToUrl(paymentPointer)
@@ -63,8 +59,7 @@ describe('urlToPayId', function (): void {
   it('throws an error on inputs that clearly are not payment pointer URLs', function (): void {
     // GIVEN a badly formed payment pointer URL (no leading https://)
     const url = 'http://hansbergren.example.com'
-    const expectedErrorMessage =
-      'Bad input. PayID URLs must be HTTPS.'
+    const expectedErrorMessage = 'Bad input. PayID URLs must be HTTPS.'
 
     // WHEN we attempt converting it to a payment pointer
     const badConversion = (): string => urlToPayId(url)

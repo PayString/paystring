@@ -84,9 +84,7 @@ export async function postUser(
     // TODO(hbergren): This leaks database stuff into this file
     // This probably means error handling should be done in the data access layer
     if (
-      err.message.includes(
-        'violates unique constraint "account_pay_id_key"',
-      )
+      err.message.includes('violates unique constraint "account_pay_id_key"')
     ) {
       return handleHttpError(
         409,
@@ -151,9 +149,7 @@ export async function putUser(
     // TODO(hbergren): This leaks database stuff into this file
     // This probably means error handling should be done in the data access layer
     if (
-      err.message.includes(
-        'violates unique constraint "account_pay_id_key"',
-      )
+      err.message.includes('violates unique constraint "account_pay_id_key"')
     ) {
       return handleHttpError(
         409,
