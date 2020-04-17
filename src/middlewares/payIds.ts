@@ -23,9 +23,6 @@ export default async function getPaymentInfo(
   req: Request,
   res: Response,
   next: NextFunction,
-  // TODO:(hbergren) Why is this passed in? Do we use this parameter anywhere?
-  // Or is this just us doing Dependency Injection?
-  getPaymentInfoFromPayId = getPaymentInfoFromDatabase,
 ): Promise<void> {
   /**
    * NOTE: if you plan to expose your PayID with a port number, you
@@ -90,7 +87,7 @@ export default async function getPaymentInfo(
 
   // TODO: If Accept is just application/json, just return all addresses, for all environments?
   // Get the paymentInformation from the database
-  const paymentInformation = await getPaymentInfoFromPayId(
+  const paymentInformation = await getPaymentInfoFromDatabase(
     payId,
     paymentNetwork,
     environment,
