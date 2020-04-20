@@ -37,7 +37,7 @@ export default async function getPaymentInfoFromDatabase(
       (
         rows: Pick<Address, 'payment_network' | 'environment' | 'details'>[],
       ) => {
-        // TODO(hbergren): More than one row possible?
+        // TODO(hbergren): More than one row possible??
         // Throw error if that happens?
         return rows[0]
       },
