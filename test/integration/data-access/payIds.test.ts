@@ -7,7 +7,7 @@ import knex from '../../../src/db/knex'
 import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
 import structuredClone from '../e2e/helpers'
 
-describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
+describe('Data Access - getPaymentInfoFromDatabase()', function (): void {
   // Seed the database for our tests.
   before(async function () {
     const testConfig = structuredClone(config)
@@ -15,11 +15,11 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
     await syncDatabaseSchema(testConfig.database)
   })
 
-  it('Gets payment information for a known payment pointer', async function () {
-    // GIVEN a payment pointer / payment network / environment tuple known to exist in the database
+  it('Gets payment information for a known PayID', async function () {
+    // GIVEN a PayID / payment network / environment tuple known to exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
-      '$xpring.money/hansbergren',
+      'alice$xpring.money',
       'XRPL',
       'TESTNET',
     )
@@ -35,11 +35,11 @@ describe('Data Access - getPaymentInfoFromPaymentPointer()', function (): void {
     assert.deepEqual(paymentInfo, expectedPaymentInfo)
   })
 
-  it('Returns undefined for an unknown payment pointer', async function () {
-    // GIVEN a payment pointer / payment network / environment tuple known to not exist in the database
+  it('Returns undefined for an unknown PayID', async function () {
+    // GIVEN a PayID / payment network / environment tuple known to not exist in the database
     // WHEN we attempt to retrieve payment information for that tuple
     const paymentInfo = await getPaymentInfoFromDatabase(
-      '$xpring.io/johndoe',
+      'johndoe$xpring.io',
       'XRPL',
       'TESTNET',
     )

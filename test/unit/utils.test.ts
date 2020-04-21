@@ -5,50 +5,77 @@ import 'mocha'
 import { payIdToUrl, urlToPayId } from '../../src/services/utils'
 
 describe('payIdToUrl', function (): void {
-  it('throws an error on inputs that clearly are not payment pointers', function (): void {
-    // GIVEN a badly formed payment pointer (no leading $)
-    const paymentPointer = 'hansbergren.example.com'
+  it('throws an error on inputs that clearly are not PayIDs', function (): void {
+    // GIVEN a badly formed PayID (no $)
+    const payId = 'alice.example.com'
     const expectedErrorMessage = 'Bad input. PayIDs must include a "$"'
 
     // WHEN we attempt converting it to a URL
-    const badConversion = (): string => payIdToUrl(paymentPointer)
+    const badConversion = (): string => payIdToUrl(payId)
+
+    // THEN we get our expected error
+    assert.throws(badConversion, expectedErrorMessage)
+  })
+
+  it('throws an error on a PayID without a user', function (): void {
+    // GIVEN a PayID without a user
+    const payId = '$domain.com'
+    const expectedErrorMessage =
+      'Bad input. Missing a user in the format [user]$[domain.com(/path)].'
+
+    // WHEN we attempt to convert it into a URL
+    const badConversion = (): string => payIdToUrl(payId)
+
+    // THEN we get our expected error
+    assert.throws(badConversion, expectedErrorMessage)
+  })
+
+  it('throws an error on a PayID without a domain', function (): void {
+    // GIVEN a PayID without a user
+    const payId = 'user$'
+    const expectedErrorMessage =
+      'Bad input. Missing a domain in the format [user]$[domain.com(/path)].'
+
+    // WHEN we attempt to convert it into a URL
+    const badConversion = (): string => payIdToUrl(payId)
 
     // THEN we get our expected error
     assert.throws(badConversion, expectedErrorMessage)
   })
 
   it('throws an error on inputs that are not ASCII', function (): void {
-    // GIVEN a badly formed payment pointer (non-ASCII)
+    // GIVEN a badly formed PayID (non-ASCII)
     // Note that this is a real TLD that exists
-    const paymentPointer = '$hansbergren.example.संगठन'
+    const payId = '$alice.example.संगठन'
     const expectedErrorMessage = 'Bad input. PayIDs must be ASCII.'
 
     // WHEN we attempt converting it to a URL
-    const badConversion = (): string => payIdToUrl(paymentPointer)
+    const badConversion = (): string => payIdToUrl(payId)
 
     // THEN we get our expected error
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('handles a subdomained payment pointer', function (): void {
-    // GIVEN a payment pointer with a subdomain
-    const paymentPointer = '$payid.example.com/alice'
-    const expectedUrl = 'https://payid.example.com/alice'
+  it('throws an error on PayID with multiple $', function (): void {
+    // GIVEN a badly formed PayID (multiple $)
+    const payId = 'alice$bob$example.com'
+    const expectedErrorMessage = 'Bad input. PayIDs must include only one $.'
 
-    // WHEN we convert it to a URL
-    const actualUrl = payIdToUrl(paymentPointer)
+    // WHEN we attempt converting it to a URL
+    const badConversion = (): string => payIdToUrl(payId)
 
-    // THEN we get our expected URL
-    assert.strictEqual(actualUrl, expectedUrl)
+    // THEN we get our expected error
+    assert.throws(badConversion, expectedErrorMessage)
   })
+  // THEN we get our expected error
 
-  it('handles a payment pointer with a path', function (): void {
-    // GIVEN a payment pointer with a path
-    const paymentPointer = '$example.com/hansbergren'
-    const expectedUrl = 'https://example.com/hansbergren'
+  it('handles a PayID with a path', function (): void {
+    // GIVEN a PayID with a path
+    const payId = 'alice$example.com/payid/users'
+    const expectedUrl = 'https://example.com/payid/users/alice'
 
     // WHEN we convert it to a URL
-    const actualUrl = payIdToUrl(paymentPointer)
+    const actualUrl = payIdToUrl(payId)
 
     // THEN we get our expected URL
     assert.strictEqual(actualUrl, expectedUrl)
@@ -56,12 +83,12 @@ describe('payIdToUrl', function (): void {
 })
 
 describe('urlToPayId', function (): void {
-  it('throws an error on inputs that clearly are not payment pointer URLs', function (): void {
-    // GIVEN a badly formed payment pointer URL (no leading https://)
+  it('throws an error on inputs that clearly are not PayID URLs', function (): void {
+    // GIVEN a badly formed PayID URL (no leading https://)
     const url = 'http://hansbergren.example.com'
     const expectedErrorMessage = 'Bad input. PayID URLs must be HTTPS.'
 
-    // WHEN we attempt converting it to a payment pointer
+    // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
 
     // THEN we get our expected error
@@ -69,7 +96,7 @@ describe('urlToPayId', function (): void {
   })
 
   it('throws an error on inputs that are not ASCII', function (): void {
-    // GIVEN a badly formed payment pointer URL (non-ASCII)
+    // GIVEN a badly formed PayID URL (non-ASCII)
     // Note that this is a real TLD that exists
     const url = 'https://hansbergren.example.संगठन'
     const expectedErrorMessage = 'Bad input. PayIDs must be ASCII.'
@@ -81,15 +108,15 @@ describe('urlToPayId', function (): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('handles a payment pointer URL with a path', function (): void {
-    // GIVEN a payment pointer URL with a subdomain
-    const url = 'https://example.com/hansbergren'
-    const expectedPaymentPointer = '$example.com/hansbergren'
+  it('handles a PayID URL with a subdomain', function (): void {
+    // GIVEN a PayID URL with a subdomain
+    const url = 'https://payid.example.com/alice'
+    const expectedPayId = 'alice$payid.example.com'
 
     // WHEN we convert it to a URL
-    const actualPaymentPointer = urlToPayId(url)
+    const actualPayId = urlToPayId(url)
 
-    assert.strictEqual(actualPaymentPointer, expectedPaymentPointer)
+    assert.strictEqual(actualPayId, expectedPayId)
     // THEN we get our expected URL
   })
 })

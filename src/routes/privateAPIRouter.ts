@@ -7,7 +7,7 @@ const privateAPIRouter = express.Router()
 
 /**
  * routes for the private API so that authorized parties can
- * post payment pointer mappings to the PayID DB
+ * post PayID mappings to the PayID DB
  */
 privateAPIRouter
   .get('/*', getUser, sendSuccess)

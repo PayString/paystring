@@ -40,9 +40,9 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     app = await appSetup()
   })
 
-  it('Returns the correct MAINNET address for a known payment pointer', function (done): void {
-    // GIVEN a payment pointer known to have an associated xrpl-mainnet address
-    const paymentPointer = '/hbergren'
+  it('Returns the correct MAINNET address for a known PayID', function (done): void {
+    // GIVEN a PayID known to have an associated xrpl-mainnet address
+    const payId = '/alice'
     const acceptHeader = 'application/xrpl-mainnet+json'
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
@@ -53,19 +53,19 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
     request(app.publicAPIExpress)
-      .get(paymentPointer)
+      .get(payId)
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
-      // AND we get back the XRP address associated with that payment pointer for xrpl-mainnet.
+      // AND we get back the XRP address associated with that PayID for xrpl-mainnet.
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns the correct TESTNET address for a known payment pointer', function (done): void {
-    // GIVEN a payment pointer known to have an associated xrpl-testnet address
-    const paymentPointer = '/hbergren'
+  it('Returns the correct TESTNET address for a known PayID', function (done): void {
+    // GIVEN a PayID known to have an associated xrpl-testnet address
+    const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
@@ -76,19 +76,19 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicAPIExpress)
-      .get(paymentPointer)
+      .get(payId)
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
-      // AND we get back the XRP address associated with that payment pointer for xrpl-testnet.
+      // AND we get back the XRP address associated with that PayID for xrpl-testnet.
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns the correct address for a known payment pointer and a non-XRPL header', function (done): void {
-    // GIVEN a payment pointer known to have an associated btc-testnet address
-    const paymentPointer = '/hbergren'
+  it('Returns the correct address for a known PayID and a non-XRPL header', function (done): void {
+    // GIVEN a PayID known to have an associated btc-testnet address
+    const payId = '/alice'
     const acceptHeader = 'application/btc-testnet+json'
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
@@ -99,19 +99,19 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
     request(app.publicAPIExpress)
-      .get(paymentPointer)
+      .get(payId)
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
-      // AND we get back the BTC address associated with that payment pointer for btc-testnet.
+      // AND we get back the BTC address associated with that PayID for btc-testnet.
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns the correct address for a known payment pointer and an ACH header (no environment)', function (done): void {
-    // GIVEN a payment pointer known to have an associated ACH address
-    const paymentPointer = '/hbergren'
+  it('Returns the correct address for a known PayID and an ACH header (no environment)', function (done): void {
+    // GIVEN a PayID known to have an associated ACH address
+    const payId = '/alice'
     const acceptHeader = 'application/ach+json'
     const expectedResponse = {
       addressDetailType: 'AchAddressDetails',
@@ -123,50 +123,50 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
     request(app.publicAPIExpress)
-      .get(paymentPointer)
+      .get(payId)
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
-      // AND we get back the ACH account information associated with that payment pointer for ACH.
+      // AND we get back the ACH account information associated with that PayID for ACH.
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns a 404 with the correct error response object for an unknown payment pointer', function (done): void {
-    // GIVEN a payment pointer known to not exist in the database
-    const paymentPointer = '/johndoe'
+  it('Returns a 404 with the correct error response object for an unknown PayID', function (done): void {
+    // GIVEN a PayID known to not exist in the database
+    const payId = '/johndoe'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
       message:
-        'Payment information for $127.0.0.1/johndoe in XRPL on TESTNET could not be found.',
+        'Payment information for johndoe$127.0.0.1 in XRPL on TESTNET could not be found.',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicAPIExpress)
-      .get(paymentPointer)
+      .get(payId)
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/)
       // THEN we get back a 404 with the expected error response.
       .expect(404, expectedErrorResponse, done)
   })
 
-  it('Returns a 404 for an payment pointer without the relevant associated address', function (done): void {
-    // GIVEN a known payment pointer that exists but does not have an associated devnet XRP address
-    const paymentPointer = '/hbergren'
+  it('Returns a 404 for an PayID without the relevant associated address', function (done): void {
+    // GIVEN a known PayID that exists but does not have an associated devnet XRP address
+    const payId = '/alice'
     const acceptHeader = 'application/xrpl-devnet+json'
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
       message:
-        'Payment information for $127.0.0.1/hbergren in XRPL on DEVNET could not be found.',
+        'Payment information for alice$127.0.0.1 in XRPL on DEVNET could not be found.',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-devnet
     request(app.publicAPIExpress)
-      .get(paymentPointer)
+      .get(payId)
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/)
       // THEN we get back a 404 with the expected error response.
@@ -174,8 +174,8 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
   })
 
   it('Returns a mock invoice on GET /invoice', function (done): void {
-    // GIVEN a payment pointer known to have a testnet address
-    const paymentPointer = '/hbergren'
+    // GIVEN a PayID known to have a testnet address
+    const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
 
     const TIME_TO_EXPIRY = 60 * 60 * 1000
@@ -187,7 +187,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
         addressDetails: {
           address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
         },
-        payId: '$127.0.0.1/hbergren',
+        payId: 'alice$127.0.0.1',
       },
       complianceRequirements: [ComplianceType.TravelRule],
       complianceHashes: [],
@@ -196,7 +196,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice
     request(app.publicAPIExpress)
-      .get(`${paymentPointer}/invoice?nonce=123`)
+      .get(`${payId}/invoice?nonce=123`)
       .set('Accept', acceptHeader)
       // THEN we get back a 200 - OK with the invoice
       .expect(isExpectedInvoice(expectedResponse))
@@ -205,8 +205,8 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
   // TODO(dino): implement this to not use mock data
   it('Returns 400 on request to GET /invoice without a nonce', function (done): void {
-    // GIVEN a payment pointer known to have a testnet address
-    const paymentPointer = '/hbergren'
+    // GIVEN a PayID known to have a testnet address
+    const payId = '/hbergren'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedResponse = {
       statusCode: 400,
@@ -216,7 +216,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice
     request(app.publicAPIExpress)
-      .get(`${paymentPointer}/invoice`)
+      .get(`${payId}/invoice`)
       .set('Accept', acceptHeader)
       // THEN we get back a 400 - Bad Request with the invoice
       .expect(400, expectedResponse, done)
@@ -224,8 +224,8 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
   // TODO(dino): implement this to not use mock data
   it('Returns an updated mock invoice on POST /invoice', function (done): void {
-    // GIVEN a payment pointer known to have a testnet address
-    const paymentPointer = '/hbergren'
+    // GIVEN a PayID known to have a testnet address
+    const payId = '/alice'
     const expectedResponse = wrapMessage(
       mockInvoiceWithComplianceHashes,
       MessageType.Invoice,
@@ -233,7 +233,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice
     request(app.publicAPIExpress)
-      .post(`${paymentPointer}/invoice`)
+      .post(`${payId}/invoice`)
       .send(wrapMessage(mockComplianceData, MessageType.Compliance))
       .expect('Content-Type', /json/)
       // THEN we get back the invoice

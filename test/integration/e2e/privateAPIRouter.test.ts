@@ -14,10 +14,10 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
   // TODO:(hbergren) beforeEach seed the database. That way we always start with a clean slate, and tests aren't interdependent.
 
   it('Returns a 200 and correct information for a user known to exist', function (done): void {
-    // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const paymentPointer = '$xpring.money/hansbergren'
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
     const expectedResponse = {
-      pay_id: '$xpring.money/hansbergren',
+      pay_id: 'alice$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -29,27 +29,27 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
       ],
     }
 
-    // WHEN we make a GET request to /v1/users/ with that payment pointer as our user
+    // WHEN we make a GET request to /v1/users/ with that PayID as our user
     request(app.privateAPIExpress)
-      .get(`/v1/users/${paymentPointer}`)
+      .get(`/v1/users/${payId}`)
       .expect('Content-Type', /json/)
       // THEN We expect back a 200 - OK, with the account information
       .expect(200, expectedResponse, done)
   })
 
-  it('Returns a 404 for an unknown payment pointer', function (done): void {
-    // GIVEN a payment pointer known to not exist on the PayID service
-    const paymentPointer = '$xpring.money/johndoe'
+  it('Returns a 404 for an unknown PayID', function (done): void {
+    // GIVEN a PayID known to not exist on the PayID service
+    const payId = 'johndoe$xpring.money'
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
       message:
-        'No information could be found for the PayID $xpring.money/johndoe.',
+        'No information could be found for the PayID johndoe$xpring.money.',
     }
 
-    // WHEN we make a GET request to /v1/users/ with that payment pointer as our user
+    // WHEN we make a GET request to /v1/users/ with that PayID as our user
     request(app.privateAPIExpress)
-      .get(`/v1/users/${paymentPointer}`)
+      .get(`/v1/users/${payId}`)
       .expect('Content-Type', /json/)
       // THEN We expect back a 404 - Not Found, with the expected error response object
       .expect(404, expectedErrorResponse, done)
@@ -66,9 +66,9 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   })
 
   it('Returns a 201 when creating a new user', function (done): void {
-    // GIVEN a user with a payment pointer known to not exist on the PayID service
+    // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
-      pay_id: '$xpring.money/johndoe',
+      pay_id: 'johndoe$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -99,9 +99,9 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   })
 
   it('Returns a 201 when creating a new user with an address without an environment (ACH)', function (done): void {
-    // GIVEN a user with a payment pointer known to not exist on the PayID service
+    // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
-      pay_id: '$xpring.money/janedoe',
+      pay_id: 'janedoe$xpring.money',
       addresses: [
         {
           payment_network: 'ACH',
@@ -125,9 +125,9 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   })
 
   it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
-    // GIVEN a user with a payment pointer known already on the PayID service
+    // GIVEN a user with a PayID known already on the PayID service
     const userInformation = {
-      pay_id: '$xpring.money/hansbergren',
+      pay_id: 'alice$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -159,10 +159,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
   })
 
   it('Returns a 200 and updated user payload when updating an address', function (done): void {
-    // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const payId = '$xpring.money/hansbergren'
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
     const updatedInformation = {
-      pay_id: '$xpring.money/hansbergren',
+      pay_id: 'alice$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -183,11 +183,11 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .expect(200, updatedInformation, done)
   })
 
-  it('Returns a 200 and updated user payload when updating a payment pointer', function (done): void {
-    // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const payId = '$xpring.money/hansbergren'
+  it('Returns a 200 and updated user payload when updating a PayID', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
     const updatedInformation = {
-      pay_id: '$xpring.money/bergren1234',
+      pay_id: 'charlie$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -209,10 +209,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
   })
 
   it('Returns a 201 and inserted user payload for a private API PUT creating a new user', function (done): void {
-    // GIVEN a payment pointer known to not exist on the PayID service
-    const payId = '$xpring.money/johndoe'
+    // GIVEN a PayID known to not exist on the PayID service
+    const payId = 'notjohndoe$xpring.money'
     const insertedInformation = {
-      pay_id: '$xpring.money/johnjoejr',
+      pay_id: 'johndoe$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -230,23 +230,22 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .send(insertedInformation)
       .expect('Content-Type', /json/)
       // THEN we expect the Location header to be set to the path of the created user resource
-      // Note that the payment pointer inserted is that of the request body, not the URL path
+      // Note that the PayID inserted is that of the request body, not the URL path
       .expect('Location', `/v1/users/${insertedInformation.pay_id}`)
       // AND we expect back a 201 - CREATED, with the inserted user information
       .expect(201, insertedInformation, done)
   })
 
-  it('Returns a 400 - Bad Request with an error payload for a request with a malformed payment pointer', function (done): void {
-    // GIVEN a payment pointer known to be in a bad format (missing $) and an expected error response payload
-    const badPayId = 'xpring.money/hansbergren'
+  it('Returns a 400 - Bad Request with an error payload for a request with a malformed PayID', function (done): void {
+    // GIVEN a PayID known to be in a bad format (missing $) and an expected error response payload
+    const badPayId = 'alice.xpring.money'
     const errorResponsePayload = {
       error: 'Bad Request',
       message: 'Bad input. PayIDs must contain a "$"',
       statusCode: 400,
     }
-
     const updatedInformation = {
-      pay_id: '$xpring.money/bergren1234',
+      pay_id: 'alice$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -257,7 +256,6 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
         },
       ],
     }
-
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
       .put(`/v1/users/${badPayId}`)
@@ -267,12 +265,16 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .expect(400, errorResponsePayload, done)
   })
 
-  it('Returns a 409 - Conflict when attempting to update a user to a payment pointer that already exists', function (done): void {
-    // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const payId = '$xpring.money/hansbergren'
+  it('Returns a 400 - Bad Request with an error payload for a request with an existing PayID with multiple "$"', function (done): void {
+    // GIVEN a PayID known to be in a bad format (multiple $) and an expected error response payload
+    const badPayId = 'alice$bob$xpring.money'
+    const errorResponsePayload = {
+      error: 'Bad Request',
+      message: 'Bad input. PayIDs must contain only one "$"',
+      statusCode: 400,
+    }
     const updatedInformation = {
-      // AND a request to update that payment pointer to one known to already exist on the PayID Service
-      pay_id: '$xpring.money/hbergren',
+      pay_id: 'alice$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -283,7 +285,60 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
         },
       ],
     }
+    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    request(app.privateAPIExpress)
+      .put(`/v1/users/${badPayId}`)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/)
+      // THEN we expect back a 400 - Bad Request, with the expected error payload response
+      .expect(400, errorResponsePayload, done)
+  })
 
+  it('Returns a 400 - Bad Request with an error payload for a request to update a PayID to a new value containing multiple "$"', function (done): void {
+    // GIVEN a PayID known to be in a bad format (missing $) and an expected error response payload
+    const badPayId = 'alice$xpring.money'
+    const errorResponsePayload = {
+      error: 'Bad Request',
+      message: 'Bad input. PayIDs must contain only one "$"',
+      statusCode: 400,
+    }
+    const updatedInformation = {
+      pay_id: 'alice$bob$xpring.money',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }
+    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    request(app.privateAPIExpress)
+      .put(`/v1/users/${badPayId}`)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/)
+      // THEN we expect back a 400 - Bad Request, with the expected error payload response
+      .expect(400, errorResponsePayload, done)
+  })
+
+  it('Returns a 409 - Conflict when attempting to update a user to a PayID that already exists', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'charlie$xpring.money'
+    const updatedInformation = {
+      // AND a request to update that PayID to one known to already exist on the PayID Service
+      pay_id: 'bob$xpring.money',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
@@ -293,12 +348,12 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .expect(409, done)
   })
 
-  it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
-    // GIVEN a payment pointer known to not exist on the PayID service
-    const payId = '$xpring.money/janedoe'
+  it('Returns a 409 - Conflict when attempting to PUT a new user to a PayID that already exists', function (done): void {
+    // GIVEN a PayID known to not resolve to an account on the PayID service
+    const payId = 'janedoe$xpring.money'
     const updatedInformation = {
-      // AND a request to update that payment pointer to one known to already exist on the PayID Service
-      pay_id: '$xpring.money/hbergren',
+      // AND a request to update that PayID to one known to already exist on the PayID Service
+      pay_id: 'bob$xpring.money',
       addresses: [
         {
           payment_network: 'XRPL',
@@ -309,7 +364,6 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
         },
       ],
     }
-
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
@@ -330,34 +384,34 @@ describe('E2E - privateAPIRouter - DELETE API', function (): void {
   })
 
   it('Returns a 204 and no payload when deleting an account', function (done): void {
-    // GIVEN a payment pointer known to resolve to an account on the PayID service
-    const paymentPointer = '$xpring.money/hbergren'
-    const missingPaymentPointerError = {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
+    const missingPayIdError = {
       error: 'Not Found',
-      message: `No information could be found for the PayID ${paymentPointer}.`,
+      message: `No information could be found for the PayID ${payId}.`,
       statusCode: 404,
     }
 
-    // WHEN we make a DELETE request to /v1/users/ with the payment pointer to delete
+    // WHEN we make a DELETE request to /v1/users/ with the PayID to delete
     request(app.privateAPIExpress)
-      .delete(`/v1/users/${paymentPointer}`)
+      .delete(`/v1/users/${payId}`)
       // THEN we expect back a 204-No Content, indicating successful deletion
       .expect(204)
       .then((_res) => {
-        // AND subsequent GET requests to that payment pointer now return a 404
+        // AND subsequent GET requests to that PayID now return a 404
         request(app.privateAPIExpress)
-          .get(`/v1/users/${paymentPointer}`)
-          .expect(404, missingPaymentPointerError, done)
+          .get(`/v1/users/${payId}`)
+          .expect(404, missingPayIdError, done)
       })
   })
 
   it('Returns a 204  when attempting to delete an account that does not exist', function (done): void {
-    // GIVEN a payment pointer known to not exist on the PayID service
-    const paymentPointer = '$xpring.money/johndoe'
+    // GIVEN a PayID known to not exist on the PayID service
+    const payId = 'johndoe$xpring.money'
 
-    // WHEN we make a DELETE request to /v1/users/ with the payment pointer to delete
+    // WHEN we make a DELETE request to /v1/users/ with the PayID to delete
     request(app.privateAPIExpress)
-      .delete(`/v1/users/${paymentPointer}`)
+      .delete(`/v1/users/${payId}`)
       // THEN we expect back a 204 - No Content
       .expect(204, done)
   })

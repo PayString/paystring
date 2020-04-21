@@ -2,7 +2,7 @@
 const HTTPS = 'https://'
 
 /**
- * Converts a PayID from `$` representation to `https://` representation
+ * Converts a PayID from [user]$[domain]/[path] format representation to a URL representation
  *
  * @param payId The PayID to convert.
  *
@@ -21,8 +21,25 @@ export function payIdToUrl(payId: string): string {
     throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
-  // Otherwise, PayId should be in the form `alice$example.com`
-  return HTTPS + payId.substring(1)
+  if ((payId.match(/\$/g) || []).length !== 1) {
+    throw new Error('Bad input. PayIDs must include only one $.')
+  }
+
+  const [user, domain] = payId.split('$')
+
+  if (user === '') {
+    throw new Error(
+      'Bad input. Missing a user in the format [user]$[domain.com(/path)].',
+    )
+  }
+
+  if (domain === '') {
+    throw new Error(
+      'Bad input. Missing a domain in the format [user]$[domain.com(/path)].',
+    )
+  }
+
+  return `${HTTPS + domain}/${user}`
 }
 
 /**
@@ -42,8 +59,16 @@ export function urlToPayId(url: string): string {
     throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
-  // Otherwise, just replace the https:// string with the $
-  return `$${url.substring(HTTPS.length)}`
+  // remove https:// from URL
+  const removedProtocolUrl = url.substring(HTTPS.length)
+  // split URL into components so we can remove user from end
+  const urlComponents = removedProtocolUrl.split('/')
+  // last /path in URL becomes user
+  const user = urlComponents[urlComponents.length - 1]
+  // rest of URL is joined back together on '/' returning it to it's normal form
+  const urlWithoutUser = urlComponents.slice(0, -1).join('/')
+  // user is put first then '$' then rest of the URL
+  return `${user}$${urlWithoutUser}`
 }
 
 /*

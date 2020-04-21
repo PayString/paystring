@@ -34,7 +34,7 @@ export interface PaymentInformation {
 }
 
 /**
- * Invoice should always contain the payment pointer.
+ * Invoice should always contain the PayID.
  */
 export interface InvoicePaymentInformation extends PaymentInformation {
   payId: string

@@ -9,7 +9,7 @@ import sendSuccess from '../middlewares/sendSuccess'
 const publicAPIRouter = express.Router()
 
 /**
- * Routes for resolving payment pointers to addresses (and health check).
+ * Routes for resolving PayIDs to addresses (and health check).
  */
 publicAPIRouter
   // Health routes

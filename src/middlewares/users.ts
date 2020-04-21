@@ -19,10 +19,10 @@ export async function getUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  // TODO:(dino) Validate paymentPointer
+  // TODO:(dino) Validate PayID
   const payId = req.params[0]
 
-  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
   if (!payId) {
@@ -59,23 +59,19 @@ export async function getUser(
 
 // TODO:(hbergren) Handle both single user and array of new users
 // TODO:(hbergren) Any sort of validation? Validate XRP addresses have both X-Address & Classic/DestinationTag?
-// TODO:(hbergren) Any sort of validation on the payment pointer? Check the domain name to make sure it's owned by that organization?
+// TODO:(hbergren) Any sort of validation on the PayID? Check the domain name to make sure it's owned by that organization?
 // TODO:(hbergren) Use joi to validate the `req.body`. All required properties present, and match some sort of validation.
 export async function postUser(
   req: Request,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  // TODO:(hbergren) Any validation? Assert that the payment pointer is `https://` and of a certain form?
+  // TODO:(hbergren) Any validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database. Also look at validation in the conversion functions.
   const payId = req.body.pay_id
   if (!payId) {
-    return handleHttpError(
-      400,
-      'A `pay_id` must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
-      res,
-    )
+    return handleHttpError(400, 'A `pay_id` must be provided in the body.', res)
   }
 
   try {
@@ -102,7 +98,7 @@ export async function postUser(
     )
   }
 
-  // Set HTTP status and save the payment pointer to generate the Location header in later middleware
+  // Set HTTP status and save the PayID to generate the Location header in later middleware
   res.locals.status = 201 // Created
   res.locals.pay_id = payId
   return next()
@@ -118,13 +114,13 @@ export async function putUser(
   const payId = req.params[0]
   const newPayId = req?.body?.pay_id
   const addresses = req?.body?.addresses
-  // TODO:(hbergren) More validation? Assert that the payment pointer is `$` and of a certain form?
+  // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
   if (!payId || !newPayId) {
     return handleHttpError(
       400,
-      'A `payment_pointer` must be provided in the path. A well-formed API call would look like `GET /v1/users/$xpring.money/hbergren`.',
+      'A `pay_id` must be provided in the path. A well-formed API call would look like `PUT /v1/users/alice$xpring.money`.',
       res,
     )
   }
@@ -132,6 +128,18 @@ export async function putUser(
   // TODO:(dino) move this to validation
   if (!payId.includes('$') || !newPayId.includes('$')) {
     return handleHttpError(400, 'Bad input. PayIDs must contain a "$"', res)
+  }
+
+  // TODO:(dino) move this to validation
+  if (
+    (payId.match(/\$/g) || []).length !== 1 ||
+    (newPayId.match(/\$/g) || []).length !== 1
+  ) {
+    return handleHttpError(
+      400,
+      'Bad input. PayIDs must contain only one "$"',
+      res,
+    )
   }
 
   // TODO:(hbergren) Remove all these try/catches. This is ridiculous
@@ -153,7 +161,7 @@ export async function putUser(
     ) {
       return handleHttpError(
         409,
-        `There already exists a user with the payment pointer ${payId}`,
+        `There already exists a user with the PayID ${payId}`,
         res,
         err,
       )
@@ -161,13 +169,13 @@ export async function putUser(
 
     return handleHttpError(
       500,
-      `Error updating payment pointer for account ${req.query.pay_id}.`,
+      `Error updating PayID for account ${req.query.pay_id}.`,
       res,
       err,
     )
   }
 
-  // If the status code is 201 - Created, we need to set a Location header later with the payment pointer
+  // If the status code is 201 - Created, we need to set a Location header later with the PayID
   if (statusCode === 201) {
     res.locals.pay_id = newPayId
   }
@@ -189,7 +197,7 @@ export async function deleteUser(
   // TODO(hbergren): This absolutely needs to live in middleware
   const payId = req.params[0]
 
-  // TODO:(hbergren) More validation? Assert that the payment pointer is `https://` and of a certain form?
+  // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
   if (!payId) {
     return handleHttpError(
