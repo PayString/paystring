@@ -7,8 +7,8 @@ function run(): void {
     const app: App = new App()
     try {
       app.init(config)
-    } catch (e) {
-      logger.fatal(e)
+    } catch (err) {
+      logger.fatal(err)
       process.exit(1)
     }
   }

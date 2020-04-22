@@ -6,8 +6,7 @@ import { getUser, postUser, putUser, deleteUser } from '../middlewares/users'
 const privateAPIRouter = express.Router()
 
 /**
- * routes for the private API so that authorized parties can
- * post PayID mappings to the PayID DB
+ * Routes for the private API so that authorized parties can post PayID mappings to the PayID DB
  */
 privateAPIRouter
   .get('/*', getUser, sendSuccess)

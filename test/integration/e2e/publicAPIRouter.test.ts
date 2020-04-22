@@ -148,7 +148,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     request(app.publicAPIExpress)
       .get(payId)
       .set('Accept', acceptHeader)
-      .expect('Content-Type', /application\/json/)
+      .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
       .expect(404, expectedErrorResponse, done)
   })
@@ -168,7 +168,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     request(app.publicAPIExpress)
       .get(payId)
       .set('Accept', acceptHeader)
-      .expect('Content-Type', /application\/json/)
+      .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
       .expect(404, expectedErrorResponse, done)
   })
@@ -235,7 +235,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     request(app.publicAPIExpress)
       .post(`${payId}/invoice`)
       .send(wrapMessage(mockComplianceData, MessageType.Compliance))
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we get back the invoice
       .expect(200, expectedResponse, done)
   })

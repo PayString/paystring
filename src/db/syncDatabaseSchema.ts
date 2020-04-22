@@ -1,5 +1,7 @@
 /* eslint-disable no-await-in-loop */
 /* eslint-disable no-restricted-syntax */
+/* eslint-disable no-sync */
+
 import * as fs from 'fs'
 import * as path from 'path'
 
@@ -11,15 +13,18 @@ import logger from '../utils/logger'
 /**
  * Syncs the database schema with our database (optionally seeds with test values).
  *
- * @param databaseConfig Contains the database connection configuration, and some options for controlling behavior.
+ * @param databaseConfig - Contains the database connection configuration, and some options for controlling behavior.
  */
 export default async function syncDatabaseSchema(
   databaseConfig = config.database,
 ): Promise<void> {
   // Define the list of directories holding '*.sql' files, in the order we want to execute them
   const sqlDirectories = ['extensions', 'schema', 'functions', 'triggers']
+
   // Run the seed script if we are seeding our database
-  if (databaseConfig.options.seedDatabase) sqlDirectories.push('seed')
+  if (databaseConfig.options.seedDatabase) {
+    sqlDirectories.push('seed')
+  }
 
   // Loop through directories holding SQL files and execute them against the database
   for (const directory of sqlDirectories) {
@@ -42,7 +47,7 @@ export default async function syncDatabaseSchema(
 /**
  * Run the SQL file containing queries on the database.
  *
- * @param string A SQL file that we would like to execute against our database.
+ * @param string - A SQL file that we would like to execute against our database.
  */
 async function executeSQLFile(
   file: string,

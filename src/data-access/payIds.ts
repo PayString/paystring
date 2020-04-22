@@ -4,9 +4,9 @@ import { Address } from '../types/database'
 /**
  * Retrieve the payment information for a given PayID.
  *
- * @param payId The PayID to retrieve payment information for.
- * @param paymentNetwork The payment network used to filter addresses (XRPL, BTC, ACH)
- * @param environment The environment used to filter addresses (MAINNET, TESTNET, DEVNET)
+ * @param payId - The PayID to retrieve payment information for.
+ * @param paymentNetwork - The payment network used to filter addresses (XRPL, BTC, ACH)
+ * @param environment - The environment used to filter addresses (MAINNET, TESTNET, DEVNET)
  *
  * @returns A JSON object representing the payment information, or `undefined` if nothing could be found for that PayID.
  */

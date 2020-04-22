@@ -11,7 +11,7 @@ import { SignatureWrapper, Invoice } from '../../../src/types/publicAPI'
 /**
  * Deep clones an object *properly*.
  *
- * @param obj The object to be deep cloned.
+ * @param obj - The object to be deep cloned.
  */
 export default function structuredClone<T>(obj: T): T {
   return v8.deserialize(v8.serialize(obj))
@@ -38,17 +38,20 @@ export async function appSetup(): Promise<App> {
 /**
  * Shut down Express application & close database connections.
  *
- * @param app The Express app.
+ * @param app - The Express app.
  */
 export async function appCleanup(app?: App): Promise<void> {
-  if (app) app.close()
+  if (app) {
+    app.close()
+  }
+
   await knex.destroy()
 }
 
 /**
  * A custom helper to check if an Invoice is equivalent to our expected response (and thus has a valid expiration time).
  *
- * @param expectedResponse The expected invoice output (which contains an older expiration time)
+ * @param expectedResponse - The expected invoice output (which contains an older expiration time)
  * @returns
  */
 export function isExpectedInvoice(expectedResponse: SignatureWrapper) {

@@ -15,8 +15,8 @@ type AddressInformation = Pick<
 
 /**
  * Retrieve the addresses associated with a given users PayID.
- * @param payId The PayID (user) for which to retrieve addresses.
- * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
+ * @param payId - The PayID (user) for which to retrieve addresses.
+ * @param organization - The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns An array of the addresses associated with that PayID.
  */
@@ -38,9 +38,9 @@ export async function selectUser(
 
 /**
  * Inserts a new user/pay_id into the Account table on the PayID service.
- * @param payId The PayID to insert in the users table.
- * @param addresses The addresses for that PayID to insert into the database.
- * @param organization The organization with authorization to perform CRUD operations on this user on the PayID service.
+ * @param payId - The PayID to insert in the users table.
+ * @param addresses - The addresses for that PayID to insert into the database.
+ * @param organization - The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns The addresses inserted for this user
  */
@@ -77,9 +77,9 @@ export async function insertUser(
 
 /**
  * Update a PayID and addresses associated with that PayID for a given account ID.
- * @param oldPayId The old PayID.
- * @param newPayId The new PayID.
- * @param addresses The array of destination/address information to associate with this user.
+ * @param oldPayId - The old PayID.
+ * @param newPayId - The new PayID.
+ * @param addresses - The array of destination/address information to associate with this user.
  *
  * @returns The updated addresses for a given PayID.
  */
@@ -96,7 +96,9 @@ export async function replaceUser(
       .returning('id')
       .then(async (ids) => {
         const accountID = ids[0]
-        if (accountID === undefined) return null
+        if (accountID === undefined) {
+          return null
+        }
 
         // Delete existing addresses associated with that user
         await knex<Address>('address')
@@ -116,14 +118,16 @@ export async function replaceUser(
 
 /**
  * Deletes a user from the database. Addresses associated with that user should be removed by a cascading delete.
- * @param payId The PayID associated with the user to delete.
+ * @param payId - The PayID associated with the user to delete.
  */
 export async function removeUser(payId: string): Promise<void> {
   await knex<Account>('account')
     .delete()
     .where('pay_id', payId)
     .then((count) => {
-      if (count <= 1) return
+      if (count <= 1) {
+        return
+      }
 
       // If we deleted more than one user, all bets are off, because multiple users could have the same PayID.
       // This should be impossible thanks to our unique constraint,
@@ -145,8 +149,8 @@ interface DatabaseAddress extends AddressInformation {
 
 /**
  * Maps an array of AddressInformation objects into an array of DatabaseAddress objects, with an 'account_id'.
- * @param addresses An array of addresses with information we want to insert into the database.
- * @param accountID the account ID to add to all the addresses to allow inserting the addresses into the database.
+ * @param addresses - An array of addresses with information we want to insert into the database.
+ * @param accountID - the account ID to add to all the addresses to allow inserting the addresses into the database.
  *
  * @returns A new array of addresses, where each address has a new property 'account_id'.
  */
@@ -165,8 +169,8 @@ function addAccountIDToAddresses(
 
 /**
  * Given an array of address objects and a transaction, insert the addresses into the database.
- * @param addresses An array of DatabaseAddress objects to insert into the database.
- * @param transaction The transaction to wrap this statement with. Used to ensure that when we insert/update a user, we maintain consistent data.
+ * @param addresses - An array of DatabaseAddress objects to insert into the database.
+ * @param transaction - The transaction to wrap this statement with. Used to ensure that when we insert/update a user, we maintain consistent data.
  *
  * @returns An array of the inserted addresses.
  */

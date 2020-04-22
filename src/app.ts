@@ -1,24 +1,24 @@
 import { Server } from 'http'
 
+import * as express from 'express'
+
 import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
 import privateAPIRouter from './routes/privateAPIRouter'
 import publicAPIRouter from './routes/publicAPIRouter'
 import logger from './utils/logger'
 
-import Express = require('express')
-
 export default class App {
   // Exposed for testing purposes
-  public readonly publicAPIExpress: Express.Application
-  public readonly privateAPIExpress: Express.Application
+  public readonly publicAPIExpress: express.Application
+  public readonly privateAPIExpress: express.Application
 
   private publicAPIServer?: Server
   private privateAPIServer?: Server
 
   public constructor() {
-    this.publicAPIExpress = Express()
-    this.privateAPIExpress = Express()
+    this.publicAPIExpress = express()
+    this.privateAPIExpress = express()
   }
 
   public async init(initConfig = config): Promise<void> {
@@ -27,6 +27,11 @@ export default class App {
 
     this.publicAPIServer = this.launchPublicAPI(initConfig.app)
     this.privateAPIServer = this.launchPrivateAPI(initConfig.app)
+  }
+
+  public close(): void {
+    this.publicAPIServer?.close()
+    this.privateAPIServer?.close()
   }
 
   private launchPublicAPI(appConfig = config.app): Server {
@@ -43,10 +48,5 @@ export default class App {
     return this.privateAPIExpress.listen(appConfig.privateAPIPort, () =>
       logger.info(`Private API listening on ${appConfig.privateAPIPort}`),
     )
-  }
-
-  public close(): void {
-    this.publicAPIServer?.close()
-    this.privateAPIServer?.close()
   }
 }

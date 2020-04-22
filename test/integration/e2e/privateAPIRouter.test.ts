@@ -32,7 +32,7 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
     // WHEN we make a GET request to /v1/users/ with that PayID as our user
     request(app.privateAPIExpress)
       .get(`/v1/users/${payId}`)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN We expect back a 200 - OK, with the account information
       .expect(200, expectedResponse, done)
   })
@@ -50,7 +50,7 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
     // WHEN we make a GET request to /v1/users/ with that PayID as our user
     request(app.privateAPIExpress)
       .get(`/v1/users/${payId}`)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN We expect back a 404 - Not Found, with the expected error response object
       .expect(404, expectedErrorResponse, done)
   })
@@ -91,7 +91,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
     request(app.privateAPIExpress)
       .post(`/v1/users`)
       .send(userInformation)
-      .expect('Content-Type', /text\/plain/)
+      .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/v1/users/${userInformation.pay_id}`)
       // AND we expect back a 201 - CREATED
@@ -117,7 +117,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
     request(app.privateAPIExpress)
       .post(`/v1/users`)
       .send(userInformation)
-      .expect('Content-Type', /text\/plain/)
+      .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/v1/users/${userInformation.pay_id}`)
       // AND we expect back a 201 - CREATED
@@ -143,7 +143,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
     request(app.privateAPIExpress)
       .post(`/v1/users`)
       .send(userInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT
       .expect(409, done)
   })
@@ -178,7 +178,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
       .expect(200, updatedInformation, done)
   })
@@ -203,7 +203,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
       .expect(200, updatedInformation, done)
   })
@@ -228,7 +228,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(insertedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the PayID inserted is that of the request body, not the URL path
       .expect('Location', `/v1/users/${insertedInformation.pay_id}`)
@@ -260,7 +260,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${badPayId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(400, errorResponsePayload, done)
   })
@@ -289,7 +289,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${badPayId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(400, errorResponsePayload, done)
   })
@@ -318,7 +318,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${badPayId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(400, errorResponsePayload, done)
   })
@@ -343,7 +343,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT
       .expect(409, done)
   })
@@ -368,7 +368,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(updatedInformation)
-      .expect('Content-Type', /json/)
+      .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT
       .expect(409, done)
   })

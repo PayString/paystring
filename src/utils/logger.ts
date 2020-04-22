@@ -33,6 +33,7 @@ configure({
   appenders: {
     out: {
       type: 'stdout',
+
       // Pattern Format documentation: https://github.com/log4js-node/log4js-node/blob/master/docs/layouts.md#pattern-format
       layout: { type: 'pattern', pattern: '%[%-5p%] %m' },
     },
@@ -50,6 +51,7 @@ configure({
 })
 
 let logCategory = 'default'
+
 // If LOG_LEVEL = TRACE|ALL, use the logger that shows filenames and line numbers
 if ([LogLevel.TRACE, LogLevel.ALL].includes(LOG_LEVEL)) {
   logCategory = 'trace'

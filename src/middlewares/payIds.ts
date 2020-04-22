@@ -15,9 +15,9 @@ import handleHttpError from './errors'
  * Resolves inbound requests to a PayID to their
  * respective ledger addresses or other payment information required.
  *
- * @param req Contains PayID and payment network header
- * @param res Stores payment information to be returned to the client
- * @param next Passses req/res to next middleware
+ * @param req - Contains PayID and payment network header
+ * @param res - Stores payment information to be returned to the client
+ * @param next - Passes req/res to next middleware
  */
 export default async function getPaymentInfo(
   req: Request,
@@ -60,9 +60,10 @@ export default async function getPaymentInfo(
 
   // TODO:(tkalaw) Make this work with multiple types
   const headerType = acceptHeaderTypes[0]
+
   // TODO:(hbergren) Refactor this parsing to a static method or even a utils class.
   // If you do that, then you can easily unit test this bit of logic. You can then change out the implementation of the method easily since it will be encapsulated.
-  const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/
+  const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/u
   const validatedAcceptHeader = ACCEPT_HEADER_REGEX.exec(headerType)
 
   if (!validatedAcceptHeader || acceptHeaderTypes.length > 1) {
@@ -118,7 +119,7 @@ export default async function getPaymentInfo(
     }
   }
 
-  // store response information (or information to be used in other middlewares)
+  // Store response information (or information to be used in other middlewares)
   // TODO:(hbergren), come up with a less hacky way to pipe around data than global state.
   res.locals.payId = payId
   res.locals.paymentInformation = response

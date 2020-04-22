@@ -4,7 +4,7 @@ const HTTPS = 'https://'
 /**
  * Converts a PayID from [user]$[domain]/[path] format representation to a URL representation
  *
- * @param payId The PayID to convert.
+ * @param payId - The PayID to convert.
  *
  * @returns A PayID in the https format.
  */
@@ -21,7 +21,7 @@ export function payIdToUrl(payId: string): string {
     throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
-  if ((payId.match(/\$/g) || []).length !== 1) {
+  if ((payId.match(/\$/gu) || []).length !== 1) {
     throw new Error('Bad input. PayIDs must include only one $.')
   }
 
@@ -45,7 +45,7 @@ export function payIdToUrl(payId: string): string {
 /**
  * Converts a PayID from `https://...` representation to `user$...` representation
  *
- * @param url The url to convert to a PayId.
+ * @param url - The url to convert to a PayId.
  *
  * @returns A PayID in the $ format.
  */
@@ -59,15 +59,15 @@ export function urlToPayId(url: string): string {
     throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
-  // remove https:// from URL
+  // Remove https:// from URL
   const removedProtocolUrl = url.substring(HTTPS.length)
-  // split URL into components so we can remove user from end
+  // Split URL into components so we can remove user from end
   const urlComponents = removedProtocolUrl.split('/')
-  // last /path in URL becomes user
+  // Last /path in URL becomes user
   const user = urlComponents[urlComponents.length - 1]
-  // rest of URL is joined back together on '/' returning it to it's normal form
+  // Rest of URL is joined back together on '/' returning it to it's normal form
   const urlWithoutUser = urlComponents.slice(0, -1).join('/')
-  // user is put first then '$' then rest of the URL
+  // User is put first then '$' then rest of the URL
   return `${user}$${urlWithoutUser}`
 }
 
@@ -81,10 +81,10 @@ export function urlToPayId(url: string): string {
  * Shamelessly taken from:
  * https://stackoverflow.com/questions/14313183/javascript-regex-how-do-i-check-if-the-string-is-ascii-only
  *
- * @param input The input to check
+ * @param input - The input to check
  * @returns A boolean indicating the result.
  */
 function isASCII(input: string): boolean {
   // eslint-disable-next-line no-control-regex
-  return /^[\x00-\x7F]*$/.test(input)
+  return /^[\x00-\x7F]*$/u.test(input)
 }

@@ -23,8 +23,7 @@ export interface AchAddressDetails {
 }
 
 /**
- * Payment information included in an Invoice or by
- * itself (in the case of a GET request to the base path /)
+ * Payment information included in an Invoice or by itself (in the case of a GET request to the base path /)
  */
 export interface PaymentInformation {
   addressDetailType: AddressDetailType
@@ -41,8 +40,7 @@ export interface InvoicePaymentInformation extends PaymentInformation {
 }
 
 /**
- * Invoice included in a SignatureWrapper when a GET
- * request is made to the /invoice endpoint.
+ * Invoice included in a SignatureWrapper when a GET request is made to the /invoice endpoint.
  */
 export interface Invoice {
   nonce: string // numeric string
@@ -54,8 +52,7 @@ export interface Invoice {
 }
 
 /**
- * Hash of Compliance data (e.g. Travel Rule) to indicate the originating
- * institution that the Compliance data has been received.
+ * Hash of Compliance data (e.g. Travel Rule) to indicate the originating institution that the Compliance data has been received.
  */
 export interface ComplianceHash {
   type: ComplianceType
@@ -93,8 +90,7 @@ export enum ComplianceType {
 }
 
 /**
- * Compliance data included in a SignatureWrapper
- * when POSTing to the /invoice endpoint.
+ * Compliance data included in a SignatureWrapper when POSTing to the /invoice endpoint.
  */
 export interface Compliance {
   type: ComplianceType
@@ -102,8 +98,7 @@ export interface Compliance {
 }
 
 /**
- * A receipt included in a SignatureWrapper when
- * POSTing to the /receipt endpoint.
+ * A receipt included in a SignatureWrapper when POSTing to the /receipt endpoint.
  */
 export interface Receipt {
   invoiceHash: string

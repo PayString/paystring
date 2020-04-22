@@ -114,6 +114,7 @@ export async function putUser(
   const payId = req.params[0]
   const newPayId = req?.body?.pay_id
   const addresses = req?.body?.addresses
+
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
@@ -132,8 +133,8 @@ export async function putUser(
 
   // TODO:(dino) move this to validation
   if (
-    (payId.match(/\$/g) || []).length !== 1 ||
-    (newPayId.match(/\$/g) || []).length !== 1
+    (payId.match(/\$/gu) || []).length !== 1 ||
+    (newPayId.match(/\$/gu) || []).length !== 1
   ) {
     return handleHttpError(
       400,
