@@ -400,7 +400,7 @@ HOST: wallet.com
 
 The different header options are shown here, with example values.
 
-| Currency | Header | Response |
+| Currency | Header | Address payload |
 |:--------|:-------|:---------|
 | BTC     | application/btc+json   | { <br>address: '1BvBMSEYstWetAu4m4GFg7xJaNVN2'<br> }      |
 | XRP     | application/xrpl-mainnet+json   | { <br>address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'<br> } |
@@ -413,7 +413,7 @@ The different header options are shown here, with example values.
 
 This example demonstrates a payment to `alice$institution.com`.
 
-```
+```javascript
 const axios = require('axios')
 const btc = require('bitcoinjs-lib')
 
@@ -440,7 +440,7 @@ In this example, you generate a seed-based wallet using the Xpring SDK. See [Xpr
 const { Wallet } = require("xpring-js");
 
 const wallet = Wallet.generateWalletFromSeed("snRiAJGe3zRwiYDBm1M");
-const tx = await wallet.send(0.63, '$alice.institution.com');
+const tx = await wallet.send(0.63, 'alice$institution.com');
 ```
 
 ## Query users and manage payments with the PayID Public API
@@ -449,10 +449,10 @@ The PayID Public API does not require authentication, as it is open to any user.
 
 ### API endpoint
 
-The PayID Public API treats a PayID address as the base endpoint for all of the following requests. Therefore, if you are requesting from `$wallet.com/alice` the following paths would be:
+The PayID Public API treats a PayID address as the base endpoint for all of the following requests. Therefore, if you are requesting from `alice$wallet.com` the following paths would be:
 
 ```
-GET https://wallet.com/alice/
+GET alice$wallet.com
 ```
 
 Substitute the appropriate URL for your PayID address.
@@ -616,5 +616,42 @@ application/ach+json</td>
 <td>
 application/spsp4+json </td>
 <td>Returns destination address and shared secret</td>
+</tr>
+</table>
+
+
+#### Headers for BTC
+
+<table>
+<tr>
+<th>Accept header</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>application/btc-mainnet+json</td>
+<td>Returns mainnet address</td>
+</tr>
+<tr>
+<td>
+application/btc-testnet+json</td>
+<td>Returns testnet address</td>
+</tr>
+</table>
+
+
+#### Headers for ETH
+
+<table>
+<tr>
+<th>Accept header</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>application/eth-mainnet+json</td>
+<td>Returns mainnet address</td>
+</tr>
+<tr>
+<td>application/eth-testnet-name+json</td>
+<td>Returns testnet-name address. Ethernet has a number of different testnets. Refer to <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md">EIP 155</a>.</td>
 </tr>
 </table>
