@@ -31,7 +31,11 @@ export default function generateInvoice(
   // and maybe never for our reference implementation (currently no plans to include any requirements
   // other than travel rule), so maybe this should be deleted.
   // TODO(dino): figure out where this hardcoded value should live or if it should be in a database
+
+  // This is 1 hour in milliseconds
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const TIME_TO_EXPIRY = 60 * 60 * 1000
+
   const invoice: Invoice = {
     nonce,
     expirationTime: Date.now() + TIME_TO_EXPIRY,

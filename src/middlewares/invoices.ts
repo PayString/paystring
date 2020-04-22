@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 
 import generateInvoice from '../services/invoices'
 import { wrapMessage } from '../services/signatureWrapper'
+import HttpStatus from '../types/httpStatus'
 import { MessageType } from '../types/publicAPI'
 
 import handleHttpError from './errors'
@@ -20,7 +21,11 @@ export function parseInvoicePath(
 ): void {
   const pathToStrip = '/invoice'
   if (!req.query.nonce) {
-    return handleHttpError(400, 'Missing nonce query parameter.', res)
+    return handleHttpError(
+      HttpStatus.BadRequest,
+      'Missing nonce query parameter.',
+      res,
+    )
   }
   req.url = req.path.slice(0, req.path.length - pathToStrip.length)
 
@@ -42,7 +47,12 @@ export default function getInvoice(
       res.locals.complianceData,
     )
   } catch (err) {
-    return handleHttpError(500, 'Server could not generate invoice.', res, err)
+    return handleHttpError(
+      HttpStatus.InternalServerError,
+      'Server could not generate invoice.',
+      res,
+      err,
+    )
   }
   res.locals.response = wrapMessage(invoice, MessageType.Invoice)
   return next()

@@ -1,6 +1,7 @@
 import * as Boom from 'boom'
 import { Response } from 'express'
 
+import HttpStatus from '../types/httpStatus'
 import logger from '../utils/logger'
 
 export default function handleHttpError(
@@ -10,7 +11,7 @@ export default function handleHttpError(
   err?: Error,
 ): void {
   // Logging for our debugging purposes
-  if (errorCode >= 500) {
+  if (errorCode >= HttpStatus.InternalServerError) {
     logger.error(errorCode, ':', msg, err)
   } else {
     logger.warn(errorCode, ':', msg)
@@ -19,11 +20,11 @@ export default function handleHttpError(
   // Error code matching
   let error: Boom.Payload
   switch (errorCode) {
-    case 400:
+    case HttpStatus.BadRequest:
       error = Boom.badRequest(msg).output.payload
       break
 
-    case 404:
+    case HttpStatus.NotFound:
       error = Boom.notFound(msg).output.payload
       break
 

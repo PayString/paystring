@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 
 import getPaymentInfoFromDatabase from '../data-access/payIds'
 import { urlToPayId } from '../services/utils'
+import HttpStatus from '../types/httpStatus'
 import {
   PaymentInformation,
   AddressDetailType,
@@ -37,7 +38,7 @@ export default async function getPaymentInfo(
   try {
     payId = urlToPayId(payIdUrl)
   } catch (err) {
-    return handleHttpError(400, err.message, res, err)
+    return handleHttpError(HttpStatus.BadRequest, err.message, res, err)
   }
 
   // This overload isn't mentioned in the express documentation, but if there are no
@@ -47,7 +48,7 @@ export default async function getPaymentInfo(
 
   if (!acceptHeaderTypes.length) {
     return handleHttpError(
-      400,
+      HttpStatus.BadRequest,
       `Missing Accept header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
@@ -68,7 +69,7 @@ export default async function getPaymentInfo(
 
   if (!validatedAcceptHeader || acceptHeaderTypes.length > 1) {
     return handleHttpError(
-      400,
+      HttpStatus.BadRequest,
       `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
@@ -98,7 +99,7 @@ export default async function getPaymentInfo(
   // Or is `application/json` the appropriate response Content-Type?
   if (paymentInformation === undefined) {
     return handleHttpError(
-      404,
+      HttpStatus.NotFound,
       `Payment information for ${payId} in ${paymentNetwork} on ${environment} could not be found.`,
       res,
     )

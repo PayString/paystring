@@ -9,6 +9,7 @@ import {
   mockComplianceData,
 } from '../../../src/data/travelRuleData'
 import { wrapMessage } from '../../../src/services/signatureWrapper'
+import HttpStatus from '../../../src/types/httpStatus'
 import {
   MessageType,
   AddressDetailType,
@@ -25,8 +26,10 @@ describe('E2E - publicAPIRouter - health check endpoint', function (): void {
     app = await appSetup()
   })
 
-  it('Returns a 200 for a GET /status/health', function (done): void {
-    request(app.publicAPIExpress).get('/status/health').expect(200, 'OK', done)
+  it('Returns a 200 - OK for a GET /status/health', function (done): void {
+    request(app.publicAPIExpress)
+      .get('/status/health')
+      .expect(HttpStatus.OK, 'OK', done)
   })
 
   after(async function () {
@@ -60,7 +63,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
       // AND we get back the XRP address associated with that PayID for xrpl-mainnet.
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns the correct TESTNET address for a known PayID', function (done): void {
@@ -83,7 +86,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
       // AND we get back the XRP address associated with that PayID for xrpl-testnet.
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns the correct address for a known PayID and a non-XRPL header', function (done): void {
@@ -106,7 +109,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
       // AND we get back the BTC address associated with that PayID for btc-testnet.
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns the correct address for a known PayID and an ACH header (no environment)', function (done): void {
@@ -130,7 +133,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
         assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
       })
       // AND we get back the ACH account information associated with that PayID for ACH.
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns a 404 with the correct error response object for an unknown PayID', function (done): void {
@@ -150,7 +153,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
-      .expect(404, expectedErrorResponse, done)
+      .expect(HttpStatus.NotFound, expectedErrorResponse, done)
   })
 
   it('Returns a 404 for an PayID without the relevant associated address', function (done): void {
@@ -170,7 +173,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
-      .expect(404, expectedErrorResponse, done)
+      .expect(HttpStatus.NotFound, expectedErrorResponse, done)
   })
 
   it('Returns a mock invoice on GET /invoice', function (done): void {
@@ -178,7 +181,10 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
 
+    // This is 1 hour in milliseconds
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const TIME_TO_EXPIRY = 60 * 60 * 1000
+
     const expectedInvoice: Invoice = {
       nonce: '123',
       expirationTime: Date.now() + TIME_TO_EXPIRY,
@@ -200,7 +206,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .set('Accept', acceptHeader)
       // THEN we get back a 200 - OK with the invoice
       .expect(isExpectedInvoice(expectedResponse))
-      .expect(200, done)
+      .expect(HttpStatus.OK, done)
   })
 
   // TODO(dino): implement this to not use mock data
@@ -219,7 +225,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .get(`${payId}/invoice`)
       .set('Accept', acceptHeader)
       // THEN we get back a 400 - Bad Request with the invoice
-      .expect(400, expectedResponse, done)
+      .expect(HttpStatus.BadRequest, expectedResponse, done)
   })
 
   // TODO(dino): implement this to not use mock data
@@ -237,7 +243,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .send(wrapMessage(mockComplianceData, MessageType.Compliance))
       .expect('Content-Type', /json/u)
       // THEN we get back the invoice
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   // Shut down Express application and close DB connections
