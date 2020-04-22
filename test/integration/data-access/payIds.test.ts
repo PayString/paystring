@@ -5,7 +5,7 @@ import config from '../../../src/config'
 import getPaymentInfoFromDatabase from '../../../src/data-access/payIds'
 import knex from '../../../src/db/knex'
 import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
-import structuredClone from '../e2e/helpers'
+import structuredClone from '../../helpers/helpers'
 
 describe('Data Access - getPaymentInfoFromDatabase()', function (): void {
   // Seed the database for our tests.

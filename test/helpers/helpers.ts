@@ -3,10 +3,10 @@ import * as v8 from 'v8'
 import { assert } from 'chai'
 import * as request from 'supertest'
 
-import App from '../../../src/app'
-import config from '../../../src/config'
-import knex from '../../../src/db/knex'
-import { SignatureWrapper, Invoice } from '../../../src/types/publicAPI'
+import App from '../../src/app'
+import config from '../../src/config'
+import knex from '../../src/db/knex'
+import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
 
 /**
  * Deep clones an object *properly*.
