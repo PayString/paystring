@@ -9,6 +9,7 @@ import {
   CryptoAddressDetails,
   AchAddressDetails,
 } from '../types/publicAPI'
+import { AcceptMediaType, parseAcceptMediaType } from '../utils/acceptHeader'
 
 import handleHttpError from './errors'
 
@@ -59,15 +60,10 @@ export default async function getPaymentInfo(
     )
   }
 
-  // TODO:(tkalaw) Make this work with multiple types
-  const headerType = acceptHeaderTypes[0]
-
-  // TODO:(hbergren) Refactor this parsing to a static method or even a utils class.
-  // If you do that, then you can easily unit test this bit of logic. You can then change out the implementation of the method easily since it will be encapsulated.
-  const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/u
-  const validatedAcceptHeader = ACCEPT_HEADER_REGEX.exec(headerType)
-
-  if (!validatedAcceptHeader || acceptHeaderTypes.length > 1) {
+  let parsedAcceptMediaTypes: AcceptMediaType[] = []
+  try {
+    parsedAcceptMediaTypes = acceptHeaderTypes.map(parseAcceptMediaType)
+  } catch (error) {
     return handleHttpError(
       HttpStatus.BadRequest,
       `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
@@ -80,12 +76,21 @@ export default async function getPaymentInfo(
     )
   }
 
-  const [acceptHeader, paymentNetwork, environment] = validatedAcceptHeader.map(
-    (elem) => {
-      // Our DB stores paymentNetwork and environment in all uppercase
-      return elem?.toUpperCase()
-    },
-  )
+  const { paymentNetwork, environment, mediaType } = parsedAcceptMediaTypes[0]
+
+  // TODO(tedkalaw): Remove this after content negotiation is in
+  if (parsedAcceptMediaTypes.length > 1) {
+    return handleHttpError(
+      400,
+      `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
+      Examples:
+      - 'Accept: application/xrpl-mainnet+json'
+      - 'Accept: application/btc-testnet+json'
+      - 'Accept: application/ach+json'
+      `,
+      res,
+    )
+  }
 
   // TODO: If Accept is just application/json, just return all addresses, for all environments?
   // Get the paymentInformation from the database
@@ -106,7 +111,8 @@ export default async function getPaymentInfo(
   }
 
   // TODO:(hbergren) See what happens if you pass multiple accept headers with different quality ratings.
-  res.set('Content-Type', acceptHeader)
+  // Set the content-type to the media type corresponding to the returned address
+  res.set('Content-Type', mediaType)
 
   // TODO:(hbergren) Create a helper function for this?
   let response: PaymentInformation = {
