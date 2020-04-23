@@ -65,6 +65,36 @@ module.exports = {
       { exceptAfterSingleLine: true },
     ],
 
+    'no-restricted-syntax': [
+      'error',
+      {
+        selector: 'ForInStatement',
+        message:
+          'for..in loops iterate over the entire prototype chain, which is virtually never what you want. Use Object.{keys,values,entries}, and iterate over the resulting array.',
+      },
+      // TODO: enable?
+      // {
+      //   selector: 'ForOfStatement',
+      //   message:
+      //     'iterators/generators require regenerator-runtime, which is too heavyweight for this guide to allow them. Separately, loops should be avoided in favor of array iterations.',
+      // },
+      {
+        selector: 'LabeledStatement',
+        message:
+          'Labels are a form of GOTO; using them makes code confusing and hard to maintain and understand.',
+      },
+      {
+        selector: 'WithStatement',
+        message:
+          "'with' is disallowed in strict mode because it makes code impossible to predict and optimize.",
+      },
+      {
+        selector:
+          "CallExpression[callee.name='setTimeout'][arguments.length!=2]",
+        message: 'setTimeout must always be invoked with two arguments.',
+      },
+    ],
+
     /* TYPESCRIPT ESLINT PLUGIN RULES */
     //
     // Allow unused parameters that start with an underscore.
