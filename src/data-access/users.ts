@@ -2,16 +2,8 @@
 import { Transaction } from 'knex'
 
 import knex from '../db/knex'
-import { Account, Address } from '../types/database'
+import { Account, Address, AddressInformation } from '../types/database'
 import logger from '../utils/logger'
-
-/**
- * The information retrieved from or inserted into the database for a given address.
- */
-type AddressInformation = Pick<
-  Address,
-  'payment_network' | 'environment' | 'details'
->
 
 /**
  * Retrieve the addresses associated with a given users PayID.

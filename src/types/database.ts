@@ -26,3 +26,11 @@ export interface Address {
   readonly created_at: Date
   readonly updated_at: Date
 }
+
+/**
+ * The information retrieved from or inserted into the database for a given address.
+ */
+export type AddressInformation = Pick<
+  Address,
+  'payment_network' | 'environment' | 'details'
+>

@@ -1,5 +1,5 @@
 import knex from '../db/knex'
-import { Address } from '../types/database'
+import { Address, AddressInformation } from '../types/database'
 
 /**
  * Retrieve the payment information for a given PayID.
@@ -16,13 +16,11 @@ export default async function getPaymentInfoFromDatabase(
   payId: string,
   paymentNetwork: string,
   environment: string,
-): Promise<
-  Pick<Address, 'payment_network' | 'environment' | 'details'> | undefined
-> {
+): Promise<AddressInformation | undefined> {
   // Get the details from the database, given our payId, paymentNetwork, and environment
   const paymentInformation = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
-    .from<Address>('address')
+    .from<AddressInformation>('address')
     .innerJoin('account', 'address.account_id', 'account.id')
     .where('account.pay_id', payId)
     .andWhere('address.payment_network', paymentNetwork)
@@ -33,15 +31,28 @@ export default async function getPaymentInfoFromDatabase(
         builder.whereNull('address.environment')
       }
     })
-    .then(
-      (
-        rows: Pick<Address, 'payment_network' | 'environment' | 'details'>[],
-      ) => {
-        // TODO(hbergren): More than one row possible??
-        // Throw error if that happens?
-        return rows[0]
-      },
-    )
+    .then((rows: AddressInformation[]) => {
+      // TODO(hbergren): More than one row possible?
+      // Throw error if that happens?
+      return rows[0]
+    })
+
+  return paymentInformation
+}
+
+/**
+ *
+ * Retrieve all of the payment information associated with a given PayID.
+ * @param payId The PayID to retrieve payment information for.
+ */
+export async function getAllPaymentInfoFromDatabase(
+  payId: string,
+): Promise<AddressInformation[]> {
+  const paymentInformation = await knex
+    .select('address.payment_network', 'address.environment', 'address.details')
+    .from<Address>('address')
+    .innerJoin('account', 'address.account_id', 'account.id')
+    .where('account.pay_id', payId)
 
   return paymentInformation
 }
