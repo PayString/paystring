@@ -192,7 +192,7 @@ curl --location --request POST '127.0.0.1/v1/users' \
 You can query information about an existing user with the following request.
 
 ```
-GET {{http(s)}}{{host}}/v1/users/{:$pay_id}
+GET {{http(s)}}{{host}}/v1/users/{pay_id}
 ```
 
 Example: `GET http://127.0.0.1:8081/v1/users/bob$xpring.money`
@@ -240,7 +240,7 @@ curl --location --request GET '{{payid_private_host}}/v1/users/alice${{payid_pri
 You can modify the user information associated with a particular PayID address.
 
 ```
-PUT {{http(s)}}{{host}}/v1/users/{≈}
+PUT {{http(s)}}{{host}}/v1/users/{pay_id}
 ```
 
 The request payload is the modified user schema for the specified PayID address.
