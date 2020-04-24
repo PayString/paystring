@@ -1,3 +1,5 @@
+import { AddressInformation } from '../types/database'
+
 import PayIDError from './errors'
 
 /**
@@ -16,8 +18,8 @@ export type AcceptMediaType = {
 
 /**
  * Parses a string mediaType and returns an AcceptType
- * @param mediaType A string representation of an Accept media type to validate
- * @returns A parsed AcceptType
+ * @param mediaType - A string representation of an Accept media type to validate
+ * @returns - A parsed AcceptType
  */
 export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
   const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/
@@ -31,4 +33,45 @@ export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
     environment: (regexResult.groups.environment || '').toUpperCase(),
     paymentNetwork: regexResult.groups.paymentNetwork.toUpperCase(),
   }
+}
+
+/**
+ * Returns the best payment information given a list of Accept types, sorted by
+ * preference, if one exists.
+ *
+ * Returns undefined otherwise.
+ *
+ * TODO(tedkalaw): Move this sort to postgres instead of doing it manually
+ *
+ * @param paymentInformation - The payment information to look through
+ * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference
+ *
+ * @returns - An object containing the AcceptMediaType and its associated AddressInformation
+ * if one exists; returns undefined otherwise
+ */
+export function getPreferredPaymentInfo(
+  paymentInformations: AddressInformation[],
+  sortedAcceptedTypes: AcceptMediaType[],
+):
+  | {
+      acceptType: AcceptMediaType
+      paymentInformation: AddressInformation
+    }
+  | undefined {
+  for (const acceptType of sortedAcceptedTypes) {
+    const paymentInformationForAcceptType = paymentInformations.find(
+      (result) =>
+        result.payment_network === acceptType.paymentNetwork &&
+        (result.environment || '') === acceptType.environment,
+    )
+
+    if (paymentInformationForAcceptType) {
+      return {
+        acceptType,
+        paymentInformation: paymentInformationForAcceptType,
+      }
+    }
+  }
+
+  return undefined
 }

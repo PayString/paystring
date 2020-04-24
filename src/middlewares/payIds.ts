@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getPaymentInfoFromDatabase from '../data-access/payIds'
+import { getAllPaymentInfoFromDatabase } from '../data-access/payIds'
 import { urlToPayId } from '../services/utils'
+import { AddressInformation } from '../types/database'
 import HttpStatus from '../types/httpStatus'
 import {
   PaymentInformation,
@@ -9,9 +10,41 @@ import {
   CryptoAddressDetails,
   AchAddressDetails,
 } from '../types/publicAPI'
-import { AcceptMediaType, parseAcceptMediaType } from '../utils/acceptHeader'
+import {
+  AcceptMediaType,
+  getPreferredPaymentInfo,
+  parseAcceptMediaType,
+} from '../utils/acceptHeader'
 
 import handleHttpError from './errors'
+
+/**
+ * Returns the best payment information associated with a payId for a set of sorted
+ * Accept types.
+ *
+ * Returns undefined if payment infomation could not be found.
+ *
+ * @param - payId The PayID to retrieve payment information for
+ * @param - sortedAcceptTypes An array of AcceptTypes, sorted by preference
+ */
+async function getPaymentInfoForAcceptTypes(
+  payId: string,
+  sortedAcceptTypes: AcceptMediaType[],
+): Promise<
+  | {
+      acceptType: AcceptMediaType
+      paymentInformation: AddressInformation
+    }
+  | undefined
+> {
+  if (!sortedAcceptTypes.length) {
+    return undefined
+  }
+
+  // TODO:(tedkalaw) Improve this query
+  const allPaymentInformation = await getAllPaymentInfoFromDatabase(payId)
+  return getPreferredPaymentInfo(allPaymentInformation, sortedAcceptTypes)
+}
 
 /**
  * Resolves inbound requests to a PayID to their
@@ -60,26 +93,13 @@ export default async function getPaymentInfo(
     )
   }
 
-  let parsedAcceptMediaTypes: AcceptMediaType[] = []
+  let parsedAcceptTypes: AcceptMediaType[] = []
   try {
-    parsedAcceptMediaTypes = acceptHeaderTypes.map(parseAcceptMediaType)
-  } catch (error) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
-      `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
-      Examples:
-      - 'Accept: application/xrpl-mainnet+json'
-      - 'Accept: application/btc-testnet+json'
-      - 'Accept: application/ach+json'
-      `,
-      res,
+    parsedAcceptTypes = acceptHeaderTypes.map((type) =>
+      parseAcceptMediaType(type),
     )
-  }
-
-  const { paymentNetwork, environment, mediaType } = parsedAcceptMediaTypes[0]
-
-  // TODO(tedkalaw): Remove this after content negotiation is in
-  if (parsedAcceptMediaTypes.length > 1) {
+  } catch (error) {
+    // TODO:(tkalaw): Should we mention all of the invalid types?
     return handleHttpError(
       400,
       `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
@@ -93,33 +113,31 @@ export default async function getPaymentInfo(
   }
 
   // TODO: If Accept is just application/json, just return all addresses, for all environments?
-  // Get the paymentInformation from the database
-  const paymentInformation = await getPaymentInfoFromDatabase(
-    payId,
-    paymentNetwork,
-    environment,
-  )
+  const result = await getPaymentInfoForAcceptTypes(payId, parsedAcceptTypes)
 
   // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Or is `application/json` the appropriate response Content-Type?
-  if (paymentInformation === undefined) {
-    return handleHttpError(
-      HttpStatus.NotFound,
-      `Payment information for ${payId} in ${paymentNetwork} on ${environment} could not be found.`,
-      res,
-    )
+  if (result === undefined) {
+    let message = `Payment information for ${payId} could not be found.`
+    if (parsedAcceptTypes.length === 1) {
+      // When we only have a single accept type, we can give a more detailed error message
+      const { paymentNetwork, environment } = parsedAcceptTypes[0]
+      message = `Payment information for ${payId} in ${paymentNetwork} on ${environment} could not be found.`
+    }
+
+    return handleHttpError(HttpStatus.NotFound, message, res)
   }
 
-  // TODO:(hbergren) See what happens if you pass multiple accept headers with different quality ratings.
+  const { acceptType, paymentInformation } = result
   // Set the content-type to the media type corresponding to the returned address
-  res.set('Content-Type', mediaType)
+  res.set('Content-Type', acceptType.mediaType)
 
   // TODO:(hbergren) Create a helper function for this?
   let response: PaymentInformation = {
     addressDetailType: AddressDetailType.CryptoAddress,
     addressDetails: paymentInformation.details as CryptoAddressDetails,
   }
-  if (paymentNetwork === 'ACH') {
+  if (paymentInformation.payment_network === 'ACH') {
     response = {
       addressDetailType: AddressDetailType.AchAddress,
       addressDetails: paymentInformation.details as AchAddressDetails,
