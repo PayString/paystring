@@ -39,7 +39,7 @@ export function payIdToUrl(payId: string): string {
     )
   }
 
-  return `${HTTPS + domain}/${user}`
+  return `${HTTPS + domain.toLowerCase()}/${user.toLowerCase()}`
 }
 
 /**
@@ -68,7 +68,7 @@ export function urlToPayId(url: string): string {
   // Rest of URL is joined back together on '/' returning it to it's normal form
   const urlWithoutUser = urlComponents.slice(0, -1).join('/')
   // User is put first then '$' then rest of the URL
-  return `${user}$${urlWithoutUser}`
+  return `${user.toLowerCase()}$${urlWithoutUser.toLowerCase()}`
 }
 
 /*

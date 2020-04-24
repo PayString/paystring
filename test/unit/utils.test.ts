@@ -80,6 +80,18 @@ describe('payIdToUrl', function (): void {
     // THEN we get our expected URL
     assert.strictEqual(actualUrl, expectedUrl)
   })
+
+  it('lowercases URL from capitalized PayID', function (): void {
+    // GIVEN a PayID with capital letters
+    const payId = 'AlIcE$example.com'
+    const expectedUrl = 'https://example.com/alice'
+
+    // WHEN we convert it to a URL
+    const actualUrl = payIdToUrl(payId)
+
+    // THEN we get our expected URL
+    assert.strictEqual(actualUrl, expectedUrl)
+  })
 })
 
 describe('urlToPayId', function (): void {
@@ -118,5 +130,17 @@ describe('urlToPayId', function (): void {
 
     assert.strictEqual(actualPayId, expectedPayId)
     // THEN we get our expected URL
+  })
+
+  it('handles a PayID URL with capital letters', function (): void {
+    // GIVEN a PayID URL with capitals
+    const url = 'https://example.com/ALICE'
+    const expectedPayId = 'alice$example.com'
+
+    // WHEN we convert it to a URL
+    const actualPayId = urlToPayId(url)
+
+    // THEN we get our expected URL
+    assert.strictEqual(actualPayId, expectedPayId)
   })
 })
