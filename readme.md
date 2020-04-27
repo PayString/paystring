@@ -17,6 +17,7 @@ Table of Contents
 * [Extensions and Travel Rule compliance](#extensions-and-travel-rule-compliance)
 * [PayID integration and the Private PayID API](#payid-integration-and-the-private-payid-api)
 * [Query users and manage payments with the PayID Public API](#query-users-and-manage-payments-with-the-payid-public-api)
+* [Travel rule compliance](#travel-rule-compliance)
 
 ## Web standards
 PayID uses existing web standards and infrastructure, including HTTP and DNS. Each institution supports its users through its domain, creating a decentralized network where institutions maintain sovereignty over their own users. Each institution is empowered to participate in the network by deploying its own server with its own users. Additionally, a user who prefers to self-custody their cryptocurrency can deploy a personal PayID server, as described in [Set up a PayID server](#set-up-a-payid-server).
@@ -44,7 +45,6 @@ PayID provides an abstraction layer so that users can send payments to human-rea
 ## Future features and integrations
 Features and integrations on the roadmap include:
 
-* Invoices and receipts
 * Additional payment rail standards
 * Payment request ([W3C Standard](https://www.w3.org/TR/payment-request/)) integration
 * Advanced payment type support: pull, push, streaming, subscription
@@ -121,7 +121,7 @@ curl --location --request GET 'http://127.0.0.1:8080/alice' --header 'Accept: ap
 When you have your open source server set up, you can create and manage users with the Private PayID API.
 
 #### API endpoint
-Substitute your own domain for `{{http(s)}}{{host}}`. If running locally, you can use  `http://127.0.0.1:8081/`.
+Substitute your own domain for `{{https}}{{host}}`. If running locally, you can use  `http://127.0.0.1:8081/`.
 
 #### API version
 
@@ -132,7 +132,7 @@ Use `/v1`.
 This operation creates a single user.
 
 ```
-POST {{http(s)}}{{host}}/v1/users
+POST {{https}}{{host}}/v1/users
 ```
 
 Payload: [Single user schema](#example-single-user-schema)
@@ -331,11 +331,180 @@ curl --location --request PUT '127.0.0.1/v1/users/alice${{payid_private_host_no_
 </tr>
 </table>
 
-
 ##### cURL example
 
 ```
 curl --location --request DELETE 'https://***REMOVED***/v1/users/alice$***REMOVED***/'
+```
+
+### Travel Rule compliance
+
+In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request an invoice. When you get the invoice, you notice the `complianceRequirements` field of the invoice, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the invoice, you then post the compliance data to the same URL to update the invoice with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded invoice.  
+
+#### Get an invoice
+
+Return an invoice for the specified user and nonce. The nonce used in this call is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+
+```
+GET {{https}}{{host}}{{public_port}}/hbergren/invoice?nonce=<uuid>
+```
+
+Example:
+
+```
+GET https://wallet.com/dino/invoice?nonce=123e4567-e89b-12d3-a456-426655440000
+```
+
+##### Response
+
+```
+200 OK
+```
+
+The invoice that matches the specified user and nonce is returned. See [Example invoice schema](#example-invoice-schema).
+
+##### Error response
+
+See [Example error schema](#example-error-schema).
+
+<table>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable</td>
+</tr>
+</table>
+
+##### cURL example
+
+```
+curl --location --request GET 'http://***REMOVED***/dino/invoice?nonce=123e4567-e89b-12d3-a456-426655440000' \
+--header 'Accept: application/xrpl-testnet+json' \
+--header 'Content-Type: application/json'
+```
+
+#### Send compliance information  
+
+If an invoice contains information in the `complianceRequirements` field, then upon receipt of the invoice, you must send back compliance information.
+
+```
+POST {{https}}{{host}}{{public_port}}/dino/invoice?nonce=123e4567-e89b-12d3-a456-426655440000
+```
+
+Example:
+```
+POST https://***REMOVED***/dino/invoice?nonce=123e4567-e89b-12d3-a456-426655440000
+```
+
+The body contains the [compliance message](#example-compliance-message-schema). This message contains information about the originator, the value of the transaction, and the beneficiary, and the message is signed cryptographically.
+
+##### Response
+
+```
+200 OK
+201 Created
+```
+
+No response body.
+
+##### Error responses
+
+<table>
+<tr>
+<th>Code</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>400</td>
+<td>Bad Request</td>
+</tr>
+<tr>
+<td>404</td>
+<td>Not Found</td>
+</tr>
+<tr>
+<td>422</td>
+<td>Unprocessable Entity</td>
+</tr>
+<tr>
+<td>503</td>
+<td>Service Unavailable</td>
+</tr>
+</table>
+
+##### cURL example
+
+```
+curl --location --request POST 'https://***REMOVED***/dino/invoice?nonce=123e4567-e89b-12d3-a456-426655440000' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"messageType": "compliance",
+	"message": {
+		"type": "TravelRule",
+		"data": {
+			"originator": {
+				"userLegalName": "Theodore Kalaw",
+				"accountId": "ef841530-f476-429c-b8f3-de25a0a29f80 ",
+				"userPhysicalAddress": "520 Main Street",
+				"institutionName": "xpring",
+				"value": {
+					"amount": "100",
+					"scale": 1
+				},
+				"timestamp": "2020-03-20T07:09:00"
+			},
+			"beneficiary": {
+				"institutionName": "xpring"
+			}
+
+		}
+	},
+	"pkiType": "x509+sha256",
+	"pkiData": [],
+	"publicKey": "00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:\n    af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:\n    9d:3b:ef",
+	"signature": "8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35..."
+}'
+```
+
+#### Send receipt
+
+The originator of the transaction sends a receipt after the XRP/BTC/ACH payment clears and settles.
+
+```
+POST {{https}}{{host}}{{public_port}}/dino/receipt
+```
+
+Example:
+```
+POST https://***REMOVED***/dino/receipt
+```
+
+##### Response
+
+```
+200 OK
+```
+
+##### cURL example
+
+```
+curl --location --request POST 'https://***REMOVED***/dino/receipt' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+	"invoiceHash": "8743b52063cd84097a65d1633f5c74f5",
+	"transactionConfirmation": "797A887A269FEAFFEC446389DC1BB8C0DFBF9421C2FA72CA244AA5EB027008FC"
+}'
 ```
 
 ### Schemas
@@ -384,6 +553,74 @@ This example shows the format of an error payload.
     "statusCode": 422,
     "error": "Unprocessable Entity",
     "message": "Your data is bad"
+}
+```
+
+### Example invoice schema
+
+This example shows the format of an invoice.
+
+```
+{
+   "messageType":"Invoice",
+   "message":{
+      "nonce":"123e4567-e89b-12d3-a456-426655440000",
+      "expirationTime":"2020-03-18T04:04:02",
+      "paymentInformation":{
+         "addressDetailType":"CryptoAddressDetails",
+         "addressDetails":{
+            "address":"T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
+         },
+         "proofOfControlSignature":"9743b52063cd84097a65d1633f5c74f5",
+         "paymentPointer":"$xpring.money/dino"
+      },
+      "complianceRequirements":[
+         "TravelRule"
+      ],
+      "memo":"please send me travel rule data",
+      "complianceHashes":[
+
+      ]
+   },
+   "pkiType":"x509+sha256",
+   "pkiData":[
+
+   ],
+   "publicKey":"00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef",
+   "signature":"8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35..."
+}
+```
+
+### Example compliance message schema
+
+```
+{
+   "messageType":"compliance",
+   "message":{
+      "type":"TravelRule",
+      "data":{
+         "originator":{
+            "userLegalName":"Theodore Kalaw",
+            "accountId":"ef841530-f476-429c-b8f3-de25a0a29f80 ",
+            "userPhysicalAddress":"520 Main Street",
+            "institutionName":"xpring",
+            "value":{
+               "amount":"100",
+               "scale":1
+            },
+            "timestamp":"2020-03-20T07:09:00"
+         },
+         "beneficiary":{
+            "institutionName":"xpring"
+         }
+      }
+   },
+   "pkiType":"x509+sha256",
+   "pkiData":[
+
+   ],
+   "publicKey":"00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:\n    af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:\n    9d:3b:ef",
+   "signature":"8b:c3:ed:d1:9d:39:6f:af:40:72:bd:1e:18:5e:30:54:23:35..."
 }
 ```
 
