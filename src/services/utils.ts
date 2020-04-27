@@ -2,7 +2,7 @@
 const HTTPS = 'https://'
 
 /**
- * Converts a PayID from [user]$[domain]/[path] format representation to a URL representation
+ * Converts a PayID from [user]$[domain] format representation to a URL representation
  *
  * @param payId - The PayID to convert.
  *
@@ -25,17 +25,21 @@ export function payIdToUrl(payId: string): string {
     throw new Error('Bad input. PayIDs must include only one $.')
   }
 
+  if ((payId.match(/\//gu) || []).length > 1) {
+    throw new Error('Bad input. PayIDs must not have paths.')
+  }
+
   const [user, domain] = payId.split('$')
 
   if (user === '') {
     throw new Error(
-      'Bad input. Missing a user in the format [user]$[domain.com(/path)].',
+      'Bad input. Missing a user in the format [user]$[domain.com].',
     )
   }
 
   if (domain === '') {
     throw new Error(
-      'Bad input. Missing a domain in the format [user]$[domain.com(/path)].',
+      'Bad input. Missing a domain in the format [user]$[domain.com].',
     )
   }
 
@@ -61,6 +65,18 @@ export function urlToPayId(url: string): string {
 
   // Remove https:// from URL
   const removedProtocolUrl = url.substring(HTTPS.length)
+
+  if ((removedProtocolUrl.match(/\//gu) || []).length > 1) {
+    /**
+     * no namespace paths allowed
+     * ex valid:   domain.com/user
+     * ex invalid: domain.com/payid/user
+     */
+    throw new Error(
+      'Bad input. The only paths allowed in a PayID are to specify the user.',
+    )
+  }
+
   // Split URL into components so we can remove user from end
   const urlComponents = removedProtocolUrl.split('/')
   // Last /path in URL becomes user

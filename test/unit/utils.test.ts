@@ -21,7 +21,7 @@ describe('payIdToUrl', function (): void {
     // GIVEN a PayID without a user
     const payId = '$domain.com'
     const expectedErrorMessage =
-      'Bad input. Missing a user in the format [user]$[domain.com(/path)].'
+      'Bad input. Missing a user in the format [user]$[domain.com].'
 
     // WHEN we attempt to convert it into a URL
     const badConversion = (): string => payIdToUrl(payId)
@@ -34,7 +34,7 @@ describe('payIdToUrl', function (): void {
     // GIVEN a PayID without a user
     const payId = 'user$'
     const expectedErrorMessage =
-      'Bad input. Missing a domain in the format [user]$[domain.com(/path)].'
+      'Bad input. Missing a domain in the format [user]$[domain.com].'
 
     // WHEN we attempt to convert it into a URL
     const badConversion = (): string => payIdToUrl(payId)
@@ -67,18 +67,17 @@ describe('payIdToUrl', function (): void {
     // THEN we get our expected error
     assert.throws(badConversion, expectedErrorMessage)
   })
-  // THEN we get our expected error
 
-  it('handles a PayID with a path', function (): void {
+  it('Rejects a PayID with a non-user path', function (): void {
     // GIVEN a PayID with a path
     const payId = 'alice$example.com/payid/users'
-    const expectedUrl = 'https://example.com/payid/users/alice'
+    const expectedErrorMessage = 'Bad input. PayIDs must not have paths.'
 
     // WHEN we convert it to a URL
-    const actualUrl = payIdToUrl(payId)
+    const badConversion = (): string => payIdToUrl(payId)
 
-    // THEN we get our expected URL
-    assert.strictEqual(actualUrl, expectedUrl)
+    // THEN we get our expected error
+    assert.throws(badConversion, expectedErrorMessage)
   })
 
   it('lowercases URL from capitalized PayID', function (): void {
@@ -130,6 +129,19 @@ describe('urlToPayId', function (): void {
 
     assert.strictEqual(actualPayId, expectedPayId)
     // THEN we get our expected URL
+  })
+
+  it('Rejects URL with user not immediately after tld', function (): void {
+    // GIVEN a PayID URL with a path
+    const url = 'https://example.com/users/alice'
+    const expectedErrorMessage =
+      'Bad input. The only paths allowed in a PayID are to specify the user.'
+
+    // WHEN we convert it to a URL
+    const badConversion = (): string => urlToPayId(url)
+
+    // THEN we get our expected error
+    assert.throws(badConversion, expectedErrorMessage)
   })
 
   it('handles a PayID URL with capital letters', function (): void {
