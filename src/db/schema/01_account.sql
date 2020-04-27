@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS account (
 	-- Also, that implementation had no false negatives, which is important, as we never want to prevent a valid URL from being used.
 	--
 	-- This regex requires PayIDs of the form `user$[subdomain.]example.com[/path]`
-	CONSTRAINT pay_id_valid_url CHECK(pay_id ~* '^([A-Za-z0-9\-\_]+)(?:\$)[^\s/$.?#].+\.[^\s]+$')
+	CONSTRAINT pay_id_valid_url CHECK(pay_id ~* '^([A-Za-z0-9\-\_\.]+)(?:\$)[^\s/$.?#].+\.[^\s]+$')
 );

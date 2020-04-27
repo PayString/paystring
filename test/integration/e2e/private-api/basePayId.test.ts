@@ -148,6 +148,30 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .expect(HttpStatus.Conflict, done)
   })
 
+  it('Returns a 201 - creates PayID containing a "."', function (done): void {
+    // GIVEN a user with a PayID containing a period
+    const userInformation = {
+      pay_id: 'alice.smith$xpring.money',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /v1/users with that user information
+    request(app.privateAPIExpress)
+      .post(`/v1/users`)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/u)
+      // THEN we expect back a 201 - CREATED
+      .expect(HttpStatus.Created, done)
+  })
+
   after(async function () {
     await appCleanup(app)
   })
