@@ -4,8 +4,13 @@ import * as express from 'express'
 
 import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
+import metricsRouter from './routes/metricsRouter'
 import privateAPIRouter from './routes/privateAPIRouter'
 import publicAPIRouter from './routes/publicAPIRouter'
+import {
+  isPushMetricsEnabled,
+  scheduleRecurringMetricsPush,
+} from './services/metrics'
 import logger from './utils/logger'
 
 export default class App {
@@ -27,6 +32,9 @@ export default class App {
 
     this.publicAPIServer = this.launchPublicAPI(initConfig.app)
     this.privateAPIServer = this.launchPrivateAPI(initConfig.app)
+    if (isPushMetricsEnabled()) {
+      scheduleRecurringMetricsPush()
+    }
   }
 
   public close(): void {
@@ -44,6 +52,7 @@ export default class App {
 
   private launchPrivateAPI(appConfig = config.app): Server {
     this.privateAPIExpress.use(`${appConfig.version}/users`, privateAPIRouter)
+    this.privateAPIExpress.use('/metrics', metricsRouter)
 
     return this.privateAPIExpress.listen(appConfig.privateAPIPort, () =>
       logger.info(`Private API listening on ${appConfig.privateAPIPort}`),

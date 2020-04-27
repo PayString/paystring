@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 
 import { getAllPaymentInfoFromDatabase } from '../data-access/payIds'
+import {
+  recordPayIdLookupBadAcceptHeader,
+  recordPayIdLookupResult,
+} from '../services/metrics'
 import { urlToPayId } from '../services/utils'
 import { AddressInformation } from '../types/database'
 import HttpStatus from '../types/httpStatus'
@@ -81,6 +85,7 @@ export default async function getPaymentInfo(
   const acceptHeaderTypes = req.accepts()
 
   if (!acceptHeaderTypes.length) {
+    recordPayIdLookupBadAcceptHeader()
     return handleHttpError(
       HttpStatus.BadRequest,
       `Missing Accept header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
@@ -99,6 +104,8 @@ export default async function getPaymentInfo(
       parseAcceptMediaType(type),
     )
   } catch (error) {
+    recordPayIdLookupBadAcceptHeader()
+
     // TODO:(tkalaw): Should we mention all of the invalid types?
     return handleHttpError(
       400,
@@ -124,7 +131,13 @@ export default async function getPaymentInfo(
       const { paymentNetwork, environment } = parsedAcceptTypes[0]
       message = `Payment information for ${payId} in ${paymentNetwork} on ${environment} could not be found.`
     }
-
+    parsedAcceptTypes.forEach((acceptType) =>
+      recordPayIdLookupResult(
+        acceptType.paymentNetwork,
+        acceptType.environment,
+        false,
+      ),
+    )
     return handleHttpError(HttpStatus.NotFound, message, res)
   }
 
@@ -149,6 +162,10 @@ export default async function getPaymentInfo(
   res.locals.payId = payId
   res.locals.paymentInformation = response
   res.locals.response = response
-
+  recordPayIdLookupResult(
+    paymentInformation.payment_network,
+    paymentInformation.environment || 'unknown',
+    true,
+  )
   return next()
 }
