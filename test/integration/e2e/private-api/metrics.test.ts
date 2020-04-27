@@ -3,6 +3,7 @@ import * as request from 'supertest'
 
 import 'mocha'
 import App from '../../../../src/app'
+import { generatePayIdCountMetrics } from '../../../../src/services/payIdReport'
 import HttpStatus from '../../../../src/types/httpStatus'
 import { appCleanup, appSetup } from '../../../helpers/helpers'
 
@@ -74,6 +75,21 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     )
     await assertMetrics(
       /payid_lookup_request{paymentNetwork="BTC",environment="TESTNET",org="undefined",result="found"} 1/,
+    )
+  })
+
+  it('Includes count of all PayIDs', async function () {
+    const achNetwork = 'ACH'
+    const litecoinNetwork = 'LTC'
+    await createPayId('charlie$fightmilk.com', achNetwork, 'US')
+    await createPayId('mac$fightmilk.com', achNetwork, 'US')
+    await createPayId('frank$wolfcola.com', litecoinNetwork, 'MAINNET')
+    await generatePayIdCountMetrics()
+    await assertMetrics(
+      /payid_count{paymentNetwork="ACH",environment="US",org="undefined"} 2/,
+    )
+    await assertMetrics(
+      /payid_count{paymentNetwork="LTC",environment="MAINNET",org="undefined"} 1/,
     )
   })
 

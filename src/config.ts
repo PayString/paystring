@@ -42,6 +42,11 @@ const config = {
      * How frequently to push metrics to the gateway (in seconds).
      */
     pushIntervalInSeconds: Number(process.env.PUSH_METRICS_INTERVAL) || 15,
+    /**
+     * How frequently (in seconds) to refresh the Pay ID Count report data from the database.
+     */
+    payIdCountRefreshIntervalInSeconds:
+      Number(process.env.PAYID_COUNT_REFRESH_INTERVAL) || 60,
   },
 }
 

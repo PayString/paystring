@@ -11,6 +11,7 @@ import {
   isPushMetricsEnabled,
   scheduleRecurringMetricsPush,
 } from './services/metrics'
+import scheduleRecurringPayIdCountMetrics from './services/payIdReport'
 import logger from './utils/logger'
 
 export default class App {
@@ -20,6 +21,8 @@ export default class App {
 
   private publicAPIServer?: Server
   private privateAPIServer?: Server
+  private recurringMetricsPushTimeout?: NodeJS.Timeout
+  private recurringMetricsTimeout?: NodeJS.Timeout
 
   public constructor() {
     this.publicAPIExpress = express()
@@ -33,13 +36,22 @@ export default class App {
     this.publicAPIServer = this.launchPublicAPI(initConfig.app)
     this.privateAPIServer = this.launchPrivateAPI(initConfig.app)
     if (isPushMetricsEnabled()) {
-      scheduleRecurringMetricsPush()
+      this.recurringMetricsPushTimeout = scheduleRecurringMetricsPush()
     }
+    this.recurringMetricsTimeout = scheduleRecurringPayIdCountMetrics(
+      config.metrics.payIdCountRefreshIntervalInSeconds,
+    )
   }
 
   public close(): void {
     this.publicAPIServer?.close()
     this.privateAPIServer?.close()
+    if (this.recurringMetricsTimeout?.hasRef()) {
+      clearInterval(this.recurringMetricsTimeout?.ref())
+    }
+    if (this.recurringMetricsPushTimeout?.hasRef()) {
+      clearInterval(this.recurringMetricsPushTimeout?.ref())
+    }
   }
 
   private launchPublicAPI(appConfig = config.app): Server {
