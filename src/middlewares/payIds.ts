@@ -33,7 +33,7 @@ import handleHttpError from './errors'
  */
 async function getPaymentInfoForAcceptTypes(
   payId: string,
-  sortedAcceptTypes: AcceptMediaType[],
+  sortedAcceptTypes: readonly AcceptMediaType[],
 ): Promise<
   | {
       acceptType: AcceptMediaType
@@ -98,7 +98,7 @@ export default async function getPaymentInfo(
     )
   }
 
-  let parsedAcceptTypes: AcceptMediaType[] = []
+  let parsedAcceptTypes: readonly AcceptMediaType[]
   try {
     parsedAcceptTypes = acceptHeaderTypes.map((type) =>
       parseAcceptMediaType(type),

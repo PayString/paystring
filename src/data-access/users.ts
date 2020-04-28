@@ -17,8 +17,8 @@ import logger from '../utils/logger'
 export async function selectUser(
   payId: string,
   organization = 'xpring',
-): Promise<AddressInformation[]> {
-  const addresses: AddressInformation[] = await knex
+): Promise<readonly AddressInformation[]> {
+  const addresses: readonly AddressInformation[] = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin<Account>('account', 'address.account_id', 'account.id')
@@ -41,9 +41,9 @@ export async function selectUser(
 // TODO:(hbergren) Accept an array of users (insertUsers?)
 export async function insertUser(
   payId: string,
-  addresses: AddressInformation[],
+  addresses: readonly AddressInformation[],
   organization = 'xpring',
-): Promise<AddressInformation[]> {
+): Promise<readonly AddressInformation[]> {
   // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
   // Or do checks in JS to ensure no constraints are violated. Or both.
   return knex.transaction(async (transaction: Transaction) => {
@@ -78,7 +78,7 @@ export async function insertUser(
 export async function replaceUser(
   oldPayId: string,
   newPayId: string,
-  addresses: AddressInformation[],
+  addresses: readonly AddressInformation[],
 ): Promise<void> {
   return knex.transaction(async (transaction: Transaction) => {
     const updatedAddresses = await knex<Account>('account')
@@ -147,9 +147,9 @@ interface DatabaseAddress extends AddressInformation {
  * @returns A new array of addresses, where each address has a new property 'account_id'.
  */
 function addAccountIDToAddresses(
-  addresses: AddressInformation[],
+  addresses: readonly AddressInformation[],
   accountID: string,
-): DatabaseAddress[] {
+): readonly DatabaseAddress[] {
   return addresses.map((address) => ({
     // TODO:(hbergren) Currently I assume all properties will be filled in, but I need to handle the case where they aren't.
     account_id: accountID,
@@ -167,9 +167,9 @@ function addAccountIDToAddresses(
  * @returns An array of the inserted addresses.
  */
 async function insertAddresses(
-  addresses: DatabaseAddress[],
+  addresses: readonly DatabaseAddress[],
   transaction: Transaction,
-): Promise<AddressInformation[]> {
+): Promise<readonly AddressInformation[]> {
   // TODO:(hbergren) Verify that the number of inserted addresses matches the input address array length?
   return knex
     .insert(addresses)

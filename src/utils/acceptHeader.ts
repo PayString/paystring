@@ -50,8 +50,8 @@ export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
  * if one exists; returns undefined otherwise
  */
 export function getPreferredPaymentInfo(
-  paymentInformations: AddressInformation[],
-  sortedAcceptedTypes: AcceptMediaType[],
+  paymentInformations: readonly AddressInformation[],
+  sortedAcceptedTypes: readonly AcceptMediaType[],
 ):
   | {
       acceptType: AcceptMediaType

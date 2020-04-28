@@ -31,7 +31,7 @@ export default async function getPaymentInfoFromDatabase(
         builder.whereNull('address.environment')
       }
     })
-    .then((rows: AddressInformation[]) => {
+    .then((rows: readonly AddressInformation[]) => {
       // TODO(hbergren): More than one row possible?
       // Throw error if that happens?
       return rows[0]
@@ -47,7 +47,7 @@ export default async function getPaymentInfoFromDatabase(
  */
 export async function getAllPaymentInfoFromDatabase(
   payId: string,
-): Promise<AddressInformation[]> {
+): Promise<readonly AddressInformation[]> {
   const paymentInformation = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
