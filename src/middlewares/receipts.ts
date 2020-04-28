@@ -11,6 +11,7 @@ export default function receiveReceipt(
   next: NextFunction,
 ): void {
   const receipt = parseReceipt(req.body)
+  /* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */
   if (!receipt) {
     return handleHttpError(
       HttpStatus.BadRequest,

@@ -6,7 +6,7 @@
 export default class PayIDError extends Error {
   public readonly httpStatusCode?: number
 
-  constructor(message: string, status?: number) {
+  public constructor(message: string, status?: number) {
     // Breaks prototype chain since it uses the Error prototype
     super(message)
 

@@ -54,19 +54,22 @@ async function executeSQLFile(
   databaseConfig = config.database,
 ): Promise<void> {
   const sql = fs.readFileSync(file, 'utf8')
-
-  // Connect to the database
   const client = new Client(databaseConfig.connection)
-  client.connect()
 
-  logger.debug(`Executing query:\n${sql}`)
-  await client.query(sql).catch((err: Error) => {
+  try {
+    // Connect to the database
+    await client.connect()
+
+    // Execute SQL query
+    logger.debug(`Executing query:\n${sql}`)
+    await client.query(sql)
+
+    // Close the database connection
+    await client.end()
+  } catch (err) {
     logger.fatal('error running query', file, err.message)
 
     // If we can't execute our SQL, our app is in an indeterminate state, so kill it.
     process.exit(1)
-  })
-
-  // Close the database connection
-  client.end()
+  }
 }
