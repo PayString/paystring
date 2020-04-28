@@ -19,7 +19,13 @@ export default async function syncDatabaseSchema(
   databaseConfig = config.database,
 ): Promise<void> {
   // Define the list of directories holding '*.sql' files, in the order we want to execute them
-  const sqlDirectories = ['extensions', 'schema', 'functions', 'triggers']
+  const sqlDirectories = [
+    'extensions',
+    'schema',
+    'functions',
+    'triggers',
+    'migrations',
+  ]
 
   // Run the seed script if we are seeding our database
   if (databaseConfig.options.seedDatabase) {

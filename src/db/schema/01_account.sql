@@ -4,7 +4,6 @@
 CREATE TABLE IF NOT EXISTS account (
 	id uuid PRIMARY KEY DEFAULT(gen_random_uuid()),
 	pay_id varchar(200) UNIQUE NOT NULL,
-	organization varchar(50) NOT NULL,
 
 	-- AUDIT COLUMNS
 	created_at timestamp with time zone NOT NULL DEFAULT(CURRENT_TIMESTAMP),
@@ -12,7 +11,6 @@ CREATE TABLE IF NOT EXISTS account (
 
 	-- CONSTRAINTS
 	CONSTRAINT pay_id_length_nonzero CHECK(length(pay_id) > 0),
-	CONSTRAINT organization_length_nonzero CHECK(length(organization) > 0),
 
 	-- This is a black magic PayID regex from https://mathiasbynens.be/demo/url-regex
 	-- It is an adaptation of the 'stephenhay' implementation, which was the shortest URL regex I could find.

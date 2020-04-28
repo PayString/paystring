@@ -8,22 +8,18 @@ import logger from '../utils/logger'
 /**
  * Retrieve the addresses associated with a given users PayID.
  * @param payId - The PayID (user) for which to retrieve addresses.
- * @param organization - The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns An array of the addresses associated with that PayID.
  */
 // TODO(hbergren): Type payId better?
-// TODO(hbergren): remove default value for organization
 export async function selectUser(
   payId: string,
-  organization = 'xpring',
 ): Promise<readonly AddressInformation[]> {
   const addresses: readonly AddressInformation[] = await knex
     .select('address.payment_network', 'address.environment', 'address.details')
     .from<Address>('address')
     .innerJoin<Account>('account', 'address.account_id', 'account.id')
     .where('account.pay_id', payId)
-    .andWhere('account.organization', organization)
 
   return addresses
 }
@@ -32,17 +28,14 @@ export async function selectUser(
  * Inserts a new user/pay_id into the Account table on the PayID service.
  * @param payId - The PayID to insert in the users table.
  * @param addresses - The addresses for that PayID to insert into the database.
- * @param organization - The organization with authorization to perform CRUD operations on this user on the PayID service.
  *
  * @returns The addresses inserted for this user
  */
 // TODO(hbergren): Type payId better
-// TODO:(hbergren): Remove default value of `xpring` for organization
 // TODO:(hbergren) Accept an array of users (insertUsers?)
 export async function insertUser(
   payId: string,
   addresses: readonly AddressInformation[],
-  organization = 'xpring',
 ): Promise<readonly AddressInformation[]> {
   // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
   // Or do checks in JS to ensure no constraints are violated. Or both.
@@ -50,7 +43,6 @@ export async function insertUser(
     const insertedAddresses = await knex
       .insert({
         pay_id: payId,
-        organization,
       })
       .into<Account>('account')
       .transacting(transaction)
