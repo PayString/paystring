@@ -1,3 +1,4 @@
+/* eslint-disable no-inline-comments */
 // Source: https://www.restapitutorial.com/httpstatuscodes.html
 
 enum HttpStatus {

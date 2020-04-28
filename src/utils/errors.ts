@@ -1,7 +1,5 @@
 /**
  * Custom Errors for PayID.
- *
- * @field httpStatusCode? Used by an error handler to respond appropriately to a client.
  */
 export default class PayIDError extends Error {
   public readonly httpStatusCode?: number

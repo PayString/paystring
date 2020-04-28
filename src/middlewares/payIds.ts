@@ -28,8 +28,8 @@ import handleHttpError from './errors'
  *
  * Returns undefined if payment infomation could not be found.
  *
- * @param - payId The PayID to retrieve payment information for
- * @param - sortedAcceptTypes An array of AcceptTypes, sorted by preference
+ * @param payId - The PayID to retrieve payment information for
+ * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference
  */
 async function getPaymentInfoForAcceptTypes(
   payId: string,
@@ -108,7 +108,7 @@ export default async function getPaymentInfo(
 
     // TODO:(tkalaw): Should we mention all of the invalid types?
     return handleHttpError(
-      400,
+      HttpStatus.BadRequest,
       `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
       Examples:
       - 'Accept: application/xrpl-mainnet+json'

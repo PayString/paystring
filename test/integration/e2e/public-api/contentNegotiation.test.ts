@@ -4,12 +4,13 @@ import { assert } from 'chai'
 import * as request from 'supertest'
 
 import App from '../../../../src/app'
+import HttpStatus from '../../../../src/types/httpStatus'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 
-const XRPLTestnetAcceptHeader = 'application/xrpl-testnet+json'
-const XRPLMainnetAcceptHeader = 'application/xrpl-mainnet+json'
+const XRPL_TESTNET_ACCEPT_HEADER = 'application/xrpl-testnet+json'
+const XRPL_MAINNET_ACCEPT_HEADER = 'application/xrpl-mainnet+json'
 
 describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
   // Boot up Express application and initialize DB connection pool
@@ -20,7 +21,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
   it('Returns the first address for multiple types with no q', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet and xrpl-mainnet address
     const payId = '/alice'
-    const acceptHeader = `${XRPLTestnetAcceptHeader}, ${XRPLMainnetAcceptHeader}`
+    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}, ${XRPL_MAINNET_ACCEPT_HEADER}`
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
       addressDetails: {
@@ -37,17 +38,17 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
       .expect((res) => {
         assert.strictEqual(
           res.get('Content-Type').split('; ')[0],
-          XRPLTestnetAcceptHeader,
+          XRPL_TESTNET_ACCEPT_HEADER,
         )
       })
       // AND we get back the xrpl-testnet account information associated with that payment pointer for xrpl-testnet
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns the preferred available address where the higher q is at the beginning', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address and xrpl-mainnet address
     const payId = '/alice'
-    const acceptHeader = `${XRPLTestnetAcceptHeader}; q=1.0, ${XRPLMainnetAcceptHeader}; q=0.5`
+    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=1.0, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.5`
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
       addressDetails: {
@@ -64,17 +65,17 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
       .expect((res) => {
         assert.strictEqual(
           res.get('Content-Type').split('; ')[0],
-          XRPLTestnetAcceptHeader,
+          XRPL_TESTNET_ACCEPT_HEADER,
         )
       })
       // AND we get back the xrpl testnet account information associated with that payment pointer for xrpl testnet
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns the preferred available address where the higher q is at the end', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address and an xrpl-mainnet address
     const payId = '/alice'
-    const acceptHeader = `${XRPLTestnetAcceptHeader}; q=0.5, ${XRPLMainnetAcceptHeader}; q=1.0`
+    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=1.0`
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
       addressDetails: {
@@ -91,18 +92,18 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
       .expect((res) => {
         assert.strictEqual(
           res.get('Content-Type').split('; ')[0],
-          XRPLMainnetAcceptHeader,
+          XRPL_MAINNET_ACCEPT_HEADER,
         )
       })
       // AND we get back the xrpl-mainnet account information associated with that payment pointer for xrpl-mainnet.
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   it('Returns a valid address when the most preferred type does not exist', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address and mainnet address
     const payId = '/alice'
     const nonExistentAcceptType = 'application/fakenetwork-fakenet+json'
-    const acceptHeader = `${nonExistentAcceptType}; q=1.0, ${XRPLTestnetAcceptHeader}; q=0.5, ${XRPLMainnetAcceptHeader}; q=0.9`
+    const acceptHeader = `${nonExistentAcceptType}; q=1.0, ${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.9`
     const expectedResponse = {
       addressDetailType: 'CryptoAddressDetails',
       addressDetails: {
@@ -119,11 +120,11 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
       .expect((res) => {
         assert.strictEqual(
           res.get('Content-Type').split('; ')[0],
-          XRPLMainnetAcceptHeader,
+          XRPL_MAINNET_ACCEPT_HEADER,
         )
       })
       // AND we get back the xrpl-mainnet account information associated with that payment pointer for xrpl mainnet.
-      .expect(200, expectedResponse, done)
+      .expect(HttpStatus.OK, expectedResponse, done)
   })
 
   // Shut down Express application and close DB connections

@@ -87,9 +87,7 @@ export function urlToPayId(url: string): string {
   return `${user.toLowerCase()}$${urlWithoutUser.toLowerCase()}`
 }
 
-/*
- * HELPER FUNCTIONS
- */
+// HELPER FUNCTIONS
 
 /**
  * Validate if the input is ASCII based text.

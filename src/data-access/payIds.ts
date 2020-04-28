@@ -43,7 +43,7 @@ export default async function getPaymentInfoFromDatabase(
 /**
  *
  * Retrieve all of the payment information associated with a given PayID.
- * @param payId The PayID to retrieve payment information for.
+ * @param payId - The PayID to retrieve payment information for.
  */
 export async function getAllPaymentInfoFromDatabase(
   payId: string,

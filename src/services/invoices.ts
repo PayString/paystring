@@ -26,7 +26,7 @@ export default function generateInvoice(
 ): Invoice {
   // TODO(dino): Store whether a server needs to be travel rule compliant in the env
   // TODO(dino): Actually hash the compliance data
-  // TODO(dino): Consider caching this invoice, or atleast caching the compliance hashes
+  // TODO(dino): Consider caching this invoice, or at least caching the compliance hashes
   // to retrieve for multiple compliance round trips. This won't be necessary for the foreseeable future,
   // and maybe never for our reference implementation (currently no plans to include any requirements
   // other than travel rule), so maybe this should be deleted.

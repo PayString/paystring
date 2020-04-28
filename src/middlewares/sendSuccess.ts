@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import HttpStatus from '../types/httpStatus'
 
 export default function sendSuccess(req: Request, res: Response): void {
-  const status = res.locals.status || HttpStatus.OK
+  const status = Number(res.locals?.status) || HttpStatus.OK
 
   // Set a location header when our status is 201 - Created
   if (status === HttpStatus.Created) {

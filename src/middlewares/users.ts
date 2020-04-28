@@ -176,7 +176,7 @@ export async function putUser(
     ) {
       return handleHttpError(
         HttpStatus.Conflict,
-        `There already exists a user with the PayID ${payId}`,
+        `There already exists a user with the PayID ${newPayId}`,
         res,
         err,
       )
@@ -184,7 +184,7 @@ export async function putUser(
 
     return handleHttpError(
       HttpStatus.InternalServerError,
-      `Error updating PayID for account ${req.query.pay_id}.`,
+      `Error updating PayID for account ${payId}.`,
       res,
       err,
     )

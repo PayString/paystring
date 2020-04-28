@@ -5,7 +5,7 @@ import PayIDError from './errors'
 /**
  * A parsed Accept type
  */
-export type AcceptMediaType = {
+export interface AcceptMediaType {
   // The raw Accept type
   mediaType: string
 
@@ -22,7 +22,7 @@ export type AcceptMediaType = {
  * @returns - A parsed AcceptType
  */
 export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
-  const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/
+  const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/u
   const regexResult = ACCEPT_HEADER_REGEX.exec(mediaType)
   if (!regexResult || !regexResult.groups) {
     throw new PayIDError(`Invalid Accept media type ${mediaType}`)
@@ -62,7 +62,7 @@ export function getPreferredPaymentInfo(
     const paymentInformationForAcceptType = paymentInformations.find(
       (result) =>
         result.payment_network === acceptType.paymentNetwork &&
-        (result.environment || '') === acceptType.environment,
+        (result.environment ?? '') === acceptType.environment,
     )
 
     if (paymentInformationForAcceptType) {

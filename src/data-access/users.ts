@@ -79,7 +79,7 @@ export async function replaceUser(
   oldPayId: string,
   newPayId: string,
   addresses: readonly AddressInformation[],
-): Promise<void> {
+): Promise<readonly AddressInformation[] | null> {
   return knex.transaction(async (transaction: Transaction) => {
     const updatedAddresses = await knex<Account>('account')
       .where('pay_id', oldPayId)
@@ -132,9 +132,7 @@ export async function removeUser(payId: string): Promise<void> {
     })
 }
 
-/*
- * HELPER FUNCTIONS
- */
+// HELPER FUNCTIONS
 interface DatabaseAddress extends AddressInformation {
   account_id: string
 }
