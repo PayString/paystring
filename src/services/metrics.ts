@@ -25,11 +25,12 @@ const payIdCountGauge = new Gauge({
   registers: [payIdGaugeRegistry],
 })
 
-export const isPushMetricsEnabled = (): boolean => {
+export function isPushMetricsEnabled(): boolean {
   if (config.metrics.gatewayUrl) {
     if (!config.app.organization) {
-      logger.warn(`PAYID_ORG must be set if push enabled. 
-    Metrics will not be pushed.`)
+      logger.warn(
+        'PAYID_ORG must be set if push enabled. Metrics will not be pushed.',
+      )
       return false
     }
     return true
@@ -40,9 +41,10 @@ export const isPushMetricsEnabled = (): boolean => {
 export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
   if (!config.metrics.gatewayUrl) {
     // this shouldn't be possible if isPushMetricsEnabled() is being checked first but just in case
-    logger.debug(`gatewayUrl not set. Metrics will not be pushed.`)
+    logger.debug('gatewayUrl not set. Metrics will not be pushed.')
     return undefined
   }
+
   if (config.metrics.pushIntervalInSeconds <= 0) {
     // this shouldn't be possible if isPushMetricsEnabled() is being checked first but just in case
     logger.warn(
@@ -70,7 +72,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
       },
       (err, _resp, _body): void => {
         if (err) {
-          logger.warn(`metrics push failed with error ${err} `)
+          logger.warn('metrics push failed with ', err)
         }
       },
     )
@@ -81,7 +83,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
       },
       (err, _resp, _body): void => {
         if (err) {
-          logger.warn(`gauge metrics push failed with error ${err} `)
+          logger.warn('gauge metrics push failed with ', err)
         }
       },
     )
@@ -102,7 +104,7 @@ export function recordPayIdLookupBadAcceptHeader(): void {
       paymentNetwork: 'unknown',
       environment: 'unknown',
       org: config.app.organization,
-      result: `error: bad_accept_header`,
+      result: 'error: bad_accept_header',
     },
     1,
   )

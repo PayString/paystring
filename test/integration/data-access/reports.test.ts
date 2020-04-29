@@ -2,7 +2,7 @@ import 'mocha'
 import { assert } from 'chai'
 
 import config from '../../../src/config'
-import { getPayIdCounts } from '../../../src/data-access/reports'
+import getPayIdCounts from '../../../src/data-access/reports'
 import knex from '../../../src/db/knex'
 import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
 import structuredClone from '../../helpers/helpers'

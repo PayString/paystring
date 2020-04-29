@@ -47,10 +47,10 @@ export default class App {
     this.publicAPIServer?.close()
     this.privateAPIServer?.close()
     if (this.recurringMetricsTimeout?.hasRef()) {
-      clearInterval(this.recurringMetricsTimeout?.ref())
+      clearInterval(this.recurringMetricsTimeout.ref())
     }
     if (this.recurringMetricsPushTimeout?.hasRef()) {
-      clearInterval(this.recurringMetricsPushTimeout?.ref())
+      clearInterval(this.recurringMetricsPushTimeout.ref())
     }
   }
 

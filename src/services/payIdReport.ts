@@ -1,18 +1,18 @@
-import { getPayIdCounts } from '../data-access/reports'
-import { PayIdCount } from '../types/reports'
+import getPayIdCounts from '../data-access/reports'
 import logger from '../utils/logger'
 
 import { recordPayIdCount, resetPayIdCounts } from './metrics'
 
-export function generatePayIdCountMetrics(): Promise<void | PayIdCount[]> {
-  return getPayIdCounts().then((results) => {
-    resetPayIdCounts()
-    results.forEach((result) =>
-      recordPayIdCount(
-        result.payment_network,
-        result.environment,
-        result.count,
-      ),
+export async function generatePayIdCountMetrics(): Promise<void> {
+  const payIdCounts = await getPayIdCounts()
+
+  resetPayIdCounts()
+
+  payIdCounts.forEach((payIdCount) => {
+    recordPayIdCount(
+      payIdCount.payment_network,
+      payIdCount.environment,
+      payIdCount.count,
     )
   })
 }

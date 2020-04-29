@@ -4,9 +4,7 @@ import { PayIdCount } from '../types/reports'
 /**
  * Retrieve count of PayIDs, grouped by payment network and environment
  */
-export const getPayIdCounts = async function getPayIdCounts(): Promise<
-  PayIdCount[]
-> {
+export default async function getPayIdCounts(): Promise<PayIdCount[]> {
   const payIdCounts: PayIdCount[] = await knex
     .select('address.payment_network', 'address.environment')
     .count('* as count')
@@ -23,5 +21,3 @@ export const getPayIdCounts = async function getPayIdCounts(): Promise<
     }
   })
 }
-
-export default getPayIdCounts

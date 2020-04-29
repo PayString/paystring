@@ -31,7 +31,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId(payId, network, mainnet)
     await lookupPayId(account, asAccept(network, mainnet), HttpStatus.OK)
     await assertMetrics(
-      /payid_lookup_request{paymentNetwork="ACH",environment="MAINNET",org="undefined",result="found"} 1/,
+      /payid_lookup_request\{paymentNetwork="ACH",environment="MAINNET",org="undefined",result="found"\} 1/u,
     )
   })
 
@@ -42,7 +42,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId(payId, network, testnet)
     await lookupPayId('bogus', asAccept(network, testnet), HttpStatus.NotFound)
     await assertMetrics(
-      /payid_lookup_request{paymentNetwork="ETH",environment="TESTNET",org="undefined",result="not_found"} 1/,
+      /payid_lookup_request\{paymentNetwork="ETH",environment="TESTNET",org="undefined",result="not_found"\} 1/u,
     )
   })
 
@@ -52,7 +52,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId(payId, ' ', mainnet)
     await lookupPayId(account, ' ', HttpStatus.BadRequest)
     await assertMetrics(
-      /payid_lookup_request{paymentNetwork="unknown",environment="unknown",org="undefined",result="error: bad_accept_header"} 1/,
+      /payid_lookup_request\{paymentNetwork="unknown",environment="unknown",org="undefined",result="error: bad_accept_header"\} 1/u,
     )
   })
 
@@ -71,10 +71,10 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await lookupPayId(xrpAccount, asAccept(xrpNetwork, mainnet), HttpStatus.OK)
     await lookupPayId(btcAccount, asAccept(btcNetwork, testnet), HttpStatus.OK)
     await assertMetrics(
-      /payid_lookup_request{paymentNetwork="XRPL",environment="MAINNET",org="undefined",result="found"} 2/,
+      /payid_lookup_request\{paymentNetwork="XRPL",environment="MAINNET",org="undefined",result="found"\} 2/u,
     )
     await assertMetrics(
-      /payid_lookup_request{paymentNetwork="BTC",environment="TESTNET",org="undefined",result="found"} 1/,
+      /payid_lookup_request\{paymentNetwork="BTC",environment="TESTNET",org="undefined",result="found"\} 1/u,
     )
   })
 
@@ -86,10 +86,10 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId('frank$wolfcola.com', litecoinNetwork, 'MAINNET')
     await generatePayIdCountMetrics()
     await assertMetrics(
-      /payid_count{paymentNetwork="ACH",environment="US",org="undefined"} 2/,
+      /payid_count\{paymentNetwork="ACH",environment="US",org="undefined"\} 2/u,
     )
     await assertMetrics(
-      /payid_count{paymentNetwork="LTC",environment="MAINNET",org="undefined"} 1/,
+      /payid_count\{paymentNetwork="LTC",environment="MAINNET",org="undefined"\} 1/u,
     )
   })
 
