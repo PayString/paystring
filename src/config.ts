@@ -7,6 +7,10 @@ enum Version {
 
 /**
  * Application configuration.
+ *
+ * NOTE: The defaults are developer defaults. This configuration is NOT a valid
+ * production configuration. Please refer to example.production.env for
+ * reference.
  */
 const config = {
   database: {
@@ -25,6 +29,7 @@ const config = {
     privateAPIPort: Number(process.env.PRIVATE_API_PORT) || 8081,
     version: process.env.VERSION ?? Version.V1,
     log_level: process.env.LOG_LEVEL ?? 'INFO',
+    httpsRequired: process.env.HTTPS_REQUIRED === 'true',
     /**
      * Name of the individual or organization that operates this PayID server.
      * Organization is used to identify who is pushing the metrics in cases where

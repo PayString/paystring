@@ -95,9 +95,9 @@ describe('payIdToUrl', function (): void {
 
 describe('urlToPayId', function (): void {
   it('throws an error on inputs that clearly are not PayID URLs', function (): void {
-    // GIVEN a badly formed PayID URL (no leading https://)
-    const url = 'http://hansbergren.example.com'
-    const expectedErrorMessage = 'Bad input. PayID URLs must be HTTPS.'
+    // GIVEN a badly formed input
+    const url = 'example.com+alice'
+    const expectedErrorMessage = 'Bad input. PayID URLs must be HTTP/HTTPS.'
 
     // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
@@ -106,13 +106,37 @@ describe('urlToPayId', function (): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
+  it('throws an error on inputs that are HTTP if httpsRequired is true', function (): void {
+    // GIVEN an http URL
+    const url = 'http://example.com/alice'
+    const expectedErrorMessage = 'Bad input. PayID URLs must be HTTPS.'
+
+    // WHEN we attempt converting it to a PayID w/ httpsRequired set to true
+    const badConversion = (): string => urlToPayId(url, true)
+
+    // THEN we get our expected error
+    assert.throws(badConversion, expectedErrorMessage)
+  })
+
+  it('handles HTTP if httpsRequired is false', function (): void {
+    // GIVEN an http URL
+    const url = 'http://example.com/alice'
+    const expectedPayId = 'alice$example.com'
+
+    // WHEN we attempt converting it to a PayID w/ httpsRequired set to false
+    const actualPayId = urlToPayId(url, false)
+
+    // THEN we get our expected PayId
+    assert.strictEqual(actualPayId, expectedPayId)
+  })
+
   it('throws an error on inputs that are not ASCII', function (): void {
     // GIVEN a badly formed PayID URL (non-ASCII)
     // Note that this is a real TLD that exists
     const url = 'https://hansbergren.example.संगठन'
     const expectedErrorMessage = 'Bad input. PayIDs must be ASCII.'
 
-    // WHEN we attempt converting it to a URL
+    // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
 
     // THEN we get our expected error
@@ -124,11 +148,11 @@ describe('urlToPayId', function (): void {
     const url = 'https://payid.example.com/alice'
     const expectedPayId = 'alice$payid.example.com'
 
-    // WHEN we convert it to a URL
+    // WHEN we attempt converting it to a PayID
     const actualPayId = urlToPayId(url)
 
+    // THEN we get our expected PayID
     assert.strictEqual(actualPayId, expectedPayId)
-    // THEN we get our expected URL
   })
 
   it('Rejects URL with user not immediately after tld', function (): void {
@@ -137,7 +161,7 @@ describe('urlToPayId', function (): void {
     const expectedErrorMessage =
       'Bad input. The only paths allowed in a PayID are to specify the user.'
 
-    // WHEN we convert it to a URL
+    // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
 
     // THEN we get our expected error
@@ -149,10 +173,10 @@ describe('urlToPayId', function (): void {
     const url = 'https://example.com/ALICE'
     const expectedPayId = 'alice$example.com'
 
-    // WHEN we convert it to a URL
+    // WHEN we attempt converting it to a PayID
     const actualPayId = urlToPayId(url)
 
-    // THEN we get our expected URL
+    // THEN we get our expected PayID
     assert.strictEqual(actualPayId, expectedPayId)
   })
 })

@@ -1,5 +1,8 @@
+import config from '../config'
+
 // CONSTANTS
 const HTTPS = 'https://'
+const HTTP = 'http://'
 
 /**
  * Converts a PayID from [user]$[domain] format representation to a URL representation
@@ -53,18 +56,25 @@ export function payIdToUrl(payId: string): string {
  *
  * @returns A PayID in the $ format.
  */
-export function urlToPayId(url: string): string {
+export function urlToPayId(
+  url: string,
+  httpsRequired = config.app.httpsRequired,
+): string {
   // TODO:(hbergren) More validation or type-guards?
-  if (!url.startsWith(HTTPS)) {
+  if (!url.startsWith(HTTPS) && httpsRequired) {
     throw new Error('Bad input. PayID URLs must be HTTPS.')
+  }
+
+  if (!url.startsWith(HTTPS) && !url.startsWith(HTTP)) {
+    throw new Error('Bad input. PayID URLs must be HTTP/HTTPS.')
   }
 
   if (!isASCII(url)) {
     throw new Error('Bad input. PayIDs must be ASCII.')
   }
 
-  // Remove https:// from URL
-  const removedProtocolUrl = url.substring(HTTPS.length)
+  // Remove https:// or http:// from URL
+  const removedProtocolUrl = url.split('://')[1]
 
   if ((removedProtocolUrl.match(/\//gu) || []).length > 1) {
     /**

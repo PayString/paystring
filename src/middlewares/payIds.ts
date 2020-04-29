@@ -52,7 +52,7 @@ async function getPaymentInfoForAcceptTypes(
 
 /**
  * Resolves inbound requests to a PayID to their
- * respective ledger addresses or other payment information required.
+ * respective ledger addresses or other payment information.
  *
  * @param req - Contains PayID and payment network header
  * @param res - Stores payment information to be returned to the client
@@ -69,9 +69,8 @@ export default async function getPaymentInfo(
    *  const payIdUrl =
    *  `${req.protocol}://${req.hostname}:${Config.publicAPIPort}${req.url}`
    */
-  // TODO(aking): stop hardcoding HTTPS. We should at minimum be using ${req.protocol}
   // TODO:(hbergren) Write a helper function for this and test it?
-  const payIdUrl = `https://${req.hostname}${req.url}`
+  const payIdUrl = `${req.protocol}://${req.hostname}${req.url}`
   let payId: string
   try {
     payId = urlToPayId(payIdUrl)
