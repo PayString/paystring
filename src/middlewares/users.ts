@@ -94,7 +94,7 @@ export async function postUser(
     ) {
       return handleHttpError(
         HttpStatus.Conflict,
-        `There already exists a user with the PayId ${payId}`,
+        `There already exists a user with the PayID ${payId}`,
         res,
         err,
       )

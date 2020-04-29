@@ -124,30 +124,6 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .expect(HttpStatus.Created, done)
   })
 
-  it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
-    // GIVEN a user with a PayID known already on the PayID service
-    const userInformation = {
-      pay_id: 'alice$xpring.money',
-      addresses: [
-        {
-          payment_network: 'XRPL',
-          environment: 'TESTNET',
-          details: {
-            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
-          },
-        },
-      ],
-    }
-
-    // WHEN we make a POST request to /v1/users with that user information
-    request(app.privateAPIExpress)
-      .post(`/v1/users`)
-      .send(userInformation)
-      .expect('Content-Type', /json/u)
-      // THEN we expect back a 409 - CONFLICT
-      .expect(HttpStatus.Conflict, done)
-  })
-
   it('Returns a 201 - creates PayID containing a "."', function (done): void {
     // GIVEN a user with a PayID containing a period
     const userInformation = {
@@ -170,6 +146,36 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
+  })
+
+  it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
+    // GIVEN a user with a PayID known already on the PayID service
+    const userInformation = {
+      pay_id: 'alice$xpring.money',
+      addresses: [
+        {
+          payment_network: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
+          },
+        },
+      ],
+    }
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 409,
+      error: 'Conflict',
+      message: 'There already exists a user with the PayID alice$xpring.money',
+    }
+
+    // WHEN we make a POST request to /v1/users with that user information
+    request(app.privateAPIExpress)
+      .post(`/v1/users`)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect back a 409 - CONFLICT and our expected error response
+      .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
 
   after(async function () {
@@ -263,7 +269,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
   it('Returns a 400 - Bad Request with an error payload for a request with a malformed PayID', function (done): void {
     // GIVEN a PayID known to be in a bad format (missing $) and an expected error response payload
     const badPayId = 'alice.xpring.money'
-    const errorResponsePayload = {
+    const expectedErrorResponse = {
       error: 'Bad Request',
       message: 'Bad input. PayIDs must contain a "$"',
       statusCode: 400,
@@ -286,13 +292,13 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
-      .expect(HttpStatus.BadRequest, errorResponsePayload, done)
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
   it('Returns a 400 - Bad Request with an error payload for a request with an existing PayID with multiple "$"', function (done): void {
     // GIVEN a PayID known to be in a bad format (multiple $) and an expected error response payload
     const badPayId = 'alice$bob$xpring.money'
-    const errorResponsePayload = {
+    const expectedErrorResponse = {
       error: 'Bad Request',
       message: 'Bad input. PayIDs must contain only one "$"',
       statusCode: 400,
@@ -315,13 +321,13 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
-      .expect(HttpStatus.BadRequest, errorResponsePayload, done)
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
   it('Returns a 400 - Bad Request with an error payload for a request to update a PayID to a new value containing multiple "$"', function (done): void {
     // GIVEN a PayID known to be in a bad format (missing $) and an expected error response payload
     const badPayId = 'alice$xpring.money'
-    const errorResponsePayload = {
+    const expectedErrorResponse = {
       error: 'Bad Request',
       message: 'Bad input. PayIDs must contain only one "$"',
       statusCode: 400,
@@ -344,7 +350,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
-      .expect(HttpStatus.BadRequest, errorResponsePayload, done)
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
   it('Returns a 409 - Conflict when attempting to update a user to a PayID that already exists', function (done): void {
@@ -363,20 +369,27 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
         },
       ],
     }
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 409,
+      error: 'Conflict',
+      message: 'There already exists a user with the PayID bob$xpring.money',
+    }
+
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
-      // THEN we expect back a 409 - CONFLICT
-      .expect(HttpStatus.Conflict, done)
+      // THEN we expect back a 409 - CONFLICT and our expected error response
+      .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
 
   it('Returns a 409 - Conflict when attempting to PUT a new user to a PayID that already exists', function (done): void {
     // GIVEN a PayID known to not resolve to an account on the PayID service
     const payId = 'janedoe$xpring.money'
+    // AND a request to update that PayID to one known to already exist on the PayID Service
     const updatedInformation = {
-      // AND a request to update that PayID to one known to already exist on the PayID Service
       pay_id: 'bob$xpring.money',
       addresses: [
         {
@@ -388,13 +401,20 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
         },
       ],
     }
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 409,
+      error: 'Conflict',
+      message: 'There already exists a user with the PayID bob$xpring.money',
+    }
+
     // WHEN we make a PUT request to /v1/users/ with the new information to update
     request(app.privateAPIExpress)
       .put(`/v1/users/${payId}`)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
-      // THEN we expect back a 409 - CONFLICT
-      .expect(HttpStatus.Conflict, done)
+      // THEN we expect back a 409 - CONFLICT and our expected error response
+      .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
 
   after(async function () {
