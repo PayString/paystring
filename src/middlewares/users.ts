@@ -84,29 +84,7 @@ export async function postUser(
     )
   }
 
-  try {
-    await insertUser(payId, req.body.addresses)
-  } catch (err) {
-    // TODO(hbergren): This leaks database stuff into this file
-    // This probably means error handling should be done in the data access layer
-    if (
-      err.message.includes('violates unique constraint "account_pay_id_key"')
-    ) {
-      return handleHttpError(
-        HttpStatus.Conflict,
-        `There already exists a user with the PayID ${payId}`,
-        res,
-        err,
-      )
-    }
-
-    return handleHttpError(
-      HttpStatus.InternalServerError,
-      `The server could not create an account for the PayID ${payId}`,
-      res,
-      err,
-    )
-  }
+  await insertUser(payId, req.body.addresses)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware
   res.locals.status = HttpStatus.Created
@@ -161,33 +139,11 @@ export async function putUser(
   // TODO(dino): validate body params before this
   let updatedAddresses
   let statusCode = HttpStatus.OK
-  try {
-    // TODO:(hbergren) Remove this ridiculous nesting.
-    updatedAddresses = await replaceUser(payId, newPayId, addresses)
-    if (updatedAddresses === null) {
-      updatedAddresses = await insertUser(newPayId, addresses)
-      statusCode = HttpStatus.Created
-    }
-  } catch (err) {
-    // TODO(hbergren): This leaks database stuff into this file
-    // This probably means error handling should be done in the data access layer
-    if (
-      err.message.includes('violates unique constraint "account_pay_id_key"')
-    ) {
-      return handleHttpError(
-        HttpStatus.Conflict,
-        `There already exists a user with the PayID ${newPayId}`,
-        res,
-        err,
-      )
-    }
 
-    return handleHttpError(
-      HttpStatus.InternalServerError,
-      `Error updating PayID for account ${payId}.`,
-      res,
-      err,
-    )
+  updatedAddresses = await replaceUser(payId, newPayId, addresses)
+  if (updatedAddresses === null) {
+    updatedAddresses = await insertUser(newPayId, addresses)
+    statusCode = HttpStatus.Created
   }
 
   // If the status code is 201 - Created, we need to set a Location header later with the PayID

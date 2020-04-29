@@ -1,20 +1,17 @@
+import HttpStatus from '../types/httpStatus'
+
 /**
  * Custom Errors for PayID.
  */
 export default class PayIDError extends Error {
-  public readonly httpStatusCode?: number
+  public readonly httpStatusCode: HttpStatus
 
-  public constructor(message: string, status?: number) {
-    // Breaks prototype chain since it uses the Error prototype
+  public constructor(message: string, status: HttpStatus) {
     super(message)
 
-    // Restore the prototype chain
-    Object.setPrototypeOf(this, new.target.prototype)
-
-    this.name = 'PayIDError'
+    // All our custom errors will extend PayIDError
+    // So use the name of the class extending PayIDError
+    this.name = this.constructor.name
     this.httpStatusCode = status
-
-    // Creates .stack property to capture stack trace
-    Error.captureStackTrace(this)
   }
 }

@@ -1,4 +1,5 @@
 import { AddressInformation } from '../types/database'
+import HttpStatus from '../types/httpStatus'
 
 import PayIDError from './errors'
 
@@ -25,7 +26,10 @@ export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
   const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/u
   const regexResult = ACCEPT_HEADER_REGEX.exec(mediaType)
   if (!regexResult || !regexResult.groups) {
-    throw new PayIDError(`Invalid Accept media type ${mediaType}`)
+    throw new PayIDError(
+      `Invalid Accept media type ${mediaType}`,
+      HttpStatus.BadRequest,
+    )
   }
 
   return {

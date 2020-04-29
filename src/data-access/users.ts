@@ -3,6 +3,7 @@ import { Transaction } from 'knex'
 
 import knex from '../db/knex'
 import { Account, Address, AddressInformation } from '../types/database'
+import { handleDatabaseError } from '../utils/databaseError'
 import logger from '../utils/logger'
 
 /**
@@ -39,24 +40,28 @@ export async function insertUser(
 ): Promise<readonly AddressInformation[]> {
   // TODO:(hbergren) Need to handle all the possible CHECK constraint and UNIQUE constraint violations in a catch block
   // Or do checks in JS to ensure no constraints are violated. Or both.
-  return knex.transaction(async (transaction: Transaction) => {
-    const insertedAddresses = await knex
-      .insert({
-        pay_id: payId,
-      })
-      .into<Account>('account')
-      .transacting(transaction)
-      .returning('id')
-      .then(async (ids) => {
-        const accountID = ids[0]
-        const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
-        return insertAddresses(mappedAddresses, transaction)
-      })
-      .then(transaction.commit)
-      .catch(transaction.rollback)
+  return knex
+    .transaction(async (transaction: Transaction) => {
+      const insertedAddresses = await knex
+        .insert({
+          pay_id: payId,
+        })
+        .into<Account>('account')
+        .transacting(transaction)
+        .returning('id')
+        .then(async (ids) => {
+          const accountID = ids[0]
+          const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
+          return insertAddresses(mappedAddresses, transaction)
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback)
 
-    return insertedAddresses
-  })
+      return insertedAddresses
+    })
+    .catch((error) => {
+      handleDatabaseError(error, payId)
+    })
 }
 
 /**
@@ -72,32 +77,36 @@ export async function replaceUser(
   newPayId: string,
   addresses: readonly AddressInformation[],
 ): Promise<readonly AddressInformation[] | null> {
-  return knex.transaction(async (transaction: Transaction) => {
-    const updatedAddresses = await knex<Account>('account')
-      .where('pay_id', oldPayId)
-      .update({ pay_id: newPayId })
-      .transacting(transaction)
-      .returning('id')
-      .then(async (ids) => {
-        const accountID = ids[0]
-        if (accountID === undefined) {
-          return null
-        }
+  return knex
+    .transaction(async (transaction: Transaction) => {
+      const updatedAddresses = await knex<Account>('account')
+        .where('pay_id', oldPayId)
+        .update({ pay_id: newPayId })
+        .transacting(transaction)
+        .returning('id')
+        .then(async (ids) => {
+          const accountID = ids[0]
+          if (accountID === undefined) {
+            return null
+          }
 
-        // Delete existing addresses associated with that user
-        await knex<Address>('address')
-          .delete()
-          .where('account_id', accountID)
-          .transacting(transaction)
+          // Delete existing addresses associated with that user
+          await knex<Address>('address')
+            .delete()
+            .where('account_id', accountID)
+            .transacting(transaction)
 
-        const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
-        return insertAddresses(mappedAddresses, transaction)
-      })
-      .then(transaction.commit)
-      .catch(transaction.rollback)
+          const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
+          return insertAddresses(mappedAddresses, transaction)
+        })
+        .then(transaction.commit)
+        .catch(transaction.rollback)
 
-    return updatedAddresses
-  })
+      return updatedAddresses
+    })
+    .catch((error) => {
+      handleDatabaseError(error, newPayId)
+    })
 }
 
 /**
