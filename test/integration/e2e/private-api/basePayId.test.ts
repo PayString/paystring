@@ -55,8 +55,8 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
   })
 
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })
 
@@ -178,8 +178,8 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
 
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })
 
@@ -417,8 +417,8 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
 
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })
 
@@ -460,7 +460,7 @@ describe('E2E - privateAPIRouter - DELETE API', function (): void {
       .expect(HttpStatus.NoContent, done)
   })
 
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })

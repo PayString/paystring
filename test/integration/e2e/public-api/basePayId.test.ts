@@ -20,8 +20,8 @@ describe('E2E - publicAPIRouter - health check endpoint', function (): void {
       .expect(HttpStatus.OK, 'OK', done)
   })
 
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })
 
@@ -165,7 +165,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
   })
 
   // Shut down Express application and close DB connections
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })

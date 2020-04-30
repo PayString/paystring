@@ -100,7 +100,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
   })
 
   // Shut down Express application and close DB connections
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 })

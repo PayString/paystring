@@ -3,16 +3,15 @@ import { assert } from 'chai'
 
 import config from '../../../src/config'
 import getPayIdCounts from '../../../src/data-access/reports'
-import knex from '../../../src/db/knex'
 import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
 import structuredClone from '../../helpers/helpers'
 
 describe('Data Access - getPayIdCounts()', function (): void {
   // Seed the database for our tests.
   before(async function () {
-    knex.initialize()
     const testConfig = structuredClone(config)
     testConfig.database.options.seedDatabase = true
+
     await syncDatabaseSchema(testConfig.database)
   })
 
@@ -46,10 +45,5 @@ describe('Data Access - getPayIdCounts()', function (): void {
       },
     ]
     assert.deepEqual(results, expected)
-  })
-
-  // Close DB connections after all tests are run
-  after(async function () {
-    await knex.destroy()
   })
 })

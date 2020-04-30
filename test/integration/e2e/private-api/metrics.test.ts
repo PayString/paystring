@@ -20,8 +20,8 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     app = await appSetup()
   })
 
-  after(async function () {
-    await appCleanup(app)
+  after(function () {
+    appCleanup(app)
   })
 
   it('Counts found metric if PayID found', async function () {

@@ -3,7 +3,6 @@ import { assert } from 'chai'
 
 import config from '../../../src/config'
 import getPaymentInfoFromDatabase from '../../../src/data-access/payIds'
-import knex from '../../../src/db/knex'
 import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
 import structuredClone from '../../helpers/helpers'
 
@@ -12,6 +11,7 @@ describe('Data Access - getPaymentInfoFromDatabase()', function (): void {
   before(async function () {
     const testConfig = structuredClone(config)
     testConfig.database.options.seedDatabase = true
+
     await syncDatabaseSchema(testConfig.database)
   })
 
@@ -46,10 +46,5 @@ describe('Data Access - getPaymentInfoFromDatabase()', function (): void {
 
     // THEN we get back undefined
     assert.strictEqual(paymentInfo, undefined)
-  })
-
-  // Close DB connections after all tests are run
-  after(async function () {
-    await knex.destroy()
   })
 })

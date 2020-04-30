@@ -5,7 +5,6 @@ import * as request from 'supertest'
 
 import App from '../../src/app'
 import config from '../../src/config'
-import knex from '../../src/db/knex'
 import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
 
 /**
@@ -30,7 +29,6 @@ export async function appSetup(): Promise<App> {
   testConfig.database.options.seedDatabase = true
 
   await app.init(testConfig)
-  knex.initialize()
 
   return app
 }
@@ -40,12 +38,8 @@ export async function appSetup(): Promise<App> {
  *
  * @param app - The Express app.
  */
-export async function appCleanup(app?: App): Promise<void> {
-  if (app) {
-    app.close()
-  }
-
-  await knex.destroy()
+export function appCleanup(app: App): void {
+  app.close()
 }
 
 /**
