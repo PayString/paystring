@@ -3,7 +3,7 @@ import { Transaction } from 'knex'
 
 import knex from '../db/knex'
 import { Account, Address, AddressInformation } from '../types/database'
-import { handleDatabaseError } from '../utils/databaseError'
+import { handleDatabaseError } from '../utils/errors'
 import logger from '../utils/logger'
 
 /**

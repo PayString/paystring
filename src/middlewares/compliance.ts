@@ -5,8 +5,7 @@ import {
   handleComplianceData,
 } from '../services/compliance'
 import HttpStatus from '../types/httpStatus'
-
-import handleHttpError from './errors'
+import { handleHttpError } from '../utils/errors'
 
 export default function receiveComplianceData(
   req: Request,

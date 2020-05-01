@@ -1,8 +1,8 @@
 import * as Boom from 'boom'
 import { Response } from 'express'
 
-import HttpStatus from '../types/httpStatus'
-import logger from '../utils/logger'
+import HttpStatus from '../../types/httpStatus'
+import logger from '../logger'
 
 export default function handleHttpError(
   errorCode: number,

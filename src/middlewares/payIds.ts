@@ -19,8 +19,7 @@ import {
   getPreferredPaymentInfo,
   parseAcceptMediaType,
 } from '../utils/acceptHeader'
-
-import handleHttpError from './errors'
+import { handleHttpError } from '../utils/errors'
 
 /**
  * Returns the best payment information associated with a payId for a set of sorted

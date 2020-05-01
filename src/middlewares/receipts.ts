@@ -2,8 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 
 import { parseReceipt, handleReceipt } from '../services/receipts'
 import HttpStatus from '../types/httpStatus'
-
-import handleHttpError from './errors'
+import { handleHttpError } from '../utils/errors'
 
 export default function receiveReceipt(
   req: Request,

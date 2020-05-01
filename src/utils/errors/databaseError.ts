@@ -1,6 +1,6 @@
-import HttpStatus from '../types/httpStatus'
+import HttpStatus from '../../types/httpStatus'
 
-import PayIDError from './errors'
+import PayIDError from './payIdError'
 
 export enum DatabaseErrorType {
   UniquePayIdViolation = 'UniquePayIdViolation',
@@ -12,6 +12,7 @@ export default class DatabaseError extends PayIDError {
 
   constructor(message: string, kind: DatabaseErrorType, status: HttpStatus) {
     super(message, status)
+
     this.kind = kind
   }
 }

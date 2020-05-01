@@ -4,8 +4,7 @@ import generateInvoice from '../services/invoices'
 import { wrapMessage } from '../services/signatureWrapper'
 import HttpStatus from '../types/httpStatus'
 import { MessageType } from '../types/publicAPI'
-
-import handleHttpError from './errors'
+import { handleHttpError } from '../utils/errors'
 
 /**
  * Parses off the /invoice path and nonce query parameter from the request URL.

@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 import HttpStatus from '../types/httpStatus'
-import PayIDError from '../utils/errors'
-
-import handleHttpError from './errors'
+import { PayIDError, handleHttpError } from '../utils/errors'
 
 export default function errorHandler(
   err: Error | PayIDError,

@@ -7,8 +7,7 @@ import {
   removeUser,
 } from '../data-access/users'
 import HttpStatus from '../types/httpStatus'
-
-import handleHttpError from './errors'
+import { handleHttpError } from '../utils/errors'
 
 // TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
 // Stop passing req, res, and next in here and do that stuff on the outside.

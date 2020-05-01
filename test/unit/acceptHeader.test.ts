@@ -5,7 +5,7 @@ import {
   parseAcceptMediaType,
   AcceptMediaType,
 } from '../../src/utils/acceptHeader'
-import PayIDError from '../../src/utils/errors'
+import { ParseError } from '../../src/utils/errors'
 
 describe('parseAcceptMediaType', function (): void {
   it('Should parse a string with a valid Accept type', function () {
@@ -29,10 +29,10 @@ describe('parseAcceptMediaType', function (): void {
     const invalidMediaTypeParse = (): AcceptMediaType =>
       parseAcceptMediaType(invalidAcceptMediaType)
 
-    // THEN we throw a PayIDError
+    // THEN we throw a ParseError
     assert.throws(
       invalidMediaTypeParse,
-      PayIDError,
+      ParseError,
       'Invalid Accept media type invalid-type',
     )
   })
