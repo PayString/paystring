@@ -5,6 +5,28 @@ const HTTPS = 'https://'
 const HTTP = 'http://'
 
 /**
+ * Gets the full URL from request components. To be used to create the PayID.
+ *
+ * @param protocol - HTTPS/HTTP
+ * @param hostname - Used to create the host in the PayID (user$host)
+ * @param path - Used to create the "user" in the PayID (user$host)
+ * @param port? - Maybe used in the PayID, if included
+ *
+ * @returns A constructed URL.
+ */
+export function constructUrl(
+  protocol: string,
+  hostname: string,
+  path: string,
+  port?: string,
+): string {
+  if (port) {
+    return `${protocol}://${hostname}:${port}${path}`
+  }
+  return `${protocol}://${hostname}${path}`
+}
+
+/**
  * Converts a PayID from [user]$[domain] format representation to a URL representation
  *
  * @param payId - The PayID to convert.
@@ -53,6 +75,7 @@ export function payIdToUrl(payId: string): string {
  * Converts a PayID from `https://...` representation to `user$...` representation
  *
  * @param url - The url to convert to a PayId.
+ * @param protocol - If httpsRequired, validate against HTTPS in payID.
  *
  * @returns A PayID in the $ format.
  */

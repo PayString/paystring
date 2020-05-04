@@ -5,7 +5,7 @@ import {
   recordPayIdLookupBadAcceptHeader,
   recordPayIdLookupResult,
 } from '../services/metrics'
-import { urlToPayId } from '../services/utils'
+import { urlToPayId, constructUrl } from '../services/utils'
 import { AddressInformation } from '../types/database'
 import HttpStatus from '../types/httpStatus'
 import {
@@ -20,6 +20,8 @@ import {
   parseAcceptMediaType,
 } from '../utils/acceptHeader'
 import { handleHttpError } from '../utils/errors'
+
+// HELPERS
 
 /**
  * Returns the best payment information associated with a payId for a set of sorted
@@ -62,16 +64,11 @@ export default async function getPaymentInfo(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  /**
-   * NOTE: if you plan to expose your PayID with a port number, you
-   * should use:
-   *  const payIdUrl =
-   *  `${req.protocol}://${req.hostname}:${Config.publicAPIPort}${req.url}`
-   */
-  // TODO:(hbergren) Write a helper function for this and test it?
-  const payIdUrl = `${req.protocol}://${req.hostname}${req.url}`
   let payId: string
   try {
+    // NOTE: If you plan to expose your PayID with a port number, you
+    // should include req.port as a fourth parameter
+    const payIdUrl = constructUrl(req.protocol, req.hostname, req.url)
     payId = urlToPayId(payIdUrl)
   } catch (err) {
     return handleHttpError(HttpStatus.BadRequest, err.message, res, err)
