@@ -16,7 +16,7 @@ import logger from '../utils/logger'
  * @param databaseConfig - Contains the database connection configuration, and some options for controlling behavior.
  */
 export default async function syncDatabaseSchema(
-  databaseConfig = config.database,
+  databaseConfig: typeof config.database,
 ): Promise<void> {
   // Define the list of directories holding '*.sql' files, in the order we want to execute them
   const sqlDirectories = [
@@ -38,7 +38,7 @@ export default async function syncDatabaseSchema(
 
     // Note that this loops through the files in alphabetical order
     for (const file of files) {
-      await executeSQLFile(
+      await executeSqlFile(
         path.join(__dirname, directory, file),
         databaseConfig,
       )
@@ -55,9 +55,9 @@ export default async function syncDatabaseSchema(
  *
  * @param string - A SQL file that we would like to execute against our database.
  */
-async function executeSQLFile(
+async function executeSqlFile(
   file: string,
-  databaseConfig = config.database,
+  databaseConfig: typeof config.database,
 ): Promise<void> {
   const sql = fs.readFileSync(file, 'utf8')
   const client = new Client(databaseConfig.connection)

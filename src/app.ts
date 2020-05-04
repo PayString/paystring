@@ -54,7 +54,7 @@ export default class App {
     }
   }
 
-  private launchPublicAPI(appConfig = config.app): Server {
+  private launchPublicAPI(appConfig: typeof config.app): Server {
     this.publicAPIExpress.use('/', publicAPIRouter)
 
     return this.publicAPIExpress.listen(appConfig.publicAPIPort, () =>
@@ -62,7 +62,7 @@ export default class App {
     )
   }
 
-  private launchPrivateAPI(appConfig = config.app): Server {
+  private launchPrivateAPI(appConfig: typeof config.app): Server {
     this.privateAPIExpress.use(`${appConfig.version}/users`, privateAPIRouter)
     this.privateAPIExpress.use('/metrics', metricsRouter)
 
