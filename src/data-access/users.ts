@@ -7,25 +7,6 @@ import { handleDatabaseError } from '../utils/errors'
 import logger from '../utils/logger'
 
 /**
- * Retrieve the addresses associated with a given users PayID.
- * @param payId - The PayID (user) for which to retrieve addresses.
- *
- * @returns An array of the addresses associated with that PayID.
- */
-// TODO(hbergren): Type payId better?
-export async function selectUser(
-  payId: string,
-): Promise<readonly AddressInformation[]> {
-  const addresses: readonly AddressInformation[] = await knex
-    .select('address.payment_network', 'address.environment', 'address.details')
-    .from<Address>('address')
-    .innerJoin<Account>('account', 'address.account_id', 'account.id')
-    .where('account.pay_id', payId)
-
-  return addresses
-}
-
-/**
  * Inserts a new user/pay_id into the Account table on the PayID service.
  * @param payId - The PayID to insert in the users table.
  * @param addresses - The addresses for that PayID to insert into the database.

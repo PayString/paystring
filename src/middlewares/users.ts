@@ -1,11 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
-import {
-  selectUser,
-  insertUser,
-  replaceUser,
-  removeUser,
-} from '../data-access/users'
+import { getAllPaymentInfoFromDatabase } from '../data-access/payIds'
+import { insertUser, replaceUser, removeUser } from '../data-access/users'
 import HttpStatus from '../types/httpStatus'
 import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
 
@@ -36,7 +32,7 @@ export async function getUser(
   let addresses
   try {
     // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await selectUser(payId)
+    addresses = await getAllPaymentInfoFromDatabase(payId)
   } catch (err) {
     return handleHttpError(
       HttpStatus.InternalServerError,

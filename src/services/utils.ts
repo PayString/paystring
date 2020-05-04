@@ -27,51 +27,6 @@ export function constructUrl(
 }
 
 /**
- * Converts a PayID from [user]$[domain] format representation to a URL representation
- *
- * @param payId - The PayID to convert.
- *
- * @returns A PayID in the https format.
- */
-// TODO(hbergren): Move these conversion functions into xpring-common-js and take a dependency on that
-// TODO(hbergren): This function is completely unused now. Remove?
-export function payIdToUrl(payId: string): string {
-  // TODO(hbergren): More validation? (PayID is a semi-valid URL?)
-  if (!payId.includes('$')) {
-    // TODO(hbergren): Throw a custom error object like we do in xpring-common-js
-    throw new Error('Bad input. PayIDs must include a "$"')
-  }
-
-  if (!isASCII(payId)) {
-    throw new Error('Bad input. PayIDs must be ASCII.')
-  }
-
-  if ((payId.match(/\$/gu) || []).length !== 1) {
-    throw new Error('Bad input. PayIDs must include only one $.')
-  }
-
-  if ((payId.match(/\//gu) || []).length > 1) {
-    throw new Error('Bad input. PayIDs must not have paths.')
-  }
-
-  const [user, domain] = payId.split('$')
-
-  if (user === '') {
-    throw new Error(
-      'Bad input. Missing a user in the format [user]$[domain.com].',
-    )
-  }
-
-  if (domain === '') {
-    throw new Error(
-      'Bad input. Missing a domain in the format [user]$[domain.com].',
-    )
-  }
-
-  return `${HTTPS + domain.toLowerCase()}/${user.toLowerCase()}`
-}
-
-/**
  * Converts a PayID from `https://...` representation to `user$...` representation
  *
  * @param url - The url string to convert to a PayId.
