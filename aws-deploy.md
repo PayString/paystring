@@ -1,6 +1,6 @@
 # Deploy PayID on AWS
 
-You can set up a PayID server on AWS (Amazon Web Services.
+You can set up a PayID server on AWS (Amazon Web Services).
 
 1. Initialize a `t2.micro` instance on AWS running Ubuntu 18.04m with a minimum of 8 GB SSD. For the purposes of this demo, you can use AWS Free Tier.
     See [Getting Started with Amazon EC2 Linux Instances](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EC2_GetStarted.html) for more information about setting up your instance.
