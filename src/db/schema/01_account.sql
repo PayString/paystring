@@ -13,10 +13,9 @@ CREATE TABLE IF NOT EXISTS account (
 	CONSTRAINT pay_id_length_nonzero CHECK(length(pay_id) > 0),
 	CONSTRAINT pay_id_lowercase CHECK(lower(pay_id) = pay_id),
 
-	-- This is a black magic PayID regex from https://mathiasbynens.be/demo/url-regex
+	-- The regex after the middle '$' is a black magic URL regex from https://mathiasbynens.be/demo/url-regex
 	-- It is an adaptation of the 'stephenhay' implementation, which was the shortest URL regex I could find.
 	-- Also, that implementation had no false negatives, which is important, as we never want to prevent a valid URL from being used.
-	--
-	-- This regex requires PayIDs of the form `user$[subdomain.]example.com[/path]`
-	CONSTRAINT pay_id_valid_url CHECK(pay_id ~* '^([A-Za-z0-9\-\_\.]+)(?:\$)[^\s/$.?#].+\.[^\s]+$')
+	-- This regex requires PayIDs of the form `user$[subdomain.]example.com`
+        CONSTRAINT valid_pay_id CHECK(pay_id ~ '^([a-z0-9\-\_\.]+)(?:\$)[^\s/$.?#].+\.[^\s]+$')
 );
