@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS account (
 
 	-- CONSTRAINTS
 	CONSTRAINT pay_id_length_nonzero CHECK(length(pay_id) > 0),
+	CONSTRAINT pay_id_lowercase CHECK(lower(pay_id) = pay_id),
 
 	-- This is a black magic PayID regex from https://mathiasbynens.be/demo/url-regex
 	-- It is an adaptation of the 'stephenhay' implementation, which was the shortest URL regex I could find.
