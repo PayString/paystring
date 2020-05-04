@@ -5,6 +5,7 @@ import * as request from 'supertest'
 
 import App from '../../src/app'
 import config from '../../src/config'
+import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
 import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
 
 /**
@@ -40,6 +41,14 @@ export async function appSetup(): Promise<App> {
  */
 export function appCleanup(app: App): void {
   app.close()
+}
+
+export async function seedDatabase(): Promise<void> {
+  // Deep cloning the configuration so we don't mutate the global shared configuration
+  const testConfig = structuredClone(config)
+  testConfig.database.options.seedDatabase = true
+
+  await syncDatabaseSchema(testConfig.database)
 }
 
 /**

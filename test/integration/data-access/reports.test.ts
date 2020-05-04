@@ -1,18 +1,12 @@
 import 'mocha'
 import { assert } from 'chai'
 
-import config from '../../../src/config'
 import getPayIdCounts from '../../../src/data-access/reports'
-import syncDatabaseSchema from '../../../src/db/syncDatabaseSchema'
-import structuredClone from '../../helpers/helpers'
+import { seedDatabase } from '../../helpers/helpers'
 
 describe('Data Access - getPayIdCounts()', function (): void {
-  // Seed the database for our tests.
   before(async function () {
-    const testConfig = structuredClone(config)
-    testConfig.database.options.seedDatabase = true
-
-    await syncDatabaseSchema(testConfig.database)
+    await seedDatabase()
   })
 
   it('Returns a result per by unique network and environment', async function () {
