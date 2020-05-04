@@ -125,9 +125,48 @@ describe('payIdToUrl', function (): void {
 })
 
 describe('urlToPayId', function (): void {
-  it('throws an error on inputs that clearly are not PayID URLs', function (): void {
+  it('throws an error on an invalid URL', function (): void {
+    // GIVEN an invalid PayID URL (multi-step path)
+    const url = 'https://example.com/badPath/alice'
+    const expectedErrorMessage =
+      'Bad input. The only paths allowed in a PayID are to specify the user.'
+
+    // WHEN we attempt converting it to a PayID
+    const badConversion = (): string => urlToPayId(url)
+
+    // THEN we get our expected PayID
+    assert.throws(badConversion, expectedErrorMessage)
+  })
+
+  it('handles a PayID URL with a subdomain', function (): void {
+    // GIVEN a PayID URL with a subdomain
+    const url = 'https://payid.example.com/alice'
+    const expectedPayId = 'alice$payid.example.com'
+
+    // WHEN we attempt converting it to a PayID
+    const actualPayId = urlToPayId(url)
+
+    // THEN we get our expected PayID
+    assert.strictEqual(actualPayId, expectedPayId)
+  })
+
+  it('handles a PayID URL with capital letters', function (): void {
+    // GIVEN a PayID URL with capitals
+    const url = 'https://example.com/ALICE'
+    const expectedPayId = 'alice$example.com'
+
+    // WHEN we attempt converting it to a PayID
+    const actualPayId = urlToPayId(url)
+
+    // THEN we get our expected PayID
+    assert.strictEqual(actualPayId, expectedPayId)
+  })
+})
+
+describe('parsePayIdUrl', function (): void {
+  it('throws an error on inputs that are not HTTP/HTTPS', function (): void {
     // GIVEN a badly formed input
-    const url = 'example.com+alice'
+    const url = 'ftp://example.com/alice'
     const expectedErrorMessage = 'Bad input. PayID URLs must be HTTP/HTTPS.'
 
     // WHEN we attempt converting it to a PayID
@@ -174,18 +213,6 @@ describe('urlToPayId', function (): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('handles a PayID URL with a subdomain', function (): void {
-    // GIVEN a PayID URL with a subdomain
-    const url = 'https://payid.example.com/alice'
-    const expectedPayId = 'alice$payid.example.com'
-
-    // WHEN we attempt converting it to a PayID
-    const actualPayId = urlToPayId(url)
-
-    // THEN we get our expected PayID
-    assert.strictEqual(actualPayId, expectedPayId)
-  })
-
   it('Rejects URL with user not immediately after tld', function (): void {
     // GIVEN a PayID URL with a path
     const url = 'https://example.com/users/alice'
@@ -197,17 +224,5 @@ describe('urlToPayId', function (): void {
 
     // THEN we get our expected error
     assert.throws(badConversion, expectedErrorMessage)
-  })
-
-  it('handles a PayID URL with capital letters', function (): void {
-    // GIVEN a PayID URL with capitals
-    const url = 'https://example.com/ALICE'
-    const expectedPayId = 'alice$example.com'
-
-    // WHEN we attempt converting it to a PayID
-    const actualPayId = urlToPayId(url)
-
-    // THEN we get our expected PayID
-    assert.strictEqual(actualPayId, expectedPayId)
   })
 })
