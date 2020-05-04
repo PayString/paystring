@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as express from 'express'
 
 import receiveComplianceData from '../middlewares/compliance'
+import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import getInvoice, { parseInvoicePath } from '../middlewares/invoices'
 import getPaymentInfo from '../middlewares/payIds'
 import receiveReceipt from '../middlewares/receipts'
@@ -23,19 +24,28 @@ publicAPIRouter
   .get('/status/health', sendSuccess)
 
   // Invoice routes
-  .get('/*/invoice', parseInvoicePath, getPaymentInfo, getInvoice, sendSuccess)
+  .get(
+    '/*/invoice',
+    wrapAsync(parseInvoicePath),
+    wrapAsync(getPaymentInfo),
+    wrapAsync(getInvoice),
+    sendSuccess,
+  )
   .post(
     '/*/invoice',
     express.json(),
-    receiveComplianceData,
-    getInvoice,
+    wrapAsync(receiveComplianceData),
+    wrapAsync(getInvoice),
     sendSuccess,
   )
 
   // Receipt routes
-  .post('/*/receipt', express.json(), receiveReceipt, sendSuccess)
+  .post('/*/receipt', express.json(), wrapAsync(receiveReceipt), sendSuccess)
 
   // Base PayID routes
-  .get('/*', getPaymentInfo, sendSuccess)
+  .get('/*', wrapAsync(getPaymentInfo), sendSuccess)
+
+  // Error handling middleware needs to be defined last
+  .use(errorHandler)
 
 export default publicAPIRouter

@@ -19,7 +19,7 @@ import {
   getPreferredPaymentInfo,
   parseAcceptMediaType,
 } from '../utils/acceptHeader'
-import { handleHttpError } from '../utils/errors'
+import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
 
 // HELPERS
 
@@ -133,7 +133,8 @@ export default async function getPaymentInfo(
         false,
       ),
     )
-    return handleHttpError(HttpStatus.NotFound, message, res)
+
+    throw new LookupError(message, LookupErrorType.Unknown)
   }
 
   const { acceptType, paymentInformation } = result

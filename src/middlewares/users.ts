@@ -7,7 +7,7 @@ import {
   removeUser,
 } from '../data-access/users'
 import HttpStatus from '../types/httpStatus'
-import { handleHttpError } from '../utils/errors'
+import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
 
 // TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
 // Stop passing req, res, and next in here and do that stuff on the outside.
@@ -47,10 +47,9 @@ export async function getUser(
   }
 
   if (addresses.length === 0) {
-    return handleHttpError(
-      HttpStatus.NotFound,
+    throw new LookupError(
       `No information could be found for the PayID ${payId}.`,
-      res,
+      LookupErrorType.Unknown,
     )
   }
 
