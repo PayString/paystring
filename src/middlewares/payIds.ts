@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import { getAllPaymentInfoFromDatabase } from '../data-access/payIds'
+import getAllPaymentInfoFromDatabase from '../data-access/payIds'
 import {
   recordPayIdLookupBadAcceptHeader,
   recordPayIdLookupResult,

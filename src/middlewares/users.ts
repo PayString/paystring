@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import { getAllPaymentInfoFromDatabase } from '../data-access/payIds'
+import getAllPaymentInfoFromDatabase from '../data-access/payIds'
 import { insertUser, replaceUser, removeUser } from '../data-access/users'
 import HttpStatus from '../types/httpStatus'
 import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
