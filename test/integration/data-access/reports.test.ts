@@ -23,6 +23,11 @@ describe('Data Access - getPayIdCounts()', function (): void {
         count: 2,
       },
       {
+        payment_network: 'INTERLEDGER',
+        environment: 'TESTNET',
+        count: 1,
+      },
+      {
         payment_network: 'XRPL',
         environment: 'DEVNET',
         count: 1,
