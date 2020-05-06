@@ -129,7 +129,7 @@ Use `/v1`.
 
 #### Create a user
 
-This operation creates a single user.
+This operation creates a single user. 
 
 ```
 POST {{https}}{{host}}/v1/users
@@ -538,7 +538,7 @@ A single user can have multiple destinations, because the same user can have add
 
 |Field | Description |
 |------|-------------|
-|`pay_id`| PayID user address |
+|`pay_id`| PayID user address. This value must be lowercase. |
 |`addresses` | Object that includes payment address information for one or more payment networks.|
 |`addresses.payment_network`| A payment network, like the bitcoin network, the XRPL, or ACH. |
 |`addresses.environment`| "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.|
