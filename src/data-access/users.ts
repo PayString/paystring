@@ -142,7 +142,8 @@ function addAccountIDToAddresses(
 /**
  * Given an array of address objects and a transaction, insert the addresses into the database.
  * @param addresses - An array of DatabaseAddress objects to insert into the database.
- * @param transaction - The transaction to wrap this statement with. Used to ensure that when we insert/update a user, we maintain consistent data.
+ * @param transaction - The transaction to wrap this statement with.
+ *                      Used to ensure that when we insert/update a user, we maintain consistent data.
  *
  * @returns An array of the inserted addresses.
  */

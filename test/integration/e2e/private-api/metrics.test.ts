@@ -99,7 +99,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
       .expect((res) => {
         assert.match(res.text, expectedMetric)
       })
-      .then((res) => res.body)
+      .then(async (res) => res.body)
   }
 
   async function lookupPayId(
@@ -113,7 +113,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
       .expect((res) => {
         assert.strictEqual(res.status, status)
       })
-      .then((res) => res.body)
+      .then(async (res) => res.body)
   }
 
   async function createPayId(
@@ -139,6 +139,6 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
       .expect((res) => {
         assert.strictEqual(res.status, HttpStatus.Created)
       })
-      .then((res) => res.body)
+      .then(async (res) => res.body)
   }
 })

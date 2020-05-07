@@ -12,7 +12,7 @@ export enum LookupErrorType {
 export default class LookupError extends PayIDError {
   public readonly kind: LookupErrorType
 
-  constructor(message: string, kind: LookupErrorType) {
+  public constructor(message: string, kind: LookupErrorType) {
     // All lookup errors should return a 404 - Not Found
     super(message, HttpStatus.NotFound)
     this.kind = kind

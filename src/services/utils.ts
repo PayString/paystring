@@ -10,7 +10,7 @@ const HTTP = 'http://'
  * @param protocol - HTTPS/HTTP
  * @param hostname - Used to create the host in the PayID (user$host)
  * @param path - Used to create the "user" in the PayID (user$host)
- * @param port? - Maybe used in the PayID, if included
+ * @param port - Maybe used in the PayID, if included
  *
  * @returns A constructed URL.
  */

@@ -52,22 +52,27 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
     )
     return undefined
   }
+
   const counterGateway = new Pushgateway(
     config.metrics.gatewayUrl,
     [],
     payIdCounterRegistry,
   )
+
   const gaugeGateway = new Pushgateway(
     config.metrics.gatewayUrl,
     [],
     payIdGaugeRegistry,
   )
+
   return setInterval(() => {
     counterGateway.pushAdd(
       {
         jobName: 'payid_counter_metrics',
         groupings: {
-          instance: `${config.app.organization}_${hostname()}_${process.pid}`,
+          instance: `${config.app.organization ?? 'null'}_${hostname()}_${
+            process.pid
+          }`,
         },
       },
       (err, _resp, _body): void => {

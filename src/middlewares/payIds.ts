@@ -111,6 +111,7 @@ export default async function getPaymentInfo(
       - 'Accept: application/ach+json'
       `,
       res,
+      error,
     )
   }
 
@@ -160,7 +161,7 @@ export default async function getPaymentInfo(
   res.locals.response = response
   recordPayIdLookupResult(
     paymentInformation.payment_network,
-    paymentInformation.environment || 'unknown',
+    paymentInformation.environment ?? 'unknown',
     true,
   )
   return next()

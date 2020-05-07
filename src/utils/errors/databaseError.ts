@@ -10,7 +10,11 @@ export enum DatabaseErrorType {
 export default class DatabaseError extends PayIDError {
   public readonly kind: DatabaseErrorType
 
-  constructor(message: string, kind: DatabaseErrorType, status: HttpStatus) {
+  public constructor(
+    message: string,
+    kind: DatabaseErrorType,
+    status: HttpStatus,
+  ) {
     super(message, status)
 
     this.kind = kind
