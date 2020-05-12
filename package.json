@@ -33,7 +33,7 @@
     "log4js": "^6.2.1",
     "pg": "^8.1.0",
     "prom-client": "^12.0.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   },
   "devDependencies": {
     "@types/boom": "^7.3.0",
