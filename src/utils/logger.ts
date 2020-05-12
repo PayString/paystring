@@ -70,6 +70,5 @@ export default logger
 // HELPER FUNCTIONS
 // TODO:(hbergren) Could possibly make this a generic (for stringy enums, but not numeric enums)
 function isLogLevel(member: string): member is LogLevel {
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   return Object.values(LogLevel).includes(member as LogLevel)
 }
