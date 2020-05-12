@@ -32,13 +32,13 @@ import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
  * @param payId - The PayID to retrieve payment information for
  * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference
  */
-async function getPaymentInfoForAcceptTypes(
+async function getAddressInfoForAcceptTypes(
   payId: string,
   sortedAcceptTypes: readonly AcceptMediaType[],
 ): Promise<
   | {
       acceptType: AcceptMediaType
-      paymentInformation: AddressInformation
+      addressInformation: AddressInformation
     }
   | undefined
 > {
@@ -116,7 +116,7 @@ export default async function getPaymentInfo(
   }
 
   // TODO: If Accept is just application/json, just return all addresses, for all environments?
-  const result = await getPaymentInfoForAcceptTypes(payId, parsedAcceptTypes)
+  const result = await getAddressInfoForAcceptTypes(payId, parsedAcceptTypes)
 
   // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Or is `application/json` the appropriate response Content-Type?
@@ -138,19 +138,19 @@ export default async function getPaymentInfo(
     throw new LookupError(message, LookupErrorType.Unknown)
   }
 
-  const { acceptType, paymentInformation } = result
+  const { acceptType, addressInformation } = result
   // Set the content-type to the media type corresponding to the returned address
   res.set('Content-Type', acceptType.mediaType)
 
   // TODO:(hbergren) Create a helper function for this?
   let response: PaymentInformation = {
     addressDetailType: AddressDetailType.CryptoAddress,
-    addressDetails: paymentInformation.details as CryptoAddressDetails,
+    addressDetails: addressInformation.details as CryptoAddressDetails,
   }
-  if (paymentInformation.payment_network === 'ACH') {
+  if (addressInformation.payment_network === 'ACH') {
     response = {
       addressDetailType: AddressDetailType.AchAddress,
-      addressDetails: paymentInformation.details as AchAddressDetails,
+      addressDetails: addressInformation.details as AchAddressDetails,
     }
   }
 
@@ -160,8 +160,8 @@ export default async function getPaymentInfo(
   res.locals.paymentInformation = response
   res.locals.response = response
   recordPayIdLookupResult(
-    paymentInformation.payment_network,
-    paymentInformation.environment ?? 'unknown',
+    addressInformation.payment_network,
+    addressInformation.environment ?? 'unknown',
     true,
   )
   return next()

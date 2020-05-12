@@ -53,25 +53,25 @@ export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
  * if one exists; returns undefined otherwise
  */
 export function getPreferredPaymentInfo(
-  paymentInformations: readonly AddressInformation[],
+  addressInformations: readonly AddressInformation[],
   sortedAcceptedTypes: readonly AcceptMediaType[],
 ):
   | {
       acceptType: AcceptMediaType
-      paymentInformation: AddressInformation
+      addressInformation: AddressInformation
     }
   | undefined {
   for (const acceptType of sortedAcceptedTypes) {
-    const paymentInformationForAcceptType = paymentInformations.find(
+    const addressInformationForAcceptType = addressInformations.find(
       (result) =>
         result.payment_network === acceptType.paymentNetwork &&
         (result.environment ?? '') === acceptType.environment,
     )
 
-    if (paymentInformationForAcceptType) {
+    if (addressInformationForAcceptType) {
       return {
         acceptType,
-        paymentInformation: paymentInformationForAcceptType,
+        addressInformation: addressInformationForAcceptType,
       }
     }
   }
