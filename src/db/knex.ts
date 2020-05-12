@@ -1,6 +1,7 @@
 import * as knexInit from 'knex'
 
 import config from '../config'
+import { handleDatabaseError } from '../utils/errors'
 
 const knex = knexInit({
   client: 'pg',
@@ -19,6 +20,10 @@ const knex = knexInit({
     },
     /* eslint-enable */
   },
+})
+
+knex.on('query-error', (error) => {
+  handleDatabaseError(error)
 })
 
 export default knex

@@ -78,6 +78,9 @@ export async function postUser(
     )
   }
 
+  // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
+  // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
+  // And that we `toUpperCase()` payment_network and environment as part of parsing the addresses.
   await insertUser(payId, req.body.addresses)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware

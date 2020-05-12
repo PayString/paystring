@@ -166,7 +166,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
     const expectedErrorResponse = {
       statusCode: 409,
       error: 'Conflict',
-      message: 'There already exists a user with the PayID alice$xpring.money',
+      message: 'There already exists a user with the provided PayID',
     }
 
     // WHEN we make a POST request to /v1/users with that user information
@@ -373,7 +373,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     const expectedErrorResponse = {
       statusCode: 409,
       error: 'Conflict',
-      message: 'There already exists a user with the PayID bob$xpring.money',
+      message: 'There already exists a user with the provided PayID',
     }
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
@@ -405,7 +405,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     const expectedErrorResponse = {
       statusCode: 409,
       error: 'Conflict',
-      message: 'There already exists a user with the PayID bob$xpring.money',
+      message: 'There already exists a user with the provided PayID',
     }
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update

@@ -12,9 +12,9 @@ export default function handleHttpError(
 ): void {
   // Logging for our debugging purposes
   if (errorCode >= HttpStatus.InternalServerError) {
-    logger.error(errorCode, ':', msg, err)
+    logger.error(errorCode, ':', err?.toString() || msg)
   } else {
-    logger.warn(errorCode, ':', msg)
+    logger.warn(errorCode, ':', err?.toString() || msg)
   }
 
   // Error code matching
