@@ -31,6 +31,7 @@ export const mockComplianceData: Compliance = {
       institutionName: 'xpring',
     },
   },
+  memo: 'Example travel rule transaction',
 }
 
 export const mockInvoice: Invoice = {

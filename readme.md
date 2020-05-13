@@ -117,7 +117,7 @@ You can then use the Private PayID API to:
 
 ### 4.2. Private API endpoints
 
-The private APIs run by default on port 8081. Make sure to adjust this value if needed.  
+The private APIs run by default on port 8081. Make sure to adjust this value if needed.
 The list of private endpoints is:
 
 | HTTP Method                              | Endpoint                 |                     Description |
@@ -449,7 +449,7 @@ The following table lists the HTTP status codes and messages returned for this m
 
 ### 4.3. Public API endpoints
 
-The public APIs runs by default on port 8080. Make sure to update this value if needed.  
+The public APIs runs by default on port 8080. Make sure to update this value if needed.
 The list of public endpoints is:
 
 | HTTP Method                                      | Endpoint                     |                          Description |
@@ -466,7 +466,7 @@ The list of public endpoints is:
 In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request an invoice. When you get the invoice, you notice the `complianceRequirements` field of the invoice, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the invoice, you then post the compliance data to the same URL to update the invoice with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded invoice.
 
 **API**
-The API returns an invoice for the specified user and nonce.  
+The API returns an invoice for the specified user and nonce.
 The nonce used in this call is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
 
 **Request format**
@@ -619,6 +619,7 @@ POST https://sender.institution.com/bob/invoice?nonce=8743e9ba-ee96-4ec0-b388-6d
 			"beneficiary": {
 				"institutionName": "xpring"
 			}
+                        "memo": "transaction by Theodore Kalaw for software development services",
 
 		}
 	},
@@ -900,7 +901,8 @@ This example shows the format of an invoice.
          "beneficiary":{
             "institutionName":"xpring"
          }
-      }
+      },
+      "memo": "payment from Theodore for consulting",
    },
    "pkiType":"x509+sha256",
    "pkiData":[

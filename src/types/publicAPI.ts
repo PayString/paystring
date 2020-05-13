@@ -97,6 +97,7 @@ export enum ComplianceType {
 export interface Compliance {
   type: ComplianceType
   data: TravelRule
+  memo?: string // 1 kb max
 }
 
 /**
