@@ -3,13 +3,13 @@ import {
   Invoice,
   MessageType,
   Compliance,
-  Receipt,
+  PaymentProof,
 } from '../types/publicAPI'
 
 export type MessageWithType =
   | [Invoice, MessageType.Invoice]
   | [Compliance, MessageType.Compliance]
-  | [Receipt, MessageType.Receipt]
+  | [PaymentProof, MessageType.PaymentProof]
 
 export function wrapMessage(...args: MessageWithType): SignatureWrapper {
   return {

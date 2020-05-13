@@ -12,7 +12,7 @@ import {
  * back to the sender as part of the Invoice as confirmation that the data was received and processed
  * successfully.
  *
- * @param nonce - Used to correlate invoices/compliance/receipts
+ * @param nonce - Used to correlate invoices/compliance/paymentProofs
  * @param payId - PayID of the user receiving funds
  * @param paymentInformation - Payment details (e.g. Crypto, ACH) of the user receiving funds
  * @param complianceData - Compliance data of sender to satisfy any legal requirements

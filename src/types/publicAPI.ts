@@ -101,9 +101,9 @@ export interface Compliance {
 }
 
 /**
- * A receipt included in a SignatureWrapper when POSTing to the /receipt endpoint.
+ * A payment proof included in a SignatureWrapper when POSTing to the /payment-proofs endpoint.
  */
-export interface Receipt {
+export interface PaymentProof {
   invoiceHash: string
   transactionConfirmation: string
 }
@@ -114,7 +114,7 @@ export interface Receipt {
 export enum MessageType {
   Invoice = 'Invoice',
   Compliance = 'Compliance',
-  Receipt = 'Receipt',
+  PaymentProof = 'PaymentProof',
 }
 
 /**
@@ -122,7 +122,7 @@ export enum MessageType {
  */
 export interface SignatureWrapper {
   messageType: MessageType
-  message: Invoice | Compliance | Receipt
+  message: Invoice | Compliance | PaymentProof
   publicKeyType: string
   publicKeyData: string[]
   publicKey: string

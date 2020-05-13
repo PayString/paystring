@@ -63,9 +63,9 @@ curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice?nonce=
 }'
 ```
 
-Upon submission of this data, the beneficiary should identify that we have fulfilled all compliance requirements and send us an upgraded invoice. This upgraded invoice cryptographically correlates our submission of compliance data through the complianceHashes field. Now that we have been informed of all compliance requirements, and fulfilled them, we can submit our transaction on ledger and POST back the receipt of payment.
+Upon submission of this data, the beneficiary should identify that we have fulfilled all compliance requirements and send us an upgraded invoice. This upgraded invoice cryptographically correlates our submission of compliance data through the complianceHashes field. Now that we have been informed of all compliance requirements, and fulfilled them, we can submit our transaction on ledger and POST back the payment proof.
 ```
-curl --location --request POST 'http://127.0.0.1:8080/exampleUser/receipt' \
+curl --location --request POST 'http://127.0.0.1:8080/exampleUser/payment-proofs' \
 --header 'Content-Type: application/json' \
 --data-raw '{
   "invoiceHash": "8743b52063cd84097a65d1633f5c74f5",

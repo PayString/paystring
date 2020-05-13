@@ -3,12 +3,12 @@ import {
   AddressDetailType,
   ComplianceType,
   Compliance,
-  Receipt,
+  PaymentProof,
 } from '../types/publicAPI'
 
 // TODO: update mocks with 'real' information from from a transaction so they
 // can be used in e2e and unit tests
-export const mockReceipt: Receipt = {
+export const mockPaymentProof: PaymentProof = {
   invoiceHash: '',
   transactionConfirmation: '',
 }

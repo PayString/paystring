@@ -6,7 +6,7 @@ import receiveComplianceData from '../middlewares/compliance'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import getInvoice, { parseInvoicePath } from '../middlewares/invoices'
 import getPaymentInfo from '../middlewares/payIds'
-import receiveReceipt from '../middlewares/receipts'
+import receivePaymentProof from '../middlewares/paymentProofs'
 import sendSuccess from '../middlewares/sendSuccess'
 
 const publicAPIRouter = express.Router()
@@ -44,8 +44,13 @@ publicAPIRouter
     sendSuccess,
   )
 
-  // Receipt routes
-  .post('/*/receipt', express.json(), wrapAsync(receiveReceipt), sendSuccess)
+  // Payment proof routes
+  .post(
+    '/*/payment-proofs',
+    express.json(),
+    wrapAsync(receivePaymentProof),
+    sendSuccess,
+  )
 
   // Base PayID routes
   .get('/*', wrapAsync(getPaymentInfo), sendSuccess)

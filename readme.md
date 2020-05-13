@@ -29,7 +29,7 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
   - [4.3. Public API endpoints](#43-public-api-endpoints)
     - [4.3.1. Get a Travel Rule compliance invoice](#431-get-a-travel-rule-compliance-invoice)
     - [4.3.2. Send compliance information](#432-send-compliance-information)
-    - [4.3.3. Send confirmation receipt](#433-send-confirmation-receipt)
+    - [4.3.3. Send payment proof](#433-send-payment-proof)
     - [4.3.4. Get user information](#434-get-user-information)
 - [5. Schemas](#5-schemas)
   - [5.1 Example single user schema](#51-example-single-user-schema)
@@ -456,7 +456,7 @@ The list of public endpoints is:
 | ------------------------------------------------ | :--------------------------- | -----------------------------------: |
 | [GET](#431-get-a-travel-rule-compliance-invoice) | /{user}/invoice?nonce=<uuid> | Get a Travel Rule compliance invoice |
 | [POST](#432-send-compliance-information)         | /{user}/invoice?nonce=<uuid> |          Send compliance information |
-| [POST](#433-send-confirmation-receipt)           | /{user}/receipt              |            Send confirmation receipt |
+| [POST](#433-send-payment-proof)                  | /{user}/payment-proof        |                   Send payment proof |
 | [GET](#434-get-user-information)                 | /{user}                      |         Get a PayID user information |
 
 #### 4.3.1. Get a Travel Rule compliance invoice
@@ -674,14 +674,14 @@ The following table lists the HTTP status codes and messages returned for this m
 | 422              | Unprocessable Entity |
 | 503              |  Service unavailable |
 
-#### 4.3.3. Send confirmation receipt
+#### 4.3.3. Send payment proof
 
-The originator of the transaction sends a receipt after the payment clears and settles.
+The originator of the transaction sends a payment proof after the payment clears and settles.
 
 **Request format**
 
 ```HTTP
-POST {pay_id_base_url}/{user}/receipt HTTP/1.1
+POST {pay_id_base_url}/{user}/payment-proofs HTTP/1.1
 
 Content-Type: application/json
 ```
@@ -694,13 +694,13 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Send confirmation receipt" method does not accept any query parameters.
+The "Send payment proof" method does not accept any query parameters.
 
 **Body parameters (Required)**
 
-"Send confirmation receipt" requires the body parameter that contains the `Send confirmation receipt Object` object.
+"Send payment proof" requires the body parameter that contains the `Send payment proof Object` object.
 
-**Send confirmation receipt Object Data Fields**
+**Send payment proof Object Data Fields**
 
 | Field                   | Type   |    Description |
 | ----------------------- | :----- | -------------: |
@@ -709,7 +709,7 @@ The "Send confirmation receipt" method does not accept any query parameters.
 
 ### Response format <!-- omit in toc -->
 
-A successful response to the "Send confirmation receipt" method returns a 200 HTTP status code.
+A successful response to the "Send payment proof" method returns a 200 HTTP status code.
 
 ### Example <!-- omit in toc -->
 
@@ -718,7 +718,7 @@ A successful response to the "Send confirmation receipt" method returns a 200 HT
 Request (Success)
 
 ```HTTP
-POST https://sender.institution.com/bob/receipt HTTP/1.1
+POST https://sender.institution.com/bob/payment-proofs HTTP/1.1
 
 {
 	"invoiceHash": "8743b52063cd84097a65d1633f5c74f5",
@@ -752,7 +752,7 @@ Accept: application/{payment_network}-{environment}+json
 
 **Query parameters (None)**
 
-The "Send confirmation receipt" method does not accept any query parameters.
+The "Send payment proofs" method does not accept any query parameters.
 
 **Headers parameters (Required)**
 
