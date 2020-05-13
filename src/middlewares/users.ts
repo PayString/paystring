@@ -73,7 +73,7 @@ export async function postUser(
   if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A `pay_id` must be provided in the body.',
+      'A `pay_id` must be provided in the request body.',
       res,
     )
   }
@@ -103,10 +103,18 @@ export async function putUser(
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!payId || !newPayId) {
+  if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
       'A `pay_id` must be provided in the path. A well-formed API call would look like `PUT /v1/users/alice$xpring.money`.',
+      res,
+    )
+  }
+
+  if (!newPayId) {
+    return handleHttpError(
+      HttpStatus.BadRequest,
+      'A `pay_id` must be provided in the request body.',
       res,
     )
   }

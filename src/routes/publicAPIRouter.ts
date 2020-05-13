@@ -8,6 +8,7 @@ import getInvoice, { parseInvoicePath } from '../middlewares/invoices'
 import getPaymentInfo from '../middlewares/payIds'
 import receiveReceipt from '../middlewares/receipts'
 import sendSuccess from '../middlewares/sendSuccess'
+import HttpStatus from '../types/httpStatus'
 
 const publicAPIRouter = express.Router()
 
@@ -18,6 +19,11 @@ publicAPIRouter
   // Route to resolve the welcome page HTML
   .get('/', (_req: express.Request, res: express.Response) => {
     res.sendFile(path.join(__dirname, '../html/index.html'))
+  })
+
+  // Route for the favicon
+  .get('/favicon.ico', (_req: express.Request, res: express.Response) => {
+    res.sendStatus(HttpStatus.NotFound)
   })
 
   // Health routes
