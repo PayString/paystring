@@ -4,7 +4,7 @@
   "main": "./build/src/index.js",
   "scripts": {
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
-    "copyHTML": "copyfiles -u 1 src/html/index.html build/src",
+    "copyHTML": "copyfiles -u 1 src/html/* build/src",
     "start": "node build/src/index.js",
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
