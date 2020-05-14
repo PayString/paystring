@@ -11,6 +11,7 @@ import {
 export const mockPaymentProof: PaymentProof = {
   invoiceHash: '',
   transactionConfirmation: '',
+  memo: 'the payment succeeded!',
 }
 
 export const mockComplianceData: Compliance = {
