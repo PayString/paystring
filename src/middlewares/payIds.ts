@@ -69,6 +69,8 @@ export default async function getPaymentInfo(
     // NOTE: If you plan to expose your PayID with a port number, you
     // should include req.port as a fourth parameter
     const payIdUrl = constructUrl(req.protocol, req.hostname, req.url)
+
+    // Checks that the constructed URL can be converted into a valid PayID
     payId = urlToPayId(payIdUrl)
   } catch (err) {
     return handleHttpError(HttpStatus.BadRequest, err.message, res, err)
@@ -79,8 +81,11 @@ export default async function getPaymentInfo(
   // https://github.com/jshttp/accepts/blob/master/index.js#L96
   const acceptHeaderTypes = req.accepts()
 
+  // MUST include at least 1 accept header
   if (!acceptHeaderTypes.length) {
+    // Collect metrics on bad request
     recordPayIdLookupBadAcceptHeader()
+
     return handleHttpError(
       HttpStatus.BadRequest,
       `Missing Accept header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
@@ -88,20 +93,22 @@ export default async function getPaymentInfo(
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
       - 'Accept: application/ach+json'
+      - 'Accept: application/payid+json'
       `,
       res,
     )
   }
 
+  // Accept types MUST be the proper format
   let parsedAcceptTypes: readonly AcceptMediaType[]
   try {
     parsedAcceptTypes = acceptHeaderTypes.map((type) =>
       parseAcceptMediaType(type),
     )
   } catch (error) {
+    // Collect metrics on bad request
     recordPayIdLookupBadAcceptHeader()
 
-    // TODO:(tkalaw): Should we mention all of the invalid types?
     return handleHttpError(
       HttpStatus.BadRequest,
       `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
@@ -109,13 +116,14 @@ export default async function getPaymentInfo(
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
       - 'Accept: application/ach+json'
+      - 'Accept: application/payid+json'
       `,
       res,
       error,
     )
   }
 
-  // TODO: If Accept is just application/json, just return all addresses, for all environments?
+  // Content-negotiation to get preferred payment information
   const result = await getAddressInfoForAcceptTypes(payId, parsedAcceptTypes)
 
   // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.

@@ -44,8 +44,6 @@ export function parseAcceptMediaType(mediaType: string): AcceptMediaType {
  *
  * Returns undefined otherwise.
  *
- * TODO(tedkalaw): Move this sort to postgres instead of doing it manually
- *
  * @param paymentInformation - The payment information to look through
  * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference
  *
