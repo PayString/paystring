@@ -9,9 +9,11 @@ import { handleHttpError } from '../utils/errors'
 /**
  * Parses off the /invoice path and nonce query parameter from the request URL.
  *
- * @param req - Contains request URL, which is the PayID + /invoice + nonce
- * @param res - Used for erroring on missing nonce
- * @param next - Passes req/res to next middleware
+ * @param req - Contains the request URL, which is the PayID + /invoice + nonce.
+ * @param res - Response used for erroring on a missing nonce.
+ * @param next - Passes req/res to the next Express middleware.
+ *
+ * @returns Either the Express next() function or undefined.
  */
 export function parseInvoicePath(
   req: Request,

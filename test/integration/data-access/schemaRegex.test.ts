@@ -19,11 +19,9 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     },
   ]
 
-  /**
-   * specific regex we are testing:
-   * constraint = valid_pay_id
-   * location = src/db/migrations/02_change_pay_id_format_constraint.sql
-   */
+  // specific regex we are testing:
+  // constraint = valid_pay_id
+  // location = src/db/migrations/02_change_pay_id_format_constraint.sql
 
   it('Accepts PayID with a lowercase letter for user', async function () {
     // GIVEN an acceptable PayID with a lowercase letter for the user

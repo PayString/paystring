@@ -2,7 +2,10 @@ import knex from '../db/knex'
 import { PayIdCount } from '../types/reports'
 
 /**
- * Retrieve count of PayIDs, grouped by payment network and environment
+ * Retrieve count of PayIDs, grouped by payment network and environment.
+ *
+ * @returns A list with the number of PayIDs that have a given (payment_network, environment) tuple,
+ *          ordered by (payment_network, environment).
  */
 export default async function getPayIdCounts(): Promise<PayIdCount[]> {
   const payIdCounts: PayIdCount[] = await knex

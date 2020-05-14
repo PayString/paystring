@@ -6,11 +6,12 @@ import { Account, Address, AddressInformation } from '../types/database'
 import logger from '../utils/logger'
 
 /**
- * Inserts a new user/pay_id into the Account table on the PayID service.
- * @param payId - The PayID to insert in the users table.
- * @param addresses - The addresses for that PayID to insert into the database.
+ * Inserts a new user/PayID into the account table in the PayID database.
  *
- * @returns The addresses inserted for this user
+ * @param payId - The PayID to insert in the account table.
+ * @param addresses - The payment addresses for that PayID to insert into the database.
+ *
+ * @returns The addresses inserted for this user.
  */
 // TODO(hbergren): Type payId better
 // TODO:(hbergren) Accept an array of users (insertUsers?)
@@ -39,12 +40,13 @@ export async function insertUser(
 }
 
 /**
- * Update a PayID and addresses associated with that PayID for a given account ID.
- * @param oldPayId - The old PayID.
- * @param newPayId - The new PayID.
- * @param addresses - The array of destination/address information to associate with this user.
+ * Update the PayID and addresses for a given user.
  *
- * @returns The updated addresses for a given PayID.
+ * @param oldPayId - The old PayID of the user.
+ * @param newPayId - The new PayID of the user.
+ * @param addresses - The array of payment address information to associate with this user.
+ *
+ * @returns The updated payment addresses for a given PayID.
  */
 export async function replaceUser(
   oldPayId: string,
@@ -80,7 +82,9 @@ export async function replaceUser(
 }
 
 /**
- * Deletes a user from the database. Addresses associated with that user should be removed by a cascading delete.
+ * Deletes a user from the database.
+ * Addresses associated with that user should be automatically removed by a cascading delete.
+ *
  * @param payId - The PayID associated with the user to delete.
  */
 export async function removeUser(payId: string): Promise<void> {
@@ -103,16 +107,19 @@ export async function removeUser(payId: string): Promise<void> {
 }
 
 // HELPER FUNCTIONS
+
 interface DatabaseAddress extends AddressInformation {
   account_id: string
 }
 
 /**
- * Maps an array of AddressInformation objects into an array of DatabaseAddress objects, with an 'account_id'.
- * @param addresses - An array of addresses with information we want to insert into the database.
- * @param accountID - the account ID to add to all the addresses to allow inserting the addresses into the database.
+ * Maps an array of AddressInformation objects into an array of DatabaseAddress objects,
+ * by adding an 'account_id' property to each object.
  *
- * @returns A new array of addresses, where each address has a new property 'account_id'.
+ * @param addresses - An array of payment addresses we want to insert into the database.
+ * @param accountID - The account ID to add to all the addresses to allow inserting the addresses into the database.
+ *
+ * @returns A new array of DatabaseAddress objects, where each address has a new property 'account_id'.
  */
 function addAccountIDToAddresses(
   addresses: readonly AddressInformation[],
@@ -128,6 +135,7 @@ function addAccountIDToAddresses(
 
 /**
  * Given an array of address objects and a transaction, insert the addresses into the database.
+ *
  * @param addresses - An array of DatabaseAddress objects to insert into the database.
  * @param transaction - The transaction to wrap this statement with.
  *                      Used to ensure that when we insert/update a user, we maintain consistent data.

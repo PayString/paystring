@@ -24,13 +24,13 @@ import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
 // HELPERS
 
 /**
- * Returns the best payment information associated with a payId for a set of sorted
- * Accept types.
+ * Finds the best payment address information given an array of Accept header types ordered by preference.
  *
- * Returns undefined if payment infomation could not be found.
+ * @param payId - The PayID used to retrieve address information.
+ * @param sortedAcceptTypes - An array of AcceptMediaTypes, sorted by preference.
  *
- * @param payId - The PayID to retrieve payment information for
- * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference
+ * @returns The best payment address information associated with a PayID for a set of sorted Accept types,
+ *          or undefined if the address information could not be found.
  */
 async function getAddressInfoForAcceptTypes(
   payId: string,
@@ -52,12 +52,11 @@ async function getAddressInfoForAcceptTypes(
 }
 
 /**
- * Resolves inbound requests to a PayID to their
- * respective ledger addresses or other payment information.
+ * Resolves inbound requests to a PayID to their respective ledger addresses or other payment information.
  *
- * @param req - Contains PayID and payment network header
- * @param res - Stores payment information to be returned to the client
- * @param next - Passes req/res to next middleware
+ * @param req - Contains PayID and payment network header.
+ * @param res - Stores payment information to be returned to the client.
+ * @param next - Passes req/res to next middleware.
  */
 export default async function getPaymentInfo(
   req: Request,

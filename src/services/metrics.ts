@@ -16,7 +16,7 @@ const requestCounter = new Counter({
 })
 
 /**
- * Gauge for reporting the current count of PayIDs by network/environment/org
+ * Prometheus Gauge for reporting the current count of PayIDs by network/environment/org.
  */
 const payIdCountGauge = new Gauge({
   name: 'payid_count',

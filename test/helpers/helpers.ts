@@ -12,15 +12,18 @@ import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
  * Deep clones an object *properly*.
  *
  * @param obj - The object to be deep cloned.
+ *
+ * @returns A deeply cloned object.
  */
 export default function structuredClone<T>(obj: T): T {
   return v8.deserialize(v8.serialize(obj))
 }
 
 /**
- * Initialize database connection pool & boot up the Express application.
+ * Boots up the Express application for testing purposes.
+ * The first time this is run it will initialize the database connection pool.
  *
- * @returns The Express app.
+ * @returns The Express application.
  */
 export async function appSetup(): Promise<App> {
   const app = new App()
@@ -35,7 +38,7 @@ export async function appSetup(): Promise<App> {
 }
 
 /**
- * Shut down Express application & close database connections.
+ * Shuts down the Express application, so there are not running processes when testing ends.
  *
  * @param app - The Express app.
  */
@@ -54,8 +57,9 @@ export async function seedDatabase(): Promise<void> {
 /**
  * A custom helper to check if an Invoice is equivalent to our expected response (and thus has a valid expiration time).
  *
- * @param expectedResponse - The expected invoice output (which contains an older expiration time)
- * @returns
+ * @param expectedResponse - The expected invoice output (which contains an older expiration time).
+ *
+ * @returns A function that takes a supertest Response, and checks that the invoice we receive is what we expected to receive.
  */
 export function isExpectedInvoice(expectedResponse: SignatureWrapper) {
   return (res: request.Response): void => {

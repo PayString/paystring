@@ -25,7 +25,7 @@ export interface AchAddressDetails {
 }
 
 /**
- * Payment information included in an Invoice or by itself (in the case of a GET request to the base path /)
+ * Payment information included in an Invoice or by itself (in the case of a GET request to the base path /).
  */
 export interface PaymentInformation {
   addressDetailType: AddressDetailType
