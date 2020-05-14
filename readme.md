@@ -219,7 +219,8 @@ Create PayID user requires the body parameter that contains the `PaymentInformat
 | Field     | Type   |                                                                       Description |
 | --------- | :----- | --------------------------------------------------------------------------------: |
 | pay_id    | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
-| addresses | List   |                                 List of addresses associated with your PayID user |
+| addresses | array  |                                 List of addresses associated with your PayID user |
+| memo      | string |              optional string field to include meta data surrounding a transaction |
 
 **Addresses Array Data Fields**
 
@@ -318,7 +319,8 @@ Update a PayID user requires the body parameter that contains the `PaymentInform
 | Field     | Type   |                                                                       Description |
 | --------- | :----- | --------------------------------------------------------------------------------: |
 | pay_id    | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
-| addresses | List   |                                 List of addresses associated with your PayID user |
+| addresses | array  |                                 List of addresses associated with your PayID user |
+| memo      | string |              optional string field to include meta data surrounding a transaction |
 
 **Addresses Array Data Fields**
 
@@ -532,7 +534,8 @@ Response (Success)
       "addressDetails": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
       },
-      "payId": "bob$127.0.0.1"
+      "payId": "bob$127.0.0.1",
+      "memo": "this is bob's XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
     "complianceHashes": []
@@ -644,7 +647,8 @@ Response (Success)
         "address": "T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
       },
       "proofOfControlSignature": "9743b52063cd84097a65d1633f5c74f5",
-      "payId": "alice$xpring.money"
+      "payId": "alice$xpring.money",
+      "memo": "this is alice's XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
     "memo": "thanks for travel rule data, here is your new invoice",
@@ -785,7 +789,8 @@ A [PaymentInformation](#71-paymentinformation-type) PaymentInformation type) obj
   "addressDetailType": "CryptoAddressDetails",
   "addressDetails": {
     "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
-  }
+  },
+  "memo": "this is an XRP testnet address"
 }
 ```
 
@@ -866,7 +871,8 @@ This example shows the format of an invoice.
         "address": "T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
       },
       "proofOfControlSignature": "9743b52063cd84097a65d1633f5c74f5",
-      "paymentPointer": "$xpring.money/dino"
+      "paymentPointer": "$xpring.money/dino",
+      "memo": "this is an XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
     "memo": "please send me travel rule data",
@@ -987,6 +993,7 @@ interface PaymentInformation {
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
   payId?: string
+  memo?: string
 }
 ```
 

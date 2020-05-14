@@ -32,6 +32,7 @@ export interface PaymentInformation {
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
   payId?: string
+  memo?: string
 }
 
 /**

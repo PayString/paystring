@@ -52,6 +52,28 @@ async function getAddressInfoForAcceptTypes(
 }
 
 /**
+ * Optionally allows injection of a memo
+ * @param paymentInformation - PaymentInformation of response so far
+ *
+ * Returns PaymentInformation updated with memo if it is not an empty string
+ */
+function appendMemo(
+  paymentInformation: PaymentInformation,
+): PaymentInformation {
+  // TODO(aking): in follow up PR allow memo injection functionality
+  const memo = ''
+
+  const updatedPaymentInformation = paymentInformation
+
+  // following disable is necessary because memo is static, will be fixed in next PR
+  /* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */
+  if (memo !== '') {
+    updatedPaymentInformation.memo = memo
+  }
+  return updatedPaymentInformation
+}
+
+/**
  * Resolves inbound requests to a PayID to their respective ledger addresses or other payment information.
  *
  * @param req - Contains PayID and payment network header.
@@ -160,6 +182,8 @@ export default async function getPaymentInfo(
       addressDetails: addressInformation.details as AchAddressDetails,
     }
   }
+
+  response = appendMemo(response)
 
   // Store response information (or information to be used in other middlewares)
   // TODO:(hbergren), come up with a less hacky way to pipe around data than global state.
