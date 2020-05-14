@@ -61,9 +61,9 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     assert.deepEqual(resp, addresses)
   })
 
-  it('Accepts PayID with a period for user', async function () {
-    // GIVEN an acceptable PayID with a period for the user
-    const payId = '.$wallet.com'
+  it('Accepts PayID with a user containing a period', async function () {
+    // GIVEN an acceptable PayID with a user containing a period
+    const payId = 'first.last$wallet.com'
 
     // WHEN we attempt to insert that PayID into our DB
     await insertUser(payId, addresses)
