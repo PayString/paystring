@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getAllPaymentInfoFromDatabase from '../data-access/payIds'
+import getAllAddressInfoFromDatabase from '../data-access/payIds'
 import {
   recordPayIdLookupBadAcceptHeader,
   recordPayIdLookupResult,
@@ -47,7 +47,7 @@ async function getAddressInfoForAcceptTypes(
   }
 
   // TODO:(tedkalaw) Improve this query
-  const allPaymentInformation = await getAllPaymentInfoFromDatabase(payId)
+  const allPaymentInformation = await getAllAddressInfoFromDatabase(payId)
   return getPreferredPaymentInfo(allPaymentInformation, sortedAcceptTypes)
 }
 

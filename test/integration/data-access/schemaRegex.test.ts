@@ -2,7 +2,7 @@ import 'mocha'
 import * as chai from 'chai'
 import * as chaiAsPromised from 'chai-as-promised'
 
-import getAllPaymentInfoFromDatabase from '../../../src/data-access/payIds'
+import getAllAddressInfoFromDatabase from '../../../src/data-access/payIds'
 import { insertUser } from '../../../src/data-access/users'
 
 chai.use(chaiAsPromised)
@@ -33,7 +33,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 
@@ -57,7 +57,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 
@@ -69,7 +69,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 
@@ -81,7 +81,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 
@@ -93,7 +93,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 
@@ -105,7 +105,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 
@@ -117,7 +117,7 @@ describe('E2E - privateAPIRouter - Regex', function (): void {
     await insertUser(payId, addresses)
 
     // THEN we expect the user to have been successfully inserted
-    const resp = await getAllPaymentInfoFromDatabase(payId)
+    const resp = await getAllAddressInfoFromDatabase(payId)
     assert.deepEqual(resp, addresses)
   })
 })
