@@ -36,7 +36,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-mainnet+json'
     const expectedResponse = {
-      addressDetailType: 'CryptoAddressDetails',
+      addressDetailsType: 'CryptoAddressDetails',
       addressDetails: {
         address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
       },
@@ -59,7 +59,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedResponse = {
-      addressDetailType: 'CryptoAddressDetails',
+      addressDetailsType: 'CryptoAddressDetails',
       addressDetails: {
         address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
       },
@@ -82,7 +82,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/btc-testnet+json'
     const expectedResponse = {
-      addressDetailType: 'CryptoAddressDetails',
+      addressDetailsType: 'CryptoAddressDetails',
       addressDetails: {
         address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
       },
@@ -105,7 +105,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/ach+json'
     const expectedResponse = {
-      addressDetailType: 'AchAddressDetails',
+      addressDetailsType: 'AchAddressDetails',
       addressDetails: {
         accountNumber: '000123456789',
         routingNumber: '123456789',

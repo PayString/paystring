@@ -3,13 +3,13 @@
 /**
  * Type of payment address in PaymentInformation.
  */
-export enum AddressDetailType {
+export enum AddressDetailsType {
   CryptoAddress = 'CryptoAddressDetails',
   AchAddress = 'AchAddressDetails',
 }
 
 /**
- * Matching schema for AddressDetailType.CryptoAddress.
+ * Matching schema for AddressDetailsType.CryptoAddress.
  */
 export interface CryptoAddressDetails {
   address: string
@@ -17,7 +17,7 @@ export interface CryptoAddressDetails {
 }
 
 /**
- * Matching schema for AddressDetailType.AchAddress.
+ * Matching schema for AddressDetailsType.AchAddress.
  */
 export interface AchAddressDetails {
   accountNumber: string
@@ -28,7 +28,7 @@ export interface AchAddressDetails {
  * Payment information included in an Invoice or by itself (in the case of a GET request to the base path /).
  */
 export interface PaymentInformation {
-  addressDetailType: AddressDetailType
+  addressDetailsType: AddressDetailsType
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
   payId?: string

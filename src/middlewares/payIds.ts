@@ -10,7 +10,7 @@ import { AddressInformation } from '../types/database'
 import HttpStatus from '../types/httpStatus'
 import {
   PaymentInformation,
-  AddressDetailType,
+  AddressDetailsType,
   CryptoAddressDetails,
   AchAddressDetails,
 } from '../types/publicAPI'
@@ -173,12 +173,12 @@ export default async function getPaymentInfo(
 
   // TODO:(hbergren) Create a helper function for this?
   let response: PaymentInformation = {
-    addressDetailType: AddressDetailType.CryptoAddress,
+    addressDetailsType: AddressDetailsType.CryptoAddress,
     addressDetails: addressInformation.details as CryptoAddressDetails,
   }
   if (addressInformation.paymentNetwork === 'ACH') {
     response = {
-      addressDetailType: AddressDetailType.AchAddress,
+      addressDetailsType: AddressDetailsType.AchAddress,
       addressDetails: addressInformation.details as AchAddressDetails,
     }
   }

@@ -468,6 +468,7 @@ The list of public endpoints is:
 In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request an invoice. When you get the invoice, you notice the `complianceRequirements` field of the invoice, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the invoice, you then post the compliance data to the same URL to update the invoice with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded invoice.
 
 **API**
+
 The API returns an invoice for the specified user.
 
 **Request format**
@@ -524,7 +525,7 @@ Response (Success)
   "message": {
     "expirationTime": 1588502198568,
     "paymentInformation": {
-      "addressDetailType": "CryptoAddressDetails",
+      "addressDetailsType": "CryptoAddressDetails",
       "addressDetails": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
       },
@@ -632,7 +633,7 @@ Response (Success)
     "txId": 368213,
     "expirationTime": 1584753369,
     "paymentInformation": {
-      "addressDetailType": "CryptoAddressDetails",
+      "addressDetailsType": "CryptoAddressDetails",
       "addressDetails": {
         "address": "T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
       },
@@ -777,7 +778,7 @@ A [PaymentInformation](#71-paymentinformation-type) PaymentInformation type) obj
 
 ```json
 {
-  "addressDetailType": "CryptoAddressDetails",
+  "addressDetailsType": "CryptoAddressDetails",
   "addressDetails": {
     "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
   },
@@ -857,7 +858,7 @@ This example shows the format of an invoice.
     "txId": 578392,
     "expirationTime": "2020-03-18T04:04:02",
     "paymentInformation": {
-      "addressDetailType": "CryptoAddressDetails",
+      "addressDetailsType": "CryptoAddressDetails",
       "addressDetails": {
         "address": "T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
       },
@@ -980,7 +981,7 @@ const tx = await wallet.send(0.63, 'alice$institution.com')
 
 ```ts
 interface PaymentInformation {
-  addressDetailType: AddressDetailType
+  addressDetailsType: AddressDetailsType
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
   payId?: string

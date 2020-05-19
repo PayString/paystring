@@ -1,6 +1,6 @@
 import {
   Invoice,
-  AddressDetailType,
+  AddressDetailsType,
   ComplianceType,
   Compliance,
   PaymentProof,
@@ -39,7 +39,7 @@ export const mockInvoice: Invoice = {
   txId: 581203,
   expirationTime: 1584723369,
   paymentInformation: {
-    addressDetailType: AddressDetailType.CryptoAddress,
+    addressDetailsType: AddressDetailsType.CryptoAddress,
     addressDetails: {
       address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
     },
@@ -56,7 +56,7 @@ export const mockInvoiceWithComplianceHashes: Invoice = {
   txId: 583289,
   expirationTime: 1584753369,
   paymentInformation: {
-    addressDetailType: AddressDetailType.CryptoAddress,
+    addressDetailsType: AddressDetailsType.CryptoAddress,
     addressDetails: {
       address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
     },

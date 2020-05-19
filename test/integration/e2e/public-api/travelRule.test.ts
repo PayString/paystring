@@ -11,7 +11,7 @@ import { wrapMessage } from '../../../../src/services/signatureWrapper'
 import HttpStatus from '../../../../src/types/httpStatus'
 import {
   MessageType,
-  AddressDetailType,
+  AddressDetailsType,
   ComplianceType,
   Invoice,
 } from '../../../../src/types/publicAPI'
@@ -42,7 +42,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       txId: 148689,
       expirationTime: Date.now() + TIME_TO_EXPIRY,
       paymentInformation: {
-        addressDetailType: AddressDetailType.CryptoAddress,
+        addressDetailsType: AddressDetailsType.CryptoAddress,
         addressDetails: {
           address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
         },
