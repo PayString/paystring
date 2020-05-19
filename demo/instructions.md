@@ -9,7 +9,7 @@ curl --location --request POST http://localhost:8081/v1/users --header 'Content-
   "payId": "$127.0.0.1/exampleUser",
   "addresses": [
   {
-    "payment_network": "XRPL",
+    "paymentNetwork": "XRPL",
     "environment": "TESTNET",
     "details": {
       "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ2"

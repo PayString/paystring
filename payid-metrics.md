@@ -132,7 +132,7 @@ Test whether the PayID server is running by creating a PayID with this cURL comm
      "payId": "alice$127.0.0.1",
      "addresses": [
          {
-             "payment_network": "XRPL",
+             "paymentNetwork": "XRPL",
              "environment": "TESTNET",
              "details": {
                  "address": "TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS"

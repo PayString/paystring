@@ -175,7 +175,7 @@ Response (Success)
   "payId": "bob$127.0.0.1",
   "addresses": [
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "TESTNET",
       "details": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
@@ -224,11 +224,11 @@ Create PayID user requires the body parameter that contains the `PaymentInformat
 
 **Addresses Array Data Fields**
 
-| Field           | Type   |                                                                                                            Description |
-| --------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
-| payment_network | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
-| environment     | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
-| details         | Object |                                                                      JSON object containing the network wallet details |
+| Field          | Type   |                                                                                                            Description |
+| -------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
+| paymentNetwork | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
+| environment    | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
+| details        | Object |                                                                      JSON object containing the network wallet details |
 
 **Details Object Data Fields**
 
@@ -256,14 +256,14 @@ POST http://127.0.0.1:8081/v1/users HTTP/1.1
   "payId": "bob$127.0.0.1",
   "addresses": [
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "TESTNET",
       "details": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
       }
     },
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "MAINNET",
       "details": {
         "address": "X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn"
@@ -324,11 +324,11 @@ Update a PayID user requires the body parameter that contains the `PaymentInform
 
 **Addresses Array Data Fields**
 
-| Field           | Type   |                                                                                                            Description |
-| --------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
-| payment_network | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
-| environment     | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
-| details         | Object |                                                                      JSON object containing the network wallet details |
+| Field          | Type   |                                                                                                            Description |
+| -------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
+| paymentNetwork | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
+| environment    | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
+| details        | Object |                                                                      JSON object containing the network wallet details |
 
 **Details Object Data Fields**
 
@@ -353,7 +353,7 @@ PUT http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
 	"payId": "bob$127.0.0.1",
 	"addresses": [
 		{
-			"payment_network": "XRPL",
+			"paymentNetwork": "XRPL",
 			"environment": "TESTNET",
 			"details": {
 			  "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ2"
@@ -422,7 +422,7 @@ DELETE http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
 	"payId": "bob$127.0.0.1",
 	"addresses": [
 		{
-			"payment_network": "XRPL",
+			"paymentNetwork": "XRPL",
 			"environment": "TESTNET",
 			"details": {
 			  "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ2"
@@ -476,7 +476,7 @@ The nonce used in this call is a [UUID](https://en.wikipedia.org/wiki/Universall
 ```HTTP
 GET {pay_id_base_url}/{user}/invoice?nonce=<uuid> HTTP/1.1
 
-Accept: application/{payment_network}-{environment}+json
+Accept: application/{paymentNetwork}-{environment}+json
 Content-Type: application/json
 ```
 
@@ -746,7 +746,7 @@ The PayID Public API does not require authentication, as it is open to any user.
 ```HTTP
 GET {pay_id_base_url}/{user} HTTP/1.1
 
-Accept: application/{payment_network}-{environment}+json
+Accept: application/{paymentNetwork}-{environment}+json
 ```
 
 **Path parameters (Required)**
@@ -819,14 +819,14 @@ A single user can have multiple destinations, because the same user can have add
   "payId": "johndoe$xpring.money",
   "addresses": [
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "TESTNET",
       "details": {
         "address": "TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth"
       }
     },
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "MAINNET",
       "details": {
         "address": "X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn"
@@ -836,13 +836,13 @@ A single user can have multiple destinations, because the same user can have add
 }
 ```
 
-| Field                       | Description                                                                                                                                    |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `payId`                     | PayID user address                                                                                                                             |
-| `addresses`                 | Object that includes payment address information for one or more payment networks.                                                             |
-| `addresses.payment_network` | A payment network, like the bitcoin network, the XRPL, or ACH.                                                                                 |
-| `addresses.environment`     | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.                         |
-| `address.details`           | Actual payment information for this address. Must be in the form `CryptoAddressDetails` or `AchAddressDetails`. See [Interfaces](#interfaces). |
+| Field                      | Description                                                                                                                                    |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `payId`                    | PayID user address                                                                                                                             |
+| `addresses`                | Object that includes payment address information for one or more payment networks.                                                             |
+| `addresses.paymentNetwork` | A payment network, like the bitcoin network, the XRPL, or ACH.                                                                                 |
+| `addresses.environment`    | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.                         |
+| `address.details`          | Actual payment information for this address. Must be in the form `CryptoAddressDetails` or `AchAddressDetails`. See [Interfaces](#interfaces). |
 
 ### 5.2 Example error schema
 

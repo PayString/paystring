@@ -51,7 +51,7 @@ You can set up a PayID server on AWS (Amazon Web Services).
     --data-raw '{
      "payId": "$<your-pay-id-address>",
      "addresses": [{
-       "payment_network": "XRPL",
+       "paymentNetwork": "XRPL",
        "environment": "MAINNET",
        "details": {
          "address": "<your-address"
