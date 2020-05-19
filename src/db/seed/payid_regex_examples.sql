@@ -1,8 +1,9 @@
 -- construct a table of valid and invalid PayIDs to test implementations against
 drop table if exists payid_examples;
-create table payid_examples ( pay_id varchar(250) primary key, is_valid bool );
+create table payid_examples (pay_id varchar(250) primary key, is_valid bool);
+
 -- valid payids
-insert into payid_examples values ( '1$1.1.1.1', true);
+insert into payid_examples values ('1$1.1.1.1', true);
 insert into payid_examples values ('payid$example.com', true);
 insert into payid_examples values ('firstname.lastname$example.com', true);
 insert into payid_examples values ('payid$subexample.example.com', true);
@@ -25,6 +26,7 @@ insert into payid_examples values ('_______@example.com$example.com', true);
 insert into payid_examples values ('payid@example.name$example.com', true);
 insert into payid_examples values ('payid@example.co.jp$example.com', true);
 insert into payid_examples values ('firstname-lastname@example.com$example.com', true);
+
 -- invalid payids
 insert into payid_examples values ('payid@[123.123.123.123]$example.com', false);
 insert into payid_examples values ('payid$[123.123.123.123]', false);
@@ -55,6 +57,3 @@ insert into payid_examples values ('payid$example.com;', false);
 insert into payid_examples values (E'payid$example.com\'', false);
 insert into payid_examples values ('payid$example.com"', false);
 insert into payid_examples values ('p$ayid$example.com?garbage', false);
-
--- now run tests with these
--- e.g. select count(*) from payid_examples where (pay_id ~ '^[a-z0-9!#@%&*+/=?^_`{|}~-]+(?:\.[a-z0-9!#@%&*+/=?^_`{|}~-]+)*\$(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z-]*[a-z0-9])?|(?:[0-9]{1,3}\.){3}[0-9]{1,3})$') != is_valid;

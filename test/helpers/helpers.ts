@@ -5,6 +5,7 @@ import * as request from 'supertest'
 
 import App from '../../src/app'
 import config from '../../src/config'
+import knex from '../../src/db/knex'
 import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
 import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
 
@@ -52,6 +53,27 @@ export async function seedDatabase(): Promise<void> {
   testConfig.database.options.seedDatabase = true
 
   await syncDatabaseSchema(testConfig.database)
+}
+
+export async function getDatabaseConstraintDefinition(
+  constraintName: string,
+  tableName: string,
+): Promise<string> {
+  return knex
+    .raw(
+      `
+        -- Select the constraint definition in the relevant table.
+        -- We fetch the relevant constraint, get the constraint definition.
+        --
+        SELECT  pg_get_constraintdef(con.oid) as constraint_def
+        FROM    pg_constraint con
+                INNER JOIN pg_class rel ON rel.oid = con.conrelid
+        WHERE   con.conname = ?
+                AND rel.relname = ?;
+      `,
+      [constraintName, tableName],
+    )
+    .then(async (result) => result.rows[0].constraint_def)
 }
 
 /**

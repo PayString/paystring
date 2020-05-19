@@ -8,7 +8,7 @@ import { insertUser } from '../../../src/data-access/users'
 chai.use(chaiAsPromised)
 const { assert } = chai
 
-describe('E2E - privateAPIRouter - Regex', function (): void {
+describe('Data Access - insertUser - PayID Regex', function (): void {
   const addresses = [
     {
       payment_network: 'XRPL',
