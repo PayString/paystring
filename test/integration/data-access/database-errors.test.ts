@@ -16,7 +16,7 @@ describe('Data Access - Database Errors', function (): void {
 
   const exampleAddresses = [
     {
-      payment_network: 'ABC',
+      paymentNetwork: 'ABC',
       environment: 'XYZ',
       details: {
         address: 'abc.xyz',
@@ -96,7 +96,7 @@ describe('Data Access - Database Errors', function (): void {
     const payId = 'alice$example.com'
     const addresses = [
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
       },
     ]
@@ -114,12 +114,12 @@ describe('Data Access - Database Errors', function (): void {
     )
   })
 
-  it('Raises an error when attempting to insert an address with an empty payment_network', async function () {
+  it('Raises an error when attempting to insert an address with an empty paymentNetwork', async function () {
     // GIVEN a PayID and associated addresses to insert
     const payId = 'alice$example.com'
     const addresses = [
       {
-        payment_network: '',
+        paymentNetwork: '',
         environment: 'TESTNET',
         details: {
           address: 'abc',
@@ -143,7 +143,7 @@ describe('Data Access - Database Errors', function (): void {
     const payId = 'alice$example.com'
     const addresses = [
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: '',
         details: {
           address: 'abc',
@@ -162,19 +162,19 @@ describe('Data Access - Database Errors', function (): void {
     )
   })
 
-  it('Raises an error when attempting to insert multiple addresses for the same (payment_network, environment)', async function () {
+  it('Raises an error when attempting to insert multiple addresses for the same (paymentNetwork, environment)', async function () {
     // GIVEN a PayID and associated addresses to insert
     const payId = 'alice$example.com'
     const addresses = [
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         details: {
           address: 'abc',
         },
       },
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         details: {
           address: 'xyz',

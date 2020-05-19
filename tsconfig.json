@@ -7,7 +7,14 @@
     "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
+    // Add custom typings
+    "baseUrl": "./",
+    "paths": {
+      "*": ["@types/*"]
+    },
+
     "downlevelIteration": true,
+
     // Source Map Stuff
     "declaration": true,
     "declarationMap": true,

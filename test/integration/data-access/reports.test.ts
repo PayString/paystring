@@ -13,32 +13,32 @@ describe('Data Access - getPayIdCounts()', function (): void {
     const results = await getPayIdCounts()
     const expected = [
       {
-        payment_network: 'ACH',
+        paymentNetwork: 'ACH',
         environment: null,
         count: 1,
       },
       {
-        payment_network: 'BTC',
+        paymentNetwork: 'BTC',
         environment: 'TESTNET',
         count: 2,
       },
       {
-        payment_network: 'INTERLEDGER',
+        paymentNetwork: 'INTERLEDGER',
         environment: 'TESTNET',
         count: 1,
       },
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'DEVNET',
         count: 1,
       },
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'MAINNET',
         count: 2,
       },
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         count: 6,
       },

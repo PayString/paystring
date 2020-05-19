@@ -19,7 +19,7 @@ describe('Data Access - getAllPaymentInfoFromDatabase()', function (): void {
     // THEN we get our seeded value back
     const expectedPaymentInfo = [
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         details: {
           address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
@@ -37,28 +37,28 @@ describe('Data Access - getAllPaymentInfoFromDatabase()', function (): void {
     // THEN we get our seeded values back
     const expectedPaymentInfo = [
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'MAINNET',
         details: {
           address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
         },
       },
       {
-        payment_network: 'XRPL',
+        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         details: {
           address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
         },
       },
       {
-        payment_network: 'BTC',
+        paymentNetwork: 'BTC',
         environment: 'TESTNET',
         details: {
           address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
         },
       },
       {
-        payment_network: 'ACH',
+        paymentNetwork: 'ACH',
         environment: null,
         details: {
           accountNumber: '000123456789',

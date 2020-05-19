@@ -11,7 +11,7 @@ const { assert } = chai
 describe('Data Access - insertUser - PayID Regex', function (): void {
   const addresses = [
     {
-      payment_network: 'XRPL',
+      paymentNetwork: 'XRPL',
       environment: 'MAINNET',
       details: {
         address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H',

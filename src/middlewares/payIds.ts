@@ -109,7 +109,7 @@ export default async function getPaymentInfo(
 
     return handleHttpError(
       HttpStatus.BadRequest,
-      `Missing Accept header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
+      `Missing Accept header. Must have an Accept header of the form "application/{paymentNetwork}(-{environment})+json".
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
@@ -132,7 +132,7 @@ export default async function getPaymentInfo(
 
     return handleHttpError(
       HttpStatus.BadRequest,
-      `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
+      `Invalid Accept header. Must be of the form "application/{paymentNetwork}(-{environment})+json".
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
@@ -176,7 +176,7 @@ export default async function getPaymentInfo(
     addressDetailType: AddressDetailType.CryptoAddress,
     addressDetails: addressInformation.details as CryptoAddressDetails,
   }
-  if (addressInformation.payment_network === 'ACH') {
+  if (addressInformation.paymentNetwork === 'ACH') {
     response = {
       addressDetailType: AddressDetailType.AchAddress,
       addressDetails: addressInformation.details as AchAddressDetails,
@@ -191,7 +191,7 @@ export default async function getPaymentInfo(
   res.locals.paymentInformation = response
   res.locals.response = response
   recordPayIdLookupResult(
-    addressInformation.payment_network,
+    addressInformation.paymentNetwork,
     addressInformation.environment ?? 'unknown',
     true,
   )

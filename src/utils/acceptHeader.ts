@@ -61,7 +61,7 @@ export function getPreferredPaymentInfo(
   for (const acceptType of sortedAcceptMediaTypes) {
     const addressInformationForAcceptType = addressInformations.find(
       (result) =>
-        result.payment_network === acceptType.paymentNetwork &&
+        result.paymentNetwork === acceptType.paymentNetwork &&
         (result.environment ?? '') === acceptType.environment,
     )
 

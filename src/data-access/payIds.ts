@@ -10,10 +10,10 @@ export default async function getAllAddressInfoFromDatabase(
   payId: string,
 ): Promise<readonly AddressInformation[]> {
   const addressInformation = await knex
-    .select('address.payment_network', 'address.environment', 'address.details')
+    .select('address.paymentNetwork', 'address.environment', 'address.details')
     .from<Address>('address')
-    .innerJoin('account', 'address.account_id', 'account.id')
-    .where('account.pay_id', payId)
+    .innerJoin('account', 'address.accountId', 'account.id')
+    .where('account.payId', payId)
 
   return addressInformation
 }

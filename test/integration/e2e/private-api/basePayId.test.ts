@@ -20,7 +20,7 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
       payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
@@ -71,14 +71,14 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       payId: 'johndoe$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
           },
         },
         {
-          payment_network: 'BTC',
+          paymentNetwork: 'BTC',
           environment: 'TESTNET',
           details: {
             address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
@@ -104,7 +104,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       payId: 'janedoe$xpring.money',
       addresses: [
         {
-          payment_network: 'ACH',
+          paymentNetwork: 'ACH',
           details: {
             accountNumber: '000123456789',
             routingNumber: '123456789',
@@ -130,7 +130,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       payId: 'alice.smith$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
@@ -154,7 +154,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
@@ -195,7 +195,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -220,7 +220,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'charlie$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -245,7 +245,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'johndoe$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -278,7 +278,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -307,7 +307,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -336,7 +336,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'alice$bob$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -361,7 +361,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'bob$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -393,7 +393,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       payId: 'bob$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',

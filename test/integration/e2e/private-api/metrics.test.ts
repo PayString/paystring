@@ -125,7 +125,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
       payId,
       addresses: [
         {
-          payment_network: paymentNetwork,
+          paymentNetwork,
           environment,
           details: {
             address: 'test',

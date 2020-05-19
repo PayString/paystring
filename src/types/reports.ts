@@ -1,8 +1,8 @@
 /**
- * Query result record for a count of PayIDs by environment and payment_network.
+ * Query result record for a count of PayIDs by environment and paymentNetwork.
  */
 export interface PayIdCount {
-  payment_network: string
+  paymentNetwork: string
   environment: string
   count: number
 }

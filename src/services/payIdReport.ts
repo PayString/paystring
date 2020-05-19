@@ -10,7 +10,7 @@ export async function generatePayIdCountMetrics(): Promise<void> {
 
   payIdCounts.forEach((payIdCount) => {
     recordPayIdCount(
-      payIdCount.payment_network,
+      payIdCount.paymentNetwork,
       payIdCount.environment,
       payIdCount.count,
     )

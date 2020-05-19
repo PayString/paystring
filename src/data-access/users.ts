@@ -22,14 +22,14 @@ export async function insertUser(
   return knex.transaction(async (transaction: Transaction) => {
     const insertedAddresses = await knex
       .insert({
-        pay_id: payId,
+        payId,
       })
       .into<Account>('account')
       .transacting(transaction)
       .returning('id')
       .then(async (ids) => {
-        const accountID = ids[0]
-        const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
+        const accountId = ids[0]
+        const mappedAddresses = addAccountIdToAddresses(addresses, accountId)
         return insertAddresses(mappedAddresses, transaction)
       })
       .then(transaction.commit)
@@ -55,23 +55,23 @@ export async function replaceUser(
 ): Promise<readonly AddressInformation[] | null> {
   return knex.transaction(async (transaction: Transaction) => {
     const updatedAddresses = await knex<Account>('account')
-      .where('pay_id', oldPayId)
-      .update({ pay_id: newPayId })
+      .where('payId', oldPayId)
+      .update({ payId: newPayId })
       .transacting(transaction)
       .returning('id')
       .then(async (ids) => {
-        const accountID = ids[0]
-        if (accountID === undefined) {
+        const accountId = ids[0]
+        if (accountId === undefined) {
           return null
         }
 
         // Delete existing addresses associated with that user
         await knex<Address>('address')
           .delete()
-          .where('account_id', accountID)
+          .where('accountId', accountId)
           .transacting(transaction)
 
-        const mappedAddresses = addAccountIDToAddresses(addresses, accountID)
+        const mappedAddresses = addAccountIdToAddresses(addresses, accountId)
         return insertAddresses(mappedAddresses, transaction)
       })
       .then(transaction.commit)
@@ -90,7 +90,7 @@ export async function replaceUser(
 export async function removeUser(payId: string): Promise<void> {
   await knex<Account>('account')
     .delete()
-    .where('pay_id', payId)
+    .where('payId', payId)
     .then((count) => {
       /* istanbul ignore if */
       if (count > 1) {
@@ -109,25 +109,25 @@ export async function removeUser(payId: string): Promise<void> {
 // HELPER FUNCTIONS
 
 interface DatabaseAddress extends AddressInformation {
-  account_id: string
+  accountId: string
 }
 
 /**
  * Maps an array of AddressInformation objects into an array of DatabaseAddress objects,
- * by adding an 'account_id' property to each object.
+ * by adding an 'accountId' property to each object.
  *
  * @param addresses - An array of payment addresses we want to insert into the database.
- * @param accountID - The account ID to add to all the addresses to allow inserting the addresses into the database.
+ * @param accountId - The account ID to add to all the addresses to allow inserting the addresses into the database.
  *
- * @returns A new array of DatabaseAddress objects, where each address has a new property 'account_id'.
+ * @returns A new array of DatabaseAddress objects, where each address has a new property 'accountId'.
  */
-function addAccountIDToAddresses(
+function addAccountIdToAddresses(
   addresses: readonly AddressInformation[],
-  accountID: string,
+  accountId: string,
 ): readonly DatabaseAddress[] {
   return addresses.map((address) => ({
-    account_id: accountID,
-    payment_network: address.payment_network.toUpperCase(),
+    accountId,
+    paymentNetwork: address.paymentNetwork.toUpperCase(),
     environment: address.environment?.toUpperCase(),
     details: address.details,
   }))
@@ -151,5 +151,5 @@ async function insertAddresses(
     .insert(addresses)
     .into<Address>('address')
     .transacting(transaction)
-    .returning(['payment_network', 'environment', 'details'])
+    .returning(['paymentNetwork', 'environment', 'details'])
 }
