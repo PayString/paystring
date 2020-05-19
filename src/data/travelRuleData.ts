@@ -10,6 +10,7 @@ import {
 // can be used in e2e and unit tests
 export const mockPaymentProof: PaymentProof = {
   invoiceHash: '',
+  txId: 318188,
   transactionConfirmation: '',
   memo: 'the payment succeeded!',
 }

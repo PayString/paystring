@@ -107,6 +107,7 @@ export interface Compliance {
 export interface PaymentProof {
   invoiceHash: string
   transactionConfirmation: string
+  txId: number
   memo?: string
 }
 
