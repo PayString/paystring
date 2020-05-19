@@ -46,7 +46,7 @@ export interface InvoicePaymentInformation extends PaymentInformation {
  * Invoice included in a SignatureWrapper when a GET request is made to the /invoice endpoint.
  */
 export interface Invoice {
-  nonce: string // numeric string
+  txId: number
   expirationTime: number // unix timestamp
   paymentInformation: InvoicePaymentInformation
   complianceRequirements: ComplianceType[] // e.g. TravelRule

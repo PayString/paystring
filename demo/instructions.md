@@ -28,7 +28,7 @@ curl --location --request GET 'http://127.0.0.1:8080/exampleUser' --header 'Acce
 We've confirmed that our PayID is working as expected so let's send an invoice request:
 
 ```
-curl --location --request GET 'http://127.0.0.1:8080/exampleUser/invoice?nonce=123456' \
+curl --location --request GET 'http://127.0.0.1:8080/exampleUser/invoice' \
 --header 'Accept: application/xrpl-testnet+json' \
 --header 'Content-Type: application/json'
 ```
@@ -36,7 +36,7 @@ curl --location --request GET 'http://127.0.0.1:8080/exampleUser/invoice?nonce=1
 The returned JSON object is our payment invoice. In this example, the institution is a VASP and has listed any laws that must be complied with in the `complianceRequirements` field of the invoice. Specifically, as the originator of the payment we are being asked to comply with the Travel Rule. In order to do that, we'll POST the compliance data to the same URL in order to upgrade our invoice.
 
 ```
-curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice?nonce=123456' \
+curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice' \
 --header 'Content-Type: application/json' \
 --data-raw '{
         "messageType": "compliance",

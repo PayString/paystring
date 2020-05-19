@@ -12,14 +12,12 @@ import {
  * back to the sender as part of the Invoice as confirmation that the data was received and processed
  * successfully.
  *
- * @param nonce - Used to correlate invoices/compliance/paymentProofs.
  * @param payId - PayID of the user receiving funds.
  * @param paymentInformation - Payment details (e.g. Crypto, ACH) of the user receiving funds.
  * @param complianceData - Compliance data of sender to satisfy any legal requirements.
  * @returns A valid Invoice to be sent to the client.
  */
 export default function generateInvoice(
-  nonce: string,
   payId: string,
   paymentInformation: PaymentInformation,
   complianceData?: Compliance,
@@ -37,7 +35,9 @@ export default function generateInvoice(
   const TIME_TO_EXPIRY = 60 * 60 * 1000
 
   const invoice: Invoice = {
-    nonce,
+    // TODO(aking + hbergren): replace this w/ table ID once we have TR
+    // tables implemented
+    txId: 148689,
     expirationTime: Date.now() + TIME_TO_EXPIRY,
     paymentInformation: {
       ...paymentInformation,

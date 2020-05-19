@@ -454,12 +454,12 @@ The following table lists the HTTP status codes and messages returned for this m
 The public APIs runs by default on port 8080. Make sure to update this value if needed.
 The list of public endpoints is:
 
-| HTTP Method                                      | Endpoint                     |                          Description |
-| ------------------------------------------------ | :--------------------------- | -----------------------------------: |
-| [GET](#431-get-a-travel-rule-compliance-invoice) | /{user}/invoice?nonce=<uuid> | Get a Travel Rule compliance invoice |
-| [POST](#432-send-compliance-information)         | /{user}/invoice?nonce=<uuid> |          Send compliance information |
-| [POST](#433-send-payment-proof)                  | /{user}/payment-proof        |                   Send payment proof |
-| [GET](#434-get-user-information)                 | /{user}                      |         Get a PayID user information |
+| HTTP Method                                      | Endpoint               |                          Description |
+| ------------------------------------------------ | :--------------------- | -----------------------------------: |
+| [GET](#431-get-a-travel-rule-compliance-invoice) | /{user}/invoice        | Get a Travel Rule compliance invoice |
+| [POST](#432-send-compliance-information)         | /{user}/invoice        |          Send compliance information |
+| [POST](#433-send-payment-proof)                  | /{user}/payment-proof  |                   Send payment proof |
+| [GET](#434-get-user-information)                 | /{user}                |         Get a PayID user information |
 
 #### 4.3.1. Get a Travel Rule compliance invoice
 
@@ -468,13 +468,12 @@ The list of public endpoints is:
 In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request an invoice. When you get the invoice, you notice the `complianceRequirements` field of the invoice, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the invoice, you then post the compliance data to the same URL to update the invoice with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded invoice.
 
 **API**
-The API returns an invoice for the specified user and nonce.
-The nonce used in this call is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+The API returns an invoice for the specified user.
 
 **Request format**
 
 ```HTTP
-GET {pay_id_base_url}/{user}/invoice?nonce=<uuid> HTTP/1.1
+GET {pay_id_base_url}/{user}/invoice HTTP/1.1
 
 Accept: application/{paymentNetwork}-{environment}+json
 Content-Type: application/json
@@ -488,11 +487,7 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Get Invoice" method accepts the required query parameter described in the following table:
-
-| Parameter | Type |                                                                                                                                      Description |
-| --------- | :--- | -----------------------------------------------------------------------------------------------------------------------------------------------: |
-| nonce     | UUID | Unique [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier). Can be generated [here](https://www.uuidgenerator.net/) for example. |
+The "Get Invoice" method does not accept any query parameters.
 
 **Headers parameters (Required)**
 
@@ -515,7 +510,7 @@ A successful response to the "Get invoice" method returns a 200 HTTP status code
 Request (Success)
 
 ```HTTP
-GET https://sender.institution.com/bob/invoice?nonce=8743e9ba-ee96-4ec0-b388-6df3fd3a7c64 HTTP/1.1
+GET https://sender.institution.com/bob/invoice HTTP/1.1
 
 Accept: application/xrpl-testnet+json
 Content-Type: application/json
@@ -527,7 +522,6 @@ Response (Success)
 {
   "messageType": "Invoice",
   "message": {
-    "nonce": "8743e9ba-ee96-4ec0-b388-6df3fd3a7c64",
     "expirationTime": 1588502198568,
     "paymentInformation": {
       "addressDetailType": "CryptoAddressDetails",
@@ -565,7 +559,7 @@ If an invoice contains information in the `complianceRequirements` field, then u
 **Request format**
 
 ```HTTP
-POST {pay_id_base_url}/{user}/invoice?nonce=<uuid> HTTP/1.1
+POST {pay_id_base_url}/{user}/invoice HTTP/1.1
 
 Content-Type: application/json
 ```
@@ -578,11 +572,7 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Get Invoice" method accepts the required query parameter described in the following table:
-
-| Parameter | Type |                                                                                                                                                      Description |
-| --------- | :--- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| nonce     | UUID | Unique [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier). `IMPORTANT:` The value must be the same as the one returned by the "GET invoice" API |
+The "Get Invoice" method does not accept any query parameters.
 
 **Body parameters (Required)**
 
@@ -601,7 +591,7 @@ Request (Success)
 The body contains the [compliance message](#example-compliance-message-schema). This message contains information about the originator, the value of the transaction, and the beneficiary, and the message is signed cryptographically.
 
 ```HTTP
-POST https://sender.institution.com/bob/invoice?nonce=8743e9ba-ee96-4ec0-b388-6df3fd3a7c64 HTTP/1.1
+POST https://sender.institution.com/bob/invoice HTTP/1.1
 
 {
 	"messageType": "compliance",
@@ -639,7 +629,7 @@ Response (Success)
 {
   "messageType": "Invoice",
   "message": {
-    "nonce": "123456",
+    "txId": 368213,
     "expirationTime": 1584753369,
     "paymentInformation": {
       "addressDetailType": "CryptoAddressDetails",
@@ -864,7 +854,7 @@ This example shows the format of an invoice.
 {
   "messageType": "Invoice",
   "message": {
-    "nonce": "123e4567-e89b-12d3-a456-426655440000",
+    "txId": 578392,
     "expirationTime": "2020-03-18T04:04:02",
     "paymentInformation": {
       "addressDetailType": "CryptoAddressDetails",

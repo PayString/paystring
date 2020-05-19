@@ -36,7 +36,7 @@ export const mockComplianceData: Compliance = {
 }
 
 export const mockInvoice: Invoice = {
-  nonce: '123456',
+  txId: 581203,
   expirationTime: 1584723369,
   paymentInformation: {
     addressDetailType: AddressDetailType.CryptoAddress,
@@ -53,7 +53,7 @@ export const mockInvoice: Invoice = {
 }
 
 export const mockInvoiceWithComplianceHashes: Invoice = {
-  nonce: '123456',
+  txId: 583289,
   expirationTime: 1584753369,
   paymentInformation: {
     addressDetailType: AddressDetailType.CryptoAddress,

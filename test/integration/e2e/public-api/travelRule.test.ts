@@ -39,7 +39,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const TIME_TO_EXPIRY = 60 * 60 * 1000
 
     const expectedInvoice: Invoice = {
-      nonce: '123',
+      txId: 148689,
       expirationTime: Date.now() + TIME_TO_EXPIRY,
       paymentInformation: {
         addressDetailType: AddressDetailType.CryptoAddress,
@@ -55,30 +55,11 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice
     request(app.publicAPIExpress)
-      .get(`${payId}/invoice?nonce=123`)
+      .get(`${payId}/invoice`)
       .set('Accept', acceptHeader)
       // THEN we get back a 200 - OK with the invoice
       .expect(isExpectedInvoice(expectedResponse))
       .expect(HttpStatus.OK, done)
-  })
-
-  // TODO(dino): implement this to not use mock data
-  it('Returns 400 on request to GET /invoice without a nonce', function (done): void {
-    // GIVEN a PayID known to have a testnet address
-    const payId = '/hbergren'
-    const acceptHeader = 'application/xrpl-testnet+json'
-    const expectedResponse = {
-      statusCode: 400,
-      message: 'Missing nonce query parameter.',
-      error: 'Bad Request',
-    }
-
-    // WHEN we make a GET request to the public endpoint to retrieve the invoice
-    request(app.publicAPIExpress)
-      .get(`${payId}/invoice`)
-      .set('Accept', acceptHeader)
-      // THEN we get back a 400 - Bad Request with the invoice
-      .expect(HttpStatus.BadRequest, expectedResponse, done)
   })
 
   // TODO(dino): implement this to not use mock data
