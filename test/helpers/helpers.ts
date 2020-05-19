@@ -7,7 +7,10 @@ import App from '../../src/app'
 import config from '../../src/config'
 import knex from '../../src/db/knex'
 import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
-import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
+import {
+  SignatureWrapper,
+  PaymentSetupDetails,
+} from '../../src/types/publicAPI'
 
 /**
  * Deep clones an object *properly*.
@@ -88,9 +91,9 @@ export function isExpectedInvoice(expectedResponse: SignatureWrapper) {
     const {
       expirationTime: expectedExpirationTime,
       ...expectedResponseWithoutExpirationTime
-    } = expectedResponse.message as Invoice
+    } = expectedResponse.message as PaymentSetupDetails
     const { expirationTime, ...responseWithoutExpirationTime } = res.body
-      .message as Invoice
+      .message as PaymentSetupDetails
     const expirationTimeDelta = expirationTime - expectedExpirationTime
 
     assert(

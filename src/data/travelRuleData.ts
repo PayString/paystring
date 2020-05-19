@@ -1,5 +1,5 @@
 import {
-  Invoice,
+  PaymentSetupDetails,
   AddressDetailsType,
   ComplianceType,
   Compliance,
@@ -36,7 +36,7 @@ export const mockComplianceData: Compliance = {
   memo: 'Example travel rule transaction',
 }
 
-export const mockInvoice: Invoice = {
+export const mockInvoice: PaymentSetupDetails = {
   txId: 581203,
   expirationTime: 1584723369,
   paymentInformation: {
@@ -53,7 +53,7 @@ export const mockInvoice: Invoice = {
   complianceHashes: [],
 }
 
-export const mockInvoiceWithComplianceHashes: Invoice = {
+export const mockInvoiceWithComplianceHashes: PaymentSetupDetails = {
   txId: 583289,
   expirationTime: 1584753369,
   paymentInformation: {

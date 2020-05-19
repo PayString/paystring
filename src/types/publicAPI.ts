@@ -45,7 +45,7 @@ export interface InvoicePaymentInformation extends PaymentInformation {
 /**
  * Invoice included in a SignatureWrapper when a GET request is made to the /invoice endpoint.
  */
-export interface Invoice {
+export interface PaymentSetupDetails {
   txId: number
   expirationTime: number // unix timestamp
   paymentInformation: InvoicePaymentInformation
@@ -115,7 +115,7 @@ export interface PaymentProof {
  * Supported custom message types for requests/responses in PayID.
  */
 export enum MessageType {
-  Invoice = 'Invoice',
+  PaymentSetupDetails = 'PaymentSetupDetails',
   Compliance = 'Compliance',
   PaymentProof = 'PaymentProof',
 }
@@ -125,7 +125,7 @@ export enum MessageType {
  */
 export interface SignatureWrapper {
   messageType: MessageType
-  message: Invoice | Compliance | PaymentProof
+  message: PaymentSetupDetails | Compliance | PaymentProof
   publicKeyType: string
   publicKeyData: string[]
   publicKey: string

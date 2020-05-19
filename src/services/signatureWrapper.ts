@@ -1,13 +1,13 @@
 import {
   SignatureWrapper,
-  Invoice,
+  PaymentSetupDetails,
   MessageType,
   Compliance,
   PaymentProof,
 } from '../types/publicAPI'
 
 export type MessageWithType =
-  | [Invoice, MessageType.Invoice]
+  | [PaymentSetupDetails, MessageType.PaymentSetupDetails]
   | [Compliance, MessageType.Compliance]
   | [PaymentProof, MessageType.PaymentProof]
 

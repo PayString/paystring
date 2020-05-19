@@ -1,6 +1,6 @@
 import { mockInvoiceWithComplianceHashes } from '../data/travelRuleData'
 import {
-  Invoice,
+  PaymentSetupDetails,
   PaymentInformation,
   Compliance,
   ComplianceType,
@@ -21,7 +21,7 @@ export default function generateInvoice(
   payId: string,
   paymentInformation: PaymentInformation,
   complianceData?: Compliance,
-): Invoice {
+): PaymentSetupDetails {
   // TODO(dino): Store whether a server needs to be travel rule compliant in the env
   // TODO(dino): Actually hash the compliance data
   // TODO(dino): Consider caching this invoice, or at least caching the compliance hashes
@@ -34,7 +34,7 @@ export default function generateInvoice(
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const TIME_TO_EXPIRY = 60 * 60 * 1000
 
-  const invoice: Invoice = {
+  const invoice: PaymentSetupDetails = {
     // TODO(aking + hbergren): replace this w/ table ID once we have TR
     // tables implemented
     txId: 148689,

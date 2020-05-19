@@ -13,7 +13,7 @@ import {
   MessageType,
   AddressDetailsType,
   ComplianceType,
-  Invoice,
+  PaymentSetupDetails,
 } from '../../../../src/types/publicAPI'
 import {
   appSetup,
@@ -38,7 +38,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const TIME_TO_EXPIRY = 60 * 60 * 1000
 
-    const expectedInvoice: Invoice = {
+    const expectedInvoice: PaymentSetupDetails = {
       txId: 148689,
       expirationTime: Date.now() + TIME_TO_EXPIRY,
       paymentInformation: {
@@ -51,7 +51,10 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       complianceRequirements: [ComplianceType.TravelRule],
       complianceHashes: [],
     }
-    const expectedResponse = wrapMessage(expectedInvoice, MessageType.Invoice)
+    const expectedResponse = wrapMessage(
+      expectedInvoice,
+      MessageType.PaymentSetupDetails,
+    )
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice
     request(app.publicAPIExpress)
@@ -68,7 +71,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const expectedResponse = wrapMessage(
       mockInvoiceWithComplianceHashes,
-      MessageType.Invoice,
+      MessageType.PaymentSetupDetails,
     )
 
     // WHEN we make a GET request to the public endpoint to retrieve the invoice

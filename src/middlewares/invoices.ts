@@ -47,6 +47,6 @@ export default function getInvoice(
       err,
     )
   }
-  res.locals.response = wrapMessage(invoice, MessageType.Invoice)
+  res.locals.response = wrapMessage(invoice, MessageType.PaymentSetupDetails)
   return next()
 }
