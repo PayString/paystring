@@ -706,10 +706,10 @@ The "Send payment proof" method does not accept any query parameters.
 
 **Send payment proof Object Data Fields**
 
-| Field                   | Type   |    Description    |
+| Field                   | Type   |       Description |
 | ----------------------- | :----- | ----------------: |
-| invoiceHash             | string |   Invoice hash    |
-| transactionConfirmation | UUID   | Transaction ID    |
+| invoiceHash             | string |      Invoice hash |
+| transactionConfirmation | UUID   |    Transaction ID |
 | memo                    | string | Optional metadata |
 
 ### Response format <!-- omit in toc -->
