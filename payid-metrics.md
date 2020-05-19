@@ -129,7 +129,7 @@ Test whether the PayID server is running by creating a PayID with this cURL comm
 
 ```
  curl --location --request POST 'http://127.0.0.1:8081/v1/users' --header 'Content-Type: application/json' --header 'Content-Type: text/plain' --data-raw '{
-     "pay_id": "alice$127.0.0.1",
+     "payId": "alice$127.0.0.1",
      "addresses": [
          {
              "payment_network": "XRPL",

@@ -172,7 +172,7 @@ Response (Success)
 
 ```json
 {
-  "pay_id": "bob$127.0.0.1",
+  "payId": "bob$127.0.0.1",
   "addresses": [
     {
       "payment_network": "XRPL",
@@ -218,7 +218,7 @@ Create PayID user requires the body parameter that contains the `PaymentInformat
 
 | Field     | Type   |                                                                       Description |
 | --------- | :----- | --------------------------------------------------------------------------------: |
-| pay_id    | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
+| payId     | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
 | addresses | array  |                                 List of addresses associated with your PayID user |
 | memo      | string |              optional string field to include meta data surrounding a transaction |
 
@@ -253,7 +253,7 @@ The addresses array can contain 1 or more objects.
 POST http://127.0.0.1:8081/v1/users HTTP/1.1
 
 {
-  "pay_id": "bob$127.0.0.1",
+  "payId": "bob$127.0.0.1",
   "addresses": [
     {
       "payment_network": "XRPL",
@@ -283,11 +283,11 @@ Created
 
 The following table lists the HTTP status codes and messages returned for this method.
 
-| HTTP Status code |                                                                     Description |
-| ---------------- | ------------------------------------------------------------------------------: |
-| 201              |                                        Successfully created a PayID information |
-| 409              | Conflict, it already exists a user with the PayID specified in the pay_id field |
-| 500              |                           Internal server error. A body field might be missing. |
+| HTTP Status code |                                                                    Description |
+| ---------------- | -----------------------------------------------------------------------------: |
+| 201              |                                       Successfully created a PayID information |
+| 409              | Conflict, it already exists a user with the PayID specified in the payId field |
+| 500              |                          Internal server error. A body field might be missing. |
 
 #### 4.2.3. Update a PayID user
 
@@ -318,7 +318,7 @@ Update a PayID user requires the body parameter that contains the `PaymentInform
 
 | Field     | Type   |                                                                       Description |
 | --------- | :----- | --------------------------------------------------------------------------------: |
-| pay_id    | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
+| payId     | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
 | addresses | array  |                                 List of addresses associated with your PayID user |
 | memo      | string |              optional string field to include meta data surrounding a transaction |
 
@@ -350,7 +350,7 @@ Request (Success)
 PUT http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
 
 {
-	"pay_id": "bob$127.0.0.1",
+	"payId": "bob$127.0.0.1",
 	"addresses": [
 		{
 			"payment_network": "XRPL",
@@ -373,14 +373,14 @@ Created
 
 The following table lists the HTTP status codes and messages returned for this method.
 
-| HTTP Status code |                                                                     Description |
-| ---------------- | ------------------------------------------------------------------------------: |
-| 200              |                                   Successfully updated a PayID user information |
-| 400              |                                                                     Bad request |
-| 404              |                                                                       Not found |
-| 409              | Conflict. it already exists a user with the PayID specified in the pay_id field |
-| 500              |                           Internal server error. A body field might be missing. |
-| 503              |                                                             Service unavailable |
+| HTTP Status code |                                                                    Description |
+| ---------------- | -----------------------------------------------------------------------------: |
+| 200              |                                  Successfully updated a PayID user information |
+| 400              |                                                                    Bad request |
+| 404              |                                                                      Not found |
+| 409              | Conflict. it already exists a user with the PayID specified in the payId field |
+| 500              |                          Internal server error. A body field might be missing. |
+| 503              |                                                            Service unavailable |
 
 #### 4.2.4. Delete a PayID user
 
@@ -419,7 +419,7 @@ Request (Success)
 DELETE http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
 
 {
-	"pay_id": "bob$127.0.0.1",
+	"payId": "bob$127.0.0.1",
 	"addresses": [
 		{
 			"payment_network": "XRPL",
@@ -816,7 +816,7 @@ A single user can have multiple destinations, because the same user can have add
 
 ```json
 {
-  "pay_id": "johndoe$xpring.money",
+  "payId": "johndoe$xpring.money",
   "addresses": [
     {
       "payment_network": "XRPL",
@@ -838,7 +838,7 @@ A single user can have multiple destinations, because the same user can have add
 
 | Field                       | Description                                                                                                                                    |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pay_id`                    | PayID user address                                                                                                                             |
+| `payId`                     | PayID user address                                                                                                                             |
 | `addresses`                 | Object that includes payment address information for one or more payment networks.                                                             |
 | `addresses.payment_network` | A payment network, like the bitcoin network, the XRPL, or ACH.                                                                                 |
 | `addresses.environment`     | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.                         |

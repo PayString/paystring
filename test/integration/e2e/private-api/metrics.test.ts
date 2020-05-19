@@ -122,7 +122,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     environment: string,
   ): Promise<request.Test> {
     const payIdRequest = {
-      pay_id: payId,
+      payId,
       addresses: [
         {
           payment_network: paymentNetwork,

@@ -6,7 +6,7 @@ We'll start off by creating a user:
 
 ```
 curl --location --request POST http://localhost:8081/v1/users --header 'Content-Type: application/json' --data-raw '{
-  "pay_id": "$127.0.0.1/exampleUser",
+  "payId": "$127.0.0.1/exampleUser",
   "addresses": [
   {
     "payment_network": "XRPL",

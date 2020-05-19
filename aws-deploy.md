@@ -44,12 +44,12 @@ You can set up a PayID server on AWS (Amazon Web Services).
 12. Check your IP address and the website in your browser to confirm the server is running. You should see an error message like:
     `{"statusCode":400,"error":"Bad Request","message":"Invalid Accept header. Must be of the form \"application/xrpl-{environment}+json\""}`
 13. Load up your desired PayID to the database using the [private PayID API](readme.md). If you use a subdomain rather than a path, then you must set up a DNS record for the subdomain as described in step 3.
-    **Note:** You can add PayIDs for each (pay_id, network, environment) tuple. Use this cURL command to set up a PayID.
+    **Note:** You can add PayIDs for each (payId, network, environment) tuple. Use this cURL command to set up a PayID.
     ```
     curl --location --request POST 'http://127.0.0.1:8081/v1/users' \
     --header 'Content-Type: application/json' \
     --data-raw '{
-     "pay_id": "$<your-pay-id-address>",
+     "payId": "$<your-pay-id-address>",
      "addresses": [{
        "payment_network": "XRPL",
        "environment": "MAINNET",
