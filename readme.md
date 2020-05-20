@@ -27,14 +27,14 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
     - [4.2.3. Update a PayID user](#423-update-a-payid-user)
     - [4.2.4. Delete a PayID user](#424-delete-a-payid-user)
   - [4.3. Public API endpoints](#43-public-api-endpoints)
-    - [4.3.1. Get a Travel Rule compliance invoice](#431-get-a-travel-rule-compliance-invoice)
+    - [4.3.1. Get a Travel Rule compliance payment setup details object](#431-get-a-travel-rule-compliance-payment-setup-details-object)
     - [4.3.2. Send compliance information](#432-send-compliance-information)
     - [4.3.3. Send payment proof](#433-send-payment-proof)
     - [4.3.4. Get user information](#434-get-user-information)
 - [5. Schemas](#5-schemas)
   - [5.1 Example single user schema](#51-example-single-user-schema)
   - [5.2 Example error schema](#52-example-error-schema)
-  - [5.3. Example invoice schema](#53-example-invoice-schema)
+  - [5.3. Example payment setup details schema](#53-example-payment-setup-details-schema)
   - [5.4. Example compliance message schema](#54-example-compliance-message-schema)
   - [5.5. Request headers](#55-request-headers)
 - [6. Code examples](#6-code-examples)
@@ -454,27 +454,27 @@ The following table lists the HTTP status codes and messages returned for this m
 The public APIs runs by default on port 8080. Make sure to update this value if needed.
 The list of public endpoints is:
 
-| HTTP Method                                      | Endpoint               |                          Description |
-| ------------------------------------------------ | :--------------------- | -----------------------------------: |
-| [GET](#431-get-a-travel-rule-compliance-invoice) | /{user}/invoice        | Get a Travel Rule compliance invoice |
-| [POST](#432-send-compliance-information)         | /{user}/invoice        |          Send compliance information |
-| [POST](#433-send-payment-proof)                  | /{user}/payment-proof  |                   Send payment proof |
-| [GET](#434-get-user-information)                 | /{user}                |         Get a PayID user information |
+| HTTP Method                                                           | Endpoint                      |                                               Description |
+| --------------------------------------------------------------------- | :---------------------------- | --------------------------------------------------------: |
+| [GET](#431-get-a-travel-rule-compliance-payment-setup-details-object) | /{user}/payment-setup-details | Get a Travel Rule compliance payment setup details object |
+| [POST](#432-send-compliance-information)                              | /{user}/payment-setup-details |                               Send compliance information |
+| [POST](#433-send-payment-proof)                                       | /{user}/payment-proof         |                                        Send payment proof |
+| [GET](#434-get-user-information)                                      | /{user}                       |                              Get a PayID user information |
 
-#### 4.3.1. Get a Travel Rule compliance invoice
+#### 4.3.1. Get a Travel Rule compliance payment setup details object
 
 **Description**
 
-In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request an invoice. When you get the invoice, you notice the `complianceRequirements` field of the invoice, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the invoice, you then post the compliance data to the same URL to update the invoice with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded invoice.
+In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request a payment setup details object. When you get the payment setup details, you notice the `complianceRequirements` field of the payment setup details, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the payment setup details, you then post the compliance data to the same URL to update the payment setup details with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded payment setup details object.
 
 **API**
 
-The API returns an invoice for the specified user.
+The API returns a payment setup details object for the specified user.
 
 **Request format**
 
 ```HTTP
-GET {pay_id_base_url}/{user}/invoice HTTP/1.1
+GET {pay_id_base_url}/{user}/payment-setup-details HTTP/1.1
 
 Accept: application/{paymentNetwork}-{environment}+json
 Content-Type: application/json
@@ -488,7 +488,7 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Get Invoice" method does not accept any query parameters.
+The "Get payment setup details" method does not accept any query parameters.
 
 **Headers parameters (Required)**
 
@@ -502,7 +502,7 @@ Update a PayID user requires the body parameter that contains the `Update PayID 
 
 ### Response format <!-- omit in toc -->
 
-A successful response to the "Get invoice" method returns a 200 HTTP status code.
+A successful response to the "Get payment setup details" method returns a 200 HTTP status code.
 
 ### Example <!-- omit in toc -->
 
@@ -511,7 +511,7 @@ A successful response to the "Get invoice" method returns a 200 HTTP status code
 Request (Success)
 
 ```HTTP
-GET https://sender.institution.com/bob/invoice HTTP/1.1
+GET https://sender.institution.com/bob/payment-setup-details HTTP/1.1
 
 Accept: application/xrpl-testnet+json
 Content-Type: application/json
@@ -521,7 +521,7 @@ Response (Success)
 
 ```json
 {
-  "messageType": "Invoice",
+  "messageType": "PaymentSetupDetails",
   "message": {
     "expirationTime": 1588502198568,
     "paymentInformation": {
@@ -546,21 +546,21 @@ Response (Success)
 
 The following table lists the HTTP status codes and messages returned for this method.
 
-| HTTP Status code |                    Description |
-| ---------------- | -----------------------------: |
-| 200              | Invoice successfully retrieved |
-| 400              |                    Bad request |
-| 404              |                      Not found |
-| 503              |            Service unavailable |
+| HTTP Status code |                                Description |
+| ---------------- | -----------------------------------------: |
+| 200              | PaymentSetupDetails successfully retrieved |
+| 400              |                                Bad request |
+| 404              |                                  Not found |
+| 503              |                        Service unavailable |
 
 #### 4.3.2. Send compliance information
 
-If an invoice contains information in the `complianceRequirements` field, then upon receipt of the invoice, the sender institution must send back compliance information.
+If a payment setup details object contains information in the `complianceRequirements` field, then upon receipt of that object, the sender institution must send back compliance information.
 
 **Request format**
 
 ```HTTP
-POST {pay_id_base_url}/{user}/invoice HTTP/1.1
+POST {pay_id_base_url}/{user}/payment-setup-details HTTP/1.1
 
 Content-Type: application/json
 ```
@@ -573,7 +573,7 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Get Invoice" method does not accept any query parameters.
+The "Get payment setup details" method does not accept any query parameters.
 
 **Body parameters (Required)**
 
@@ -581,7 +581,7 @@ The "Get Invoice" method does not accept any query parameters.
 
 ### Response format <!-- omit in toc -->
 
-A successful response to the "Get invoice" method returns a 200 HTTP status code.
+A successful response to the "Get payment setup details" method returns a 200 HTTP status code.
 
 ### Example <!-- omit in toc -->
 
@@ -592,7 +592,7 @@ Request (Success)
 The body contains the [compliance message](#example-compliance-message-schema). This message contains information about the originator, the value of the transaction, and the beneficiary, and the message is signed cryptographically.
 
 ```HTTP
-POST https://sender.institution.com/bob/invoice HTTP/1.1
+POST https://sender.institution.com/bob/payment-setup-details HTTP/1.1
 
 {
 	"messageType": "compliance",
@@ -628,7 +628,7 @@ Response (Success)
 
 ```json
 {
-  "messageType": "Invoice",
+  "messageType": "PaymentSetupDetails",
   "message": {
     "txId": 368213,
     "expirationTime": 1584753369,
@@ -642,7 +642,7 @@ Response (Success)
       "memo": "this is alice's XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
-    "memo": "thanks for travel rule data, here is your new invoice",
+    "memo": "thanks for travel rule data, here are your new payment setup details",
     "complianceHashes": [
       {
         "type": "TravelRule",
@@ -697,11 +697,11 @@ The "Send payment proof" method does not accept any query parameters.
 
 **Send payment proof Object Data Fields**
 
-| Field                   | Type   |       Description |
-| ----------------------- | :----- | ----------------: |
-| invoiceHash             | string |      Invoice hash |
-| transactionConfirmation | UUID   |    Transaction ID |
-| memo                    | string | Optional metadata |
+| Field                   | Type   | Description                |
+| ----------------------- | :----- | -------------------------: |
+| paymentSetupDetailsHash | string | Payment setup details hash |
+| transactionConfirmation | UUID   | Transaction ID             |
+| memo                    | string | Optional metadata          |
 
 ### Response format <!-- omit in toc -->
 
@@ -717,7 +717,7 @@ Request (Success)
 POST https://sender.institution.com/bob/payment-proofs HTTP/1.1
 
 {
-	"invoiceHash": "8743b52063cd84097a65d1633f5c74f5",
+	"paymentSetupDetailsHash": "8743b52063cd84097a65d1633f5c74f5",
 	"transactionConfirmation": "797A887A269FEAFFEC446389DC1BB8C0DFBF9421C2FA72CA244AA5EB027008FC"
 }
 ```
@@ -847,13 +847,13 @@ This example shows the format of an error payload.
 }
 ```
 
-### 5.3. Example invoice schema
+### 5.3. Example payment setup details schema
 
-This example shows the format of an invoice.
+This example shows the format of a payment setup details object.
 
 ```JSON
 {
-  "messageType": "Invoice",
+  "messageType": "PaymentSetupDetails",
   "message": {
     "txId": 578392,
     "expirationTime": "2020-03-18T04:04:02",

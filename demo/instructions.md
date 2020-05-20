@@ -25,18 +25,16 @@ Now that we've created a user, we can query their payment information through th
 curl --location --request GET 'http://127.0.0.1:8080/exampleUser' --header 'Accept: application/xrpl-testnet+json'
 ```
 
-We've confirmed that our PayID is working as expected so let's send an invoice request:
-
+We've confirmed that our PayID is working as expected so let's send a payment setup details request:
 ```
-curl --location --request GET 'http://127.0.0.1:8080/exampleUser/invoice' \
+curl --location --request GET 'http://127.0.0.1:8080/exampleUser/payment-setup-details' \
 --header 'Accept: application/xrpl-testnet+json' \
 --header 'Content-Type: application/json'
 ```
 
-The returned JSON object is our payment invoice. In this example, the institution is a VASP and has listed any laws that must be complied with in the `complianceRequirements` field of the invoice. Specifically, as the originator of the payment we are being asked to comply with the Travel Rule. In order to do that, we'll POST the compliance data to the same URL in order to upgrade our invoice.
-
+The returned JSON object is our payment setup details. In this example, the institution is a VASP and has listed any laws that must be complied with in the `complianceRequirements` field of the payment setup details. Specifically, as the originator of the payment we are being asked to comply with the Travel Rule. In order to do that, we'll POST the compliance data to the same URL in order to upgrade our payment setup details object.
 ```
-curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice' \
+curl --location --request POST 'http://127.0.0.1:8080/exampleUser/payment-setup-details' \
 --header 'Content-Type: application/json' \
 --data-raw '{
         "messageType": "compliance",
@@ -67,13 +65,13 @@ curl --location --request POST 'http://127.0.0.1:8080/exampleUser/invoice' \
 }'
 ```
 
-Upon submission of this data, the beneficiary should identify that we have fulfilled all compliance requirements and send us an upgraded invoice. This upgraded invoice cryptographically correlates our submission of compliance data through the complianceHashes field. Now that we have been informed of all compliance requirements, and fulfilled them, we can submit our transaction on ledger and POST back the payment proof.
 
+Upon submission of this data, the beneficiary should identify that we have fulfilled all compliance requirements and send us an upgraded payment setup details object. This upgraded payment setup details cryptographically correlates our submission of compliance data through the complianceHashes field. Now that we have been informed of all compliance requirements, and fulfilled them, we can submit our transaction on ledger and POST back the payment proof.
 ```
 curl --location --request POST 'http://127.0.0.1:8080/exampleUser/payment-proofs' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-  "invoiceHash": "8743b52063cd84097a65d1633f5c74f5",
+  "paymentSetupDetailsHash": "8743b52063cd84097a65d1633f5c74f5",
   "transactionConfirmation": "797A887A269FEAFFEC446389DC1BB8C0DFBF9421C2FA72CA244AA5EB027008FC"
 }'
 ```
