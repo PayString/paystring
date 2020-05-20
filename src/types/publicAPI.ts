@@ -43,7 +43,8 @@ export interface InvoicePaymentInformation extends PaymentInformation {
 }
 
 /**
- * Invoice included in a SignatureWrapper when a GET request is made to the /invoice endpoint.
+ * PaymentSetupDetails included in a SignatureWrapper when a GET request is made to
+ * the /payment-setup-details endpoint.
  */
 export interface PaymentSetupDetails {
   txId: number
@@ -93,7 +94,8 @@ export enum ComplianceType {
 }
 
 /**
- * Compliance data included in a SignatureWrapper when POSTing to the /invoice endpoint.
+ * Compliance data included in a SignatureWrapper when POSTing to the
+ * /payment-setup-details endpoint.
  */
 export interface Compliance {
   type: ComplianceType

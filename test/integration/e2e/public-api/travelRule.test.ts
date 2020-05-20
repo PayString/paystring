@@ -29,7 +29,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     app = await appSetup()
   })
 
-  it('Returns a mock invoice on GET /invoice', function (done): void {
+  it('Returns a mock PaymentSetupDetails on GET /payment-setup-details', function (done): void {
     // GIVEN a PayID known to have a testnet address
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
@@ -56,17 +56,17 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       MessageType.PaymentSetupDetails,
     )
 
-    // WHEN we make a GET request to the public endpoint to retrieve the invoice
+    // WHEN we make a GET request to the public endpoint to retrieve the PaymentSetupDetails
     request(app.publicAPIExpress)
-      .get(`${payId}/invoice`)
+      .get(`${payId}/payment-setup-details`)
       .set('Accept', acceptHeader)
-      // THEN we get back a 200 - OK with the invoice
+      // THEN we get back a 200 - OK with the PaymentSetupDetails
       .expect(isExpectedInvoice(expectedResponse))
       .expect(HttpStatus.OK, done)
   })
 
   // TODO(dino): implement this to not use mock data
-  it('Returns an updated mock invoice on POST /invoice', function (done): void {
+  it('Returns an updated mock PaymentSetupDetails on POST /payment-setup-details', function (done): void {
     // GIVEN a PayID known to have a testnet address
     const payId = '/alice'
     const expectedResponse = wrapMessage(
@@ -74,12 +74,12 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       MessageType.PaymentSetupDetails,
     )
 
-    // WHEN we make a GET request to the public endpoint to retrieve the invoice
+    // WHEN we make a GET request to the public endpoint to retrieve the PaymentSetupDetails
     request(app.publicAPIExpress)
-      .post(`${payId}/invoice`)
+      .post(`${payId}/payment-setup-details`)
       .send(wrapMessage(mockComplianceData, MessageType.Compliance))
       .expect('Content-Type', /json/u)
-      // THEN we get back the invoice
+      // THEN we get back the PaymentSetupDetails
       .expect(HttpStatus.OK, expectedResponse, done)
   })
 

@@ -30,14 +30,14 @@ publicAPIRouter
 
   // Invoice routes
   .get(
-    '/*/invoice',
+    '/*/payment-setup-details',
     wrapAsync(parseInvoicePath),
     wrapAsync(getPaymentInfo),
     wrapAsync(getInvoice),
     sendSuccess,
   )
   .post(
-    '/*/invoice',
+    '/*/payment-setup-details',
     express.json(),
     wrapAsync(receiveComplianceData),
     wrapAsync(getInvoice),

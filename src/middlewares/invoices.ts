@@ -20,7 +20,7 @@ export function parseInvoicePath(
   _res: Response,
   next: NextFunction,
 ): void {
-  const pathToStrip = '/invoice'
+  const pathToStrip = '/payment-setup-details'
 
   req.url = req.path.slice(0, req.path.length - pathToStrip.length)
 
