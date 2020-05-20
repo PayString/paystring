@@ -20,6 +20,7 @@ import {
   parseAcceptMediaType,
 } from '../utils/acceptHeader'
 import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
+import appendMemo from '../utils/memo'
 
 // HELPERS
 
@@ -49,28 +50,6 @@ async function getAddressInfoForAcceptTypes(
   // TODO:(tedkalaw) Improve this query
   const allPaymentInformation = await getAllAddressInfoFromDatabase(payId)
   return getPreferredPaymentInfo(allPaymentInformation, sortedAcceptTypes)
-}
-
-/**
- * Optionally allows injection of a memo
- * @param paymentInformation - PaymentInformation of response so far
- *
- * Returns PaymentInformation updated with memo if it is not an empty string
- */
-function appendMemo(
-  paymentInformation: PaymentInformation,
-): PaymentInformation {
-  // TODO(aking): in follow up PR allow memo injection functionality
-  const memo = ''
-
-  const updatedPaymentInformation = paymentInformation
-
-  // following disable is necessary because memo is static, will be fixed in next PR
-  /* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */
-  if (memo !== '') {
-    updatedPaymentInformation.memo = memo
-  }
-  return updatedPaymentInformation
 }
 
 /**
