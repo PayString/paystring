@@ -27,7 +27,7 @@ const payIdCountGauge = new Gauge({
 
 export function isPushMetricsEnabled(): boolean {
   if (config.metrics.gatewayUrl) {
-    if (!config.app.organization) {
+    if (!config.metrics.organization) {
       logger.warn(
         'PAYID_ORG must be set if push enabled. Metrics will not be pushed.',
       )
@@ -70,7 +70,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
       {
         jobName: 'payid_counter_metrics',
         groupings: {
-          instance: `${config.app.organization ?? 'null'}_${hostname()}_${
+          instance: `${config.metrics.organization ?? 'null'}_${hostname()}_${
             process.pid
           }`,
         },
@@ -84,7 +84,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
     gaugeGateway.push(
       {
         jobName: 'payid_gauge_metrics',
-        groupings: { instance: config.app.organization as string },
+        groupings: { instance: config.metrics.organization as string },
       },
       (err, _resp, _body): void => {
         if (err) {
@@ -108,7 +108,7 @@ export function recordPayIdLookupBadAcceptHeader(): void {
     {
       paymentNetwork: 'unknown',
       environment: 'unknown',
-      org: config.app.organization,
+      org: config.metrics.organization,
       result: 'error: bad_accept_header',
     },
     1,
@@ -124,7 +124,7 @@ export function recordPayIdCount(
     {
       paymentNetwork,
       environment,
-      org: config.app.organization,
+      org: config.metrics.organization,
     },
     count,
   )
@@ -139,7 +139,7 @@ export function recordPayIdLookupResult(
     {
       paymentNetwork,
       environment,
-      org: config.app.organization,
+      org: config.metrics.organization,
       result: found ? 'found' : 'not_found',
     },
     1,

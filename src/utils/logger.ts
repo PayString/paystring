@@ -27,7 +27,7 @@ enum LogLevel {
 }
 
 // Get the current log level from configuration
-const LOG_LEVEL = config.app.log_level.toUpperCase()
+const LOG_LEVEL = config.app.logLevel.toUpperCase()
 
 if (!isLogLevel(LOG_LEVEL)) {
   throw new Error(
