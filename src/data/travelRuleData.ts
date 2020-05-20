@@ -9,7 +9,7 @@ import {
 // TODO: update mocks with 'real' information from from a transaction so they
 // can be used in e2e and unit tests
 export const mockPaymentProof: PaymentProof = {
-  invoiceHash: '',
+  paymentSetupDetailsHash: '',
   txId: 318188,
   transactionConfirmation: '',
   memo: 'the payment succeeded!',

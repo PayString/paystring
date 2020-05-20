@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import generateInvoice from '../services/invoices'
+import generatePaymentSetupDetails from '../services/paymentSetupDetails'
 import { wrapMessage } from '../services/signatureWrapper'
 import HttpStatus from '../types/httpStatus'
 import { MessageType } from '../types/publicAPI'
@@ -9,13 +9,13 @@ import { handleHttpError } from '../utils/errors'
 /**
  * Parses off the /payment-setup-details path and nonce query parameter from the request URL.
  *
- * @param req - Contains the request URL, which is the PayID + /invoice.
- * @param _res - Response used for erroring on a missing nonce.
+ * @param req - Contains the request URL, which is the PayID + /payment-setup-details + nonce.
+ * @param _res - Response used for erroring.
  * @param next - Passes req/res to the next Express middleware.
  *
  * @returns Either the Express next() function or undefined.
  */
-export function parseInvoicePath(
+export function parsePaymentSetupDetailsPath(
   req: Request,
   _res: Response,
   next: NextFunction,
@@ -27,14 +27,14 @@ export function parseInvoicePath(
   return next()
 }
 
-export default function getInvoice(
+export default function getPaymentSetupDetails(
   _req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  let invoice
+  let paymentSetupDetails
   try {
-    invoice = generateInvoice(
+    paymentSetupDetails = generatePaymentSetupDetails(
       res.locals.payId,
       res.locals.paymentInformation,
       res.locals.complianceData,
@@ -42,11 +42,14 @@ export default function getInvoice(
   } catch (err) {
     return handleHttpError(
       HttpStatus.InternalServerError,
-      'Server could not generate invoice.',
+      'Server could not generate PaymentSetupDetails.',
       res,
       err,
     )
   }
-  res.locals.response = wrapMessage(invoice, MessageType.PaymentSetupDetails)
+  res.locals.response = wrapMessage(
+    paymentSetupDetails,
+    MessageType.PaymentSetupDetails,
+  )
   return next()
 }

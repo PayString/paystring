@@ -4,9 +4,11 @@ import * as express from 'express'
 
 import receiveComplianceData from '../middlewares/compliance'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
-import getInvoice, { parseInvoicePath } from '../middlewares/invoices'
 import getPaymentInfo from '../middlewares/payIds'
 import receivePaymentProof from '../middlewares/paymentProofs'
+import getPaymentSetupDetails, {
+  parsePaymentSetupDetailsPath,
+} from '../middlewares/paymentSetupDetails'
 import sendSuccess from '../middlewares/sendSuccess'
 
 const publicAPIRouter = express.Router()
@@ -28,19 +30,19 @@ publicAPIRouter
   // Health routes
   .get('/status/health', sendSuccess)
 
-  // Invoice routes
+  // PaymentSetupDetails routes
   .get(
     '/*/payment-setup-details',
-    wrapAsync(parseInvoicePath),
+    wrapAsync(parsePaymentSetupDetailsPath),
     wrapAsync(getPaymentInfo),
-    wrapAsync(getInvoice),
+    wrapAsync(getPaymentSetupDetails),
     sendSuccess,
   )
   .post(
     '/*/payment-setup-details',
     express.json(),
     wrapAsync(receiveComplianceData),
-    wrapAsync(getInvoice),
+    wrapAsync(getPaymentSetupDetails),
     sendSuccess,
   )
 

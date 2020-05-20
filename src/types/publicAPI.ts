@@ -25,7 +25,8 @@ export interface AchAddressDetails {
 }
 
 /**
- * Payment information included in an Invoice or by itself (in the case of a GET request to the base path /).
+ * Payment information included in a PaymentSetupDetails or by itself (in the
+ * case of a GET request to the base path /).
  */
 export interface PaymentInformation {
   addressDetailsType: AddressDetailsType
@@ -36,9 +37,10 @@ export interface PaymentInformation {
 }
 
 /**
- * Invoice should always contain the PayID.
+ * PaymentSetupDetails should always contain the PayID.
  */
-export interface InvoicePaymentInformation extends PaymentInformation {
+export interface PaymentSetupDetailsPaymentInformation
+  extends PaymentInformation {
   payId: string
 }
 
@@ -49,7 +51,7 @@ export interface InvoicePaymentInformation extends PaymentInformation {
 export interface PaymentSetupDetails {
   txId: number
   expirationTime: number // unix timestamp
-  paymentInformation: InvoicePaymentInformation
+  paymentInformation: PaymentSetupDetailsPaymentInformation
   complianceRequirements: ComplianceType[] // e.g. TravelRule
   memo?: string // 1 kb max
   complianceHashes: ComplianceHash[]
@@ -107,7 +109,7 @@ export interface Compliance {
  * A payment proof included in a SignatureWrapper when POSTing to the /payment-proofs endpoint.
  */
 export interface PaymentProof {
-  invoiceHash: string
+  paymentSetupDetailsHash: string
   transactionConfirmation: string
   txId: number
   memo?: string

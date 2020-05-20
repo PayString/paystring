@@ -18,14 +18,14 @@ import {
  * @param complianceData - Compliance data of sender to satisfy any legal requirements.
  * @returns A valid PaymentSetupDetails to be sent to the client.
  */
-export default function generateInvoice(
+export default function generatePaymentSetupDetails(
   payId: string,
   paymentInformation: PaymentInformation,
   complianceData?: Compliance,
 ): PaymentSetupDetails {
   // TODO(dino): Store whether a server needs to be travel rule compliant in the env
   // TODO(dino): Actually hash the compliance data
-  // TODO(dino): Consider caching this invoice, or at least caching the compliance hashes
+  // TODO(dino): Consider caching this PaymentSetupDetails, or at least caching the compliance hashes
   // to retrieve for multiple compliance round trips. This won't be necessary for the foreseeable future,
   // and maybe never for our reference implementation (currently no plans to include any requirements
   // other than travel rule), so maybe this should be deleted.
@@ -35,7 +35,7 @@ export default function generateInvoice(
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const TIME_TO_EXPIRY = 60 * 60 * 1000
 
-  const invoice: PaymentSetupDetails = {
+  const paymentSetupDetails: PaymentSetupDetails = {
     // TODO(aking + hbergren): replace this w/ table ID once we have TR
     // tables implemented
     txId: 148689,
@@ -51,5 +51,5 @@ export default function generateInvoice(
   if (complianceData) {
     return mockPaymentSetupDetailsWithComplianceHashes
   }
-  return invoice
+  return paymentSetupDetails
 }
