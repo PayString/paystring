@@ -4,7 +4,7 @@ import * as request from 'supertest'
 
 import App from '../../../../src/app'
 import {
-  mockInvoiceWithComplianceHashes,
+  mockPaymentSetupDetailsWithComplianceHashes,
   mockComplianceData,
 } from '../../../../src/data/travelRuleData'
 import { wrapMessage } from '../../../../src/services/signatureWrapper'
@@ -18,7 +18,7 @@ import {
 import {
   appSetup,
   appCleanup,
-  isExpectedInvoice,
+  isExpectedPaymentSetupDetails,
 } from '../../../helpers/helpers'
 
 let app: App
@@ -38,7 +38,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const TIME_TO_EXPIRY = 60 * 60 * 1000
 
-    const expectedInvoice: PaymentSetupDetails = {
+    const expectedPaymentSetupDetails: PaymentSetupDetails = {
       txId: 148689,
       expirationTime: Date.now() + TIME_TO_EXPIRY,
       paymentInformation: {
@@ -52,7 +52,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       complianceHashes: [],
     }
     const expectedResponse = wrapMessage(
-      expectedInvoice,
+      expectedPaymentSetupDetails,
       MessageType.PaymentSetupDetails,
     )
 
@@ -61,7 +61,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       .get(`${payId}/payment-setup-details`)
       .set('Accept', acceptHeader)
       // THEN we get back a 200 - OK with the PaymentSetupDetails
-      .expect(isExpectedInvoice(expectedResponse))
+      .expect(isExpectedPaymentSetupDetails(expectedResponse))
       .expect(HttpStatus.OK, done)
   })
 
@@ -70,7 +70,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     // GIVEN a PayID known to have a testnet address
     const payId = '/alice'
     const expectedResponse = wrapMessage(
-      mockInvoiceWithComplianceHashes,
+      mockPaymentSetupDetailsWithComplianceHashes,
       MessageType.PaymentSetupDetails,
     )
 

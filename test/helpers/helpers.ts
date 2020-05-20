@@ -80,13 +80,17 @@ export async function getDatabaseConstraintDefinition(
 }
 
 /**
- * A custom helper to check if an Invoice is equivalent to our expected response (and thus has a valid expiration time).
+ * A custom helper to check if a PaymentSetupDetails is equivalent to our
+ * expected response (and thus has a valid expiration time).
  *
- * @param expectedResponse - The expected invoice output (which contains an older expiration time).
+ * @param expectedResponse - The expected PaymentSetupDetails output (which contains an older expiration time).
  *
- * @returns A function that takes a supertest Response, and checks that the invoice we receive is what we expected to receive.
+ * @returns A function that takes a supertest Response, and checks that the
+ * PaymentSetupDetails we receive is what we expected to receive.
  */
-export function isExpectedInvoice(expectedResponse: SignatureWrapper) {
+export function isExpectedPaymentSetupDetails(
+  expectedResponse: SignatureWrapper,
+) {
   return (res: request.Response): void => {
     const {
       expirationTime: expectedExpirationTime,

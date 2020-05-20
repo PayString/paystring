@@ -36,7 +36,7 @@ export const mockComplianceData: Compliance = {
   memo: 'Example travel rule transaction',
 }
 
-export const mockInvoice: PaymentSetupDetails = {
+export const mockPaymentSetupDetails: PaymentSetupDetails = {
   txId: 581203,
   expirationTime: 1584723369,
   paymentInformation: {
@@ -53,7 +53,7 @@ export const mockInvoice: PaymentSetupDetails = {
   complianceHashes: [],
 }
 
-export const mockInvoiceWithComplianceHashes: PaymentSetupDetails = {
+export const mockPaymentSetupDetailsWithComplianceHashes: PaymentSetupDetails = {
   txId: 583289,
   expirationTime: 1584753369,
   paymentInformation: {
@@ -66,7 +66,7 @@ export const mockInvoiceWithComplianceHashes: PaymentSetupDetails = {
     memo: 'travel rule transaction with compliance hash',
   },
   complianceRequirements: [ComplianceType.TravelRule],
-  memo: 'thanks for travel rule data, here is your new invoice',
+  memo: 'thanks for travel rule data, here are your new payment setup details',
   complianceHashes: [
     {
       type: ComplianceType.TravelRule,

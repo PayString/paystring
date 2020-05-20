@@ -7,7 +7,7 @@ import { MessageType } from '../types/publicAPI'
 import { handleHttpError } from '../utils/errors'
 
 /**
- * Parses off the /invoice path from the request URL.
+ * Parses off the /payment-setup-details path and nonce query parameter from the request URL.
  *
  * @param req - Contains the request URL, which is the PayID + /invoice.
  * @param _res - Response used for erroring on a missing nonce.
