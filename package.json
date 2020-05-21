@@ -47,7 +47,7 @@
     "@types/supertest": "^2.0.9",
     "@typescript-eslint/parser": "^2.34.0",
     "@typescript-eslint/eslint-plugin": "^2.34.0",
-    "@xpring-eng/eslint-config-base": "^0.2.2",
+    "@xpring-eng/eslint-config-base": "^0.2.3",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "chokidar": "^3.4.0",
