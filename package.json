@@ -53,7 +53,7 @@
     "chokidar": "^3.4.0",
     "chokidar-cli": "^2.1.0",
     "copyfiles": "^2.2.0",
-    "eslint": "^7.0.0",
+    "eslint": "^7.1.0",
     "eslint-plugin-import": "^2.20.2",
     "eslint-plugin-mocha": "^7.0.0",
     "eslint-plugin-prettier": "^3.1.3",
