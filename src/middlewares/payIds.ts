@@ -88,7 +88,7 @@ export default async function getPaymentInfo(
 
     return handleHttpError(
       HttpStatus.BadRequest,
-      `Missing Accept header. Must have an Accept header of the form "application/{paymentNetwork}(-{environment})+json".
+      `Missing Accept header. Must have an Accept header of the form 'application/{paymentNetwork}(-{environment})+json'.
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
@@ -111,7 +111,7 @@ export default async function getPaymentInfo(
 
     return handleHttpError(
       HttpStatus.BadRequest,
-      `Invalid Accept header. Must be of the form "application/{paymentNetwork}(-{environment})+json".
+      `Invalid Accept header. Must be of the form 'application/{paymentNetwork}(-{environment})+json'.
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
