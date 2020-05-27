@@ -53,6 +53,7 @@ export const mockPaymentSetupDetails: PaymentSetupDetails = {
   complianceHashes: [],
 }
 
+// eslint-disable-next-line max-len
 export const mockPaymentSetupDetailsWithComplianceHashes: PaymentSetupDetails = {
   txId: 583289,
   expirationTime: 1584753369,

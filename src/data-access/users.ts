@@ -59,8 +59,10 @@ export async function replaceUser(
       .update({ payId: newPayId })
       .transacting(transaction)
       .returning('id')
-      .then(async (ids) => {
+      .then(async (ids: ReadonlyArray<string | undefined>) => {
         const accountId = ids[0]
+
+        // This would happen if oldPayId did not exist in the database already
         if (accountId === undefined) {
           return null
         }
