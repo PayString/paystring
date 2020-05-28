@@ -29,11 +29,20 @@ export interface AchAddressDetails {
  * case of a GET request to the base path /).
  */
 export interface PaymentInformation {
-  addressDetailsType: AddressDetailsType
-  addressDetails: CryptoAddressDetails | AchAddressDetails
+  addresses: Address[]
   proofOfControlSignature?: string
   payId?: string
   memo?: string
+}
+
+/**
+ * Address information included inside of a PaymentInformation object.
+ */
+export interface Address {
+  paymentNetwork: string
+  environment?: string
+  addressDetailsType: AddressDetailsType
+  addressDetails: CryptoAddressDetails | AchAddressDetails
 }
 
 /**

@@ -40,10 +40,16 @@ export const mockPaymentSetupDetails: PaymentSetupDetails = {
   txId: 581203,
   expirationTime: 1584723369,
   paymentInformation: {
-    addressDetailsType: AddressDetailsType.CryptoAddress,
-    addressDetails: {
-      address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
-    },
+    addresses: [
+      {
+        paymentNetwork: 'XRP',
+        environment: 'TESTNET',
+        addressDetailsType: AddressDetailsType.CryptoAddress,
+        addressDetails: {
+          address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
+        },
+      },
+    ],
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
     payId: 'alice$xpring.money',
     memo: 'for a travel rule transaction',
@@ -58,10 +64,16 @@ export const mockPaymentSetupDetailsWithComplianceHashes: PaymentSetupDetails = 
   txId: 583289,
   expirationTime: 1584753369,
   paymentInformation: {
-    addressDetailsType: AddressDetailsType.CryptoAddress,
-    addressDetails: {
-      address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
-    },
+    addresses: [
+      {
+        paymentNetwork: 'XRP',
+        environment: 'TESTNET',
+        addressDetailsType: AddressDetailsType.CryptoAddress,
+        addressDetails: {
+          address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
+        },
+      },
+    ],
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
     payId: 'alice$xpring.money',
     memo: 'travel rule transaction with compliance hash',

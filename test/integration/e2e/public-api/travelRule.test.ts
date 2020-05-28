@@ -42,10 +42,16 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       txId: 148689,
       expirationTime: Date.now() + TIME_TO_EXPIRY,
       paymentInformation: {
-        addressDetailsType: AddressDetailsType.CryptoAddress,
-        addressDetails: {
-          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
-        },
+        addresses: [
+          {
+            paymentNetwork: 'XRPL',
+            environment: 'TESTNET',
+            addressDetailsType: AddressDetailsType.CryptoAddress,
+            addressDetails: {
+              address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            },
+          },
+        ],
         payId: 'alice$127.0.0.1',
       },
       complianceRequirements: [ComplianceType.TravelRule],

@@ -36,10 +36,17 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-mainnet+json'
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'MAINNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
@@ -59,10 +66,17 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
@@ -82,10 +96,17 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/btc-testnet+json'
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
@@ -105,11 +126,17 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/ach+json'
     const expectedResponse = {
-      addressDetailsType: 'AchAddressDetails',
-      addressDetails: {
-        accountNumber: '000123456789',
-        routingNumber: '123456789',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'ACH',
+          addressDetailsType: 'AchAddressDetails',
+          addressDetails: {
+            accountNumber: '000123456789',
+            routingNumber: '123456789',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH

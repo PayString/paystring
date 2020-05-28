@@ -23,10 +23,17 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     const payId = '/alice'
     const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}, ${XRPL_MAINNET_ACCEPT_HEADER}`
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
@@ -50,10 +57,17 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     const payId = '/alice'
     const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=1.0, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.5`
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying testnet
@@ -77,10 +91,17 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     const payId = '/alice'
     const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=1.0`
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'MAINNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
@@ -105,10 +126,17 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     const nonExistentAcceptType = 'application/fakenetwork-fakenet+json'
     const acceptHeader = `${nonExistentAcceptType}; q=1.0, ${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.9`
     const expectedResponse = {
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
-      },
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'MAINNET',
+          addressDetailsType: 'CryptoAddressDetails',
+          addressDetails: {
+            address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+          },
+        },
+      ],
+      payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying

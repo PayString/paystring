@@ -1,23 +1,23 @@
 import 'mocha'
 import { assert } from 'chai'
 
-import getAllPaymentInfoFromDatabase from '../../../src/data-access/payIds'
+import getAllAddressInfoFromDatabase from '../../../src/data-access/payIds'
 import { seedDatabase } from '../../helpers/helpers'
 
-describe('Data Access - getAllPaymentInfoFromDatabase()', function (): void {
+describe('Data Access - getAllAddressInfoFromDatabase()', function (): void {
   before(async function () {
     await seedDatabase()
   })
 
-  it('Gets payment information for a known PayID (1 address)', async function () {
+  it('Gets address information for a known PayID (1 address)', async function () {
     // GIVEN a PayID known to exist in the database
-    // WHEN we attempt to retrieve payment information for that tuple
-    const paymentInfo = await getAllPaymentInfoFromDatabase(
+    // WHEN we attempt to retrieve address information for that tuple
+    const addressInfo = await getAllAddressInfoFromDatabase(
       'alice$xpring.money',
     )
 
     // THEN we get our seeded value back
-    const expectedPaymentInfo = [
+    const expectedaddressInfo = [
       {
         paymentNetwork: 'XRPL',
         environment: 'TESTNET',
@@ -26,16 +26,16 @@ describe('Data Access - getAllPaymentInfoFromDatabase()', function (): void {
         },
       },
     ]
-    assert.deepEqual(paymentInfo, expectedPaymentInfo)
+    assert.deepEqual(addressInfo, expectedaddressInfo)
   })
 
-  it('Gets payment information for a known PayID (multiple addresses)', async function () {
+  it('Gets address information for a known PayID (multiple addresses)', async function () {
     // GIVEN a PayID known to exist in the database
-    // WHEN we attempt to retrieve payment information for that tuple
-    const paymentInfo = await getAllPaymentInfoFromDatabase('alice$127.0.0.1')
+    // WHEN we attempt to retrieve address information for that tuple
+    const addressInfo = await getAllAddressInfoFromDatabase('alice$127.0.0.1')
 
     // THEN we get our seeded values back
-    const expectedPaymentInfo = [
+    const expectedaddressInfo = [
       {
         paymentNetwork: 'XRPL',
         environment: 'MAINNET',
@@ -66,15 +66,15 @@ describe('Data Access - getAllPaymentInfoFromDatabase()', function (): void {
         },
       },
     ]
-    assert.deepEqual(paymentInfo, expectedPaymentInfo)
+    assert.deepEqual(addressInfo, expectedaddressInfo)
   })
 
   it('Returns empty array for an unknown PayID', async function () {
     // GIVEN a PayID known to not exist in the database
-    // WHEN we attempt to retrieve payment information for that tuple
-    const paymentInfo = await getAllPaymentInfoFromDatabase('johndoe$xpring.io')
+    // WHEN we attempt to retrieve address information for that tuple
+    const addressInfo = await getAllAddressInfoFromDatabase('johndoe$xpring.io')
 
     // THEN we get back an empty array
-    assert.deepStrictEqual(paymentInfo, [])
+    assert.deepStrictEqual(addressInfo, [])
   })
 })
