@@ -8,7 +8,7 @@ import { insertUser } from '../../../src/data-access/users'
 chai.use(chaiAsPromised)
 const { assert } = chai
 
-describe('Data Access - insertUser - PayID Regex', function (): void {
+describe('Data Access - PayID Regex - insertUser()', function (): void {
   const addresses = [
     {
       paymentNetwork: 'XRPL',

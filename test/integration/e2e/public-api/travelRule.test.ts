@@ -23,7 +23,7 @@ import {
 
 let app: App
 
-describe('E2E - publicAPIRouter - GET API', function (): void {
+describe('E2E - publicAPIRouter - Travel Rule', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
     app = await appSetup()

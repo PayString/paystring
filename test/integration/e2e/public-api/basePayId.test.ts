@@ -9,7 +9,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 
-describe('E2E - publicAPIRouter - health check endpoint', function (): void {
+describe('E2E - publicAPIRouter - Health Check', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -25,7 +25,7 @@ describe('E2E - publicAPIRouter - health check endpoint', function (): void {
   })
 })
 
-describe('E2E - publicAPIRouter - GET API', function (): void {
+describe('E2E - publicAPIRouter - Base PayID', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
     app = await appSetup()

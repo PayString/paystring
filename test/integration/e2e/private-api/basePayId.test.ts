@@ -7,7 +7,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 
-describe('E2E - privateAPIRouter - GET API', function (): void {
+describe('E2E - privateAPIRouter - GET /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -60,7 +60,7 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
   })
 })
 
-describe('E2E - privateAPIRouter - POST API', function (): void {
+describe('E2E - privateAPIRouter - POST /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -183,7 +183,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   })
 })
 
-describe('E2E - privateAPIRouter - PUT API', function (): void {
+describe('E2E - privateAPIRouter - PUT /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -422,7 +422,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
   })
 })
 
-describe('E2E - privateAPIRouter - DELETE API', function (): void {
+describe('E2E - privateAPIRouter - DELETE /users', function (): void {
   before(async function () {
     app = await appSetup()
   })

@@ -7,7 +7,7 @@ import {
   getDatabaseConstraintDefinition,
 } from '../../helpers/helpers'
 
-describe('Database Schema - PayID Regex Example table', function (): void {
+describe('Database Schema - PayID Regex Example Table', function (): void {
   let payIdRegex: string
 
   before(async function () {

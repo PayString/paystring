@@ -1,14 +1,14 @@
 import { assert } from 'chai'
 
 import 'mocha'
-import { ParseError } from '../../src/utils/errors'
 import {
-  parseAcceptHeaders,
   ParsedAcceptHeader,
+  parseAcceptHeaders,
   parseAcceptHeader,
-} from '../../src/utils/headers'
+} from '../../src/services/headers'
+import { ParseError } from '../../src/utils/errors'
 
-describe('parseAcceptHeaders', function (): void {
+describe('Parsing - Headers - parseAcceptHeaders()', function (): void {
   it('Parses a list with a valid media type strings', function () {
     // GIVEN a string with a valid Accept type
     const validAcceptMediaType1 = 'application/xrpl-testnet+json'
@@ -73,7 +73,7 @@ describe('parseAcceptHeaders', function (): void {
   })
 })
 
-describe('parseAcceptHeader', function (): void {
+describe('Parsing - Headers - parseAcceptHeader()', function (): void {
   it('Parses a string with a valid media type', function () {
     // GIVEN a string with a valid Accept type
     const validAcceptMediaType = 'application/xrpl-testnet+json'

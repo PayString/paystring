@@ -2,9 +2,9 @@ import { assert } from 'chai'
 
 import 'mocha'
 
-import { urlToPayId, constructUrl } from '../../src/services/utils'
+import { urlToPayId, constructUrl } from '../../src/services/urls'
 
-describe('constructUrl', function (): void {
+describe('Parsing - URLs - constructUrl()', function (): void {
   it('returns a url from components', function (): void {
     // GIVEN a set of URL components
     const protocol = 'https'
@@ -35,7 +35,7 @@ describe('constructUrl', function (): void {
   })
 })
 
-describe('urlToPayId', function (): void {
+describe('Parsing - URLs - urlToPayId()', function (): void {
   it('throws an error on an invalid URL', function (): void {
     // GIVEN an invalid PayID URL (multi-step path)
     const url = 'https://example.com/badPath/alice'
@@ -74,7 +74,7 @@ describe('urlToPayId', function (): void {
   })
 })
 
-describe('parsePayIdUrl', function (): void {
+describe('Parsing - URLs - parsePayIdUrl()', function (): void {
   it('throws an error on inputs that are not HTTP/HTTPS', function (): void {
     // GIVEN a badly formed input
     const url = 'ftp://example.com/alice'
