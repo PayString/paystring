@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getAllPaymentInfoFromDatabase from '../data-access/payIds'
+import getAllAddressInfoFromDatabase from '../data-access/payIds'
 import { insertUser, replaceUser, removeUser } from '../data-access/users'
 import HttpStatus from '../types/httpStatus'
 import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
@@ -32,7 +32,7 @@ export async function getUser(
   let addresses
   try {
     // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await getAllPaymentInfoFromDatabase(payId)
+    addresses = await getAllAddressInfoFromDatabase(payId)
   } catch (err) {
     return handleHttpError(
       HttpStatus.InternalServerError,
@@ -50,7 +50,7 @@ export async function getUser(
   }
 
   res.locals.response = {
-    pay_id: payId,
+    payId,
     addresses,
   }
 
@@ -69,20 +69,23 @@ export async function postUser(
   // TODO:(hbergren) Any validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database. Also look at validation in the conversion functions.
-  const payId = req.body.pay_id
+  const payId = req.body.payId
   if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A `pay_id` must be provided in the body.',
+      'A `payId` must be provided in the request body.',
       res,
     )
   }
 
+  // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
+  // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
+  // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
   await insertUser(payId, req.body.addresses)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware
   res.locals.status = HttpStatus.Created
-  res.locals.pay_id = payId
+  res.locals.payId = payId
   return next()
 }
 
@@ -94,16 +97,24 @@ export async function putUser(
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
   const payId = req.params[0]
-  const newPayId = req?.body?.pay_id
+  const newPayId = req?.body?.payId
   const addresses = req?.body?.addresses
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!payId || !newPayId) {
+  if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A `pay_id` must be provided in the path. A well-formed API call would look like `PUT /v1/users/alice$xpring.money`.',
+      'A `payId` must be provided in the path. A well-formed API call would look like `PUT /v1/users/alice$xpring.money`.',
+      res,
+    )
+  }
+
+  if (!newPayId) {
+    return handleHttpError(
+      HttpStatus.BadRequest,
+      'A `payId` must be provided in the request body.',
       res,
     )
   }
@@ -142,12 +153,12 @@ export async function putUser(
 
   // If the status code is 201 - Created, we need to set a Location header later with the PayID
   if (statusCode === HttpStatus.Created) {
-    res.locals.pay_id = newPayId
+    res.locals.payId = newPayId
   }
 
   res.locals.status = statusCode
   res.locals.response = {
-    pay_id: newPayId,
+    payId: newPayId,
     addresses: updatedAddresses,
   }
 
@@ -167,7 +178,7 @@ export async function deleteUser(
   if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A `pay_id` must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
+      'A PayID must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
       res,
     )
   }

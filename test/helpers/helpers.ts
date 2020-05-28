@@ -5,22 +5,29 @@ import * as request from 'supertest'
 
 import App from '../../src/app'
 import config from '../../src/config'
+import knex from '../../src/db/knex'
 import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
-import { SignatureWrapper, Invoice } from '../../src/types/publicAPI'
+import {
+  SignatureWrapper,
+  PaymentSetupDetails,
+} from '../../src/types/publicAPI'
 
 /**
  * Deep clones an object *properly*.
  *
  * @param obj - The object to be deep cloned.
+ *
+ * @returns A deeply cloned object.
  */
 export default function structuredClone<T>(obj: T): T {
   return v8.deserialize(v8.serialize(obj))
 }
 
 /**
- * Initialize database connection pool & boot up the Express application.
+ * Boots up the Express application for testing purposes.
+ * The first time this is run it will initialize the database connection pool.
  *
- * @returns The Express app.
+ * @returns The Express application.
  */
 export async function appSetup(): Promise<App> {
   const app = new App()
@@ -35,7 +42,7 @@ export async function appSetup(): Promise<App> {
 }
 
 /**
- * Shut down Express application & close database connections.
+ * Shuts down the Express application, so there are not running processes when testing ends.
  *
  * @param app - The Express app.
  */
@@ -51,20 +58,46 @@ export async function seedDatabase(): Promise<void> {
   await syncDatabaseSchema(testConfig.database)
 }
 
+export async function getDatabaseConstraintDefinition(
+  constraintName: string,
+  tableName: string,
+): Promise<string> {
+  return knex
+    .raw(
+      `
+        -- Select the constraint definition in the relevant table.
+        -- We fetch the relevant constraint, get the constraint definition.
+        --
+        SELECT  pg_get_constraintdef(con.oid) as constraint_def
+        FROM    pg_constraint con
+                INNER JOIN pg_class rel ON rel.oid = con.conrelid
+        WHERE   con.conname = ?
+                AND rel.relname = ?;
+      `,
+      [constraintName, tableName],
+    )
+    .then(async (result) => result.rows[0].constraint_def)
+}
+
 /**
- * A custom helper to check if an Invoice is equivalent to our expected response (and thus has a valid expiration time).
+ * A custom helper to check if a PaymentSetupDetails is equivalent to our
+ * expected response (and thus has a valid expiration time).
  *
- * @param expectedResponse - The expected invoice output (which contains an older expiration time)
- * @returns
+ * @param expectedResponse - The expected PaymentSetupDetails output (which contains an older expiration time).
+ *
+ * @returns A function that takes a supertest Response, and checks that the
+ * PaymentSetupDetails we receive is what we expected to receive.
  */
-export function isExpectedInvoice(expectedResponse: SignatureWrapper) {
+export function isExpectedPaymentSetupDetails(
+  expectedResponse: SignatureWrapper,
+) {
   return (res: request.Response): void => {
     const {
       expirationTime: expectedExpirationTime,
       ...expectedResponseWithoutExpirationTime
-    } = expectedResponse.message as Invoice
+    } = expectedResponse.message as PaymentSetupDetails
     const { expirationTime, ...responseWithoutExpirationTime } = res.body
-      .message as Invoice
+      .message as PaymentSetupDetails
     const expirationTimeDelta = expirationTime - expectedExpirationTime
 
     assert(

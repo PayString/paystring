@@ -4,9 +4,11 @@ import * as express from 'express'
 
 import receiveComplianceData from '../middlewares/compliance'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
-import getInvoice, { parseInvoicePath } from '../middlewares/invoices'
 import getPaymentInfo from '../middlewares/payIds'
-import receiveReceipt from '../middlewares/receipts'
+import receivePaymentProof from '../middlewares/paymentProofs'
+import getPaymentSetupDetails, {
+  parsePaymentSetupDetailsPath,
+} from '../middlewares/paymentSetupDetails'
 import sendSuccess from '../middlewares/sendSuccess'
 
 const publicAPIRouter = express.Router()
@@ -20,27 +22,37 @@ publicAPIRouter
     res.sendFile(path.join(__dirname, '../html/index.html'))
   })
 
+  // Route for the favicon
+  .get('/favicon.ico', (_req: express.Request, res: express.Response) => {
+    res.sendFile(path.join(__dirname, '../html/favicon.ico'))
+  })
+
   // Health routes
   .get('/status/health', sendSuccess)
 
-  // Invoice routes
+  // PaymentSetupDetails routes
   .get(
-    '/*/invoice',
-    wrapAsync(parseInvoicePath),
+    '/*/payment-setup-details',
+    wrapAsync(parsePaymentSetupDetailsPath),
     wrapAsync(getPaymentInfo),
-    wrapAsync(getInvoice),
+    wrapAsync(getPaymentSetupDetails),
     sendSuccess,
   )
   .post(
-    '/*/invoice',
+    '/*/payment-setup-details',
     express.json(),
     wrapAsync(receiveComplianceData),
-    wrapAsync(getInvoice),
+    wrapAsync(getPaymentSetupDetails),
     sendSuccess,
   )
 
-  // Receipt routes
-  .post('/*/receipt', express.json(), wrapAsync(receiveReceipt), sendSuccess)
+  // Payment proof routes
+  .post(
+    '/*/payment-proofs',
+    express.json(),
+    wrapAsync(receivePaymentProof),
+    sendSuccess,
+  )
 
   // Base PayID routes
   .get('/*', wrapAsync(getPaymentInfo), sendSuccess)

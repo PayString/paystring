@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getAllPaymentInfoFromDatabase from '../data-access/payIds'
+import getAllAddressInfoFromDatabase from '../data-access/payIds'
 import {
   recordPayIdLookupBadAcceptHeader,
   recordPayIdLookupResult,
@@ -10,7 +10,7 @@ import { AddressInformation } from '../types/database'
 import HttpStatus from '../types/httpStatus'
 import {
   PaymentInformation,
-  AddressDetailType,
+  AddressDetailsType,
   CryptoAddressDetails,
   AchAddressDetails,
 } from '../types/publicAPI'
@@ -20,25 +20,26 @@ import {
   parseAcceptMediaType,
 } from '../utils/acceptHeader'
 import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
+import appendMemo from '../utils/memo'
 
 // HELPERS
 
 /**
- * Returns the best payment information associated with a payId for a set of sorted
- * Accept types.
+ * Finds the best payment address information given an array of Accept header types ordered by preference.
  *
- * Returns undefined if payment infomation could not be found.
+ * @param payId - The PayID used to retrieve address information.
+ * @param sortedAcceptTypes - An array of AcceptMediaTypes, sorted by preference.
  *
- * @param payId - The PayID to retrieve payment information for
- * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference
+ * @returns The best payment address information associated with a PayID for a set of sorted Accept types,
+ *          or undefined if the address information could not be found.
  */
-async function getPaymentInfoForAcceptTypes(
+async function getAddressInfoForAcceptTypes(
   payId: string,
   sortedAcceptTypes: readonly AcceptMediaType[],
 ): Promise<
   | {
       acceptType: AcceptMediaType
-      paymentInformation: AddressInformation
+      addressInformation: AddressInformation
     }
   | undefined
 > {
@@ -47,17 +48,16 @@ async function getPaymentInfoForAcceptTypes(
   }
 
   // TODO:(tedkalaw) Improve this query
-  const allPaymentInformation = await getAllPaymentInfoFromDatabase(payId)
+  const allPaymentInformation = await getAllAddressInfoFromDatabase(payId)
   return getPreferredPaymentInfo(allPaymentInformation, sortedAcceptTypes)
 }
 
 /**
- * Resolves inbound requests to a PayID to their
- * respective ledger addresses or other payment information.
+ * Resolves inbound requests to a PayID to their respective ledger addresses or other payment information.
  *
- * @param req - Contains PayID and payment network header
- * @param res - Stores payment information to be returned to the client
- * @param next - Passes req/res to next middleware
+ * @param req - Contains PayID and payment network header.
+ * @param res - Stores payment information to be returned to the client.
+ * @param next - Passes req/res to next middleware.
  */
 export default async function getPaymentInfo(
   req: Request,
@@ -69,6 +69,8 @@ export default async function getPaymentInfo(
     // NOTE: If you plan to expose your PayID with a port number, you
     // should include req.port as a fourth parameter
     const payIdUrl = constructUrl(req.protocol, req.hostname, req.url)
+
+    // Checks that the constructed URL can be converted into a valid PayID
     payId = urlToPayId(payIdUrl)
   } catch (err) {
     return handleHttpError(HttpStatus.BadRequest, err.message, res, err)
@@ -79,43 +81,50 @@ export default async function getPaymentInfo(
   // https://github.com/jshttp/accepts/blob/master/index.js#L96
   const acceptHeaderTypes = req.accepts()
 
+  // MUST include at least 1 accept header
   if (!acceptHeaderTypes.length) {
+    // Collect metrics on bad request
     recordPayIdLookupBadAcceptHeader()
+
     return handleHttpError(
       HttpStatus.BadRequest,
-      `Missing Accept header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
+      `Missing Accept header. Must have an Accept header of the form 'application/{paymentNetwork}(-{environment})+json'.
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
       - 'Accept: application/ach+json'
+      - 'Accept: application/payid+json'
       `,
       res,
     )
   }
 
+  // Accept types MUST be the proper format
   let parsedAcceptTypes: readonly AcceptMediaType[]
   try {
     parsedAcceptTypes = acceptHeaderTypes.map((type) =>
       parseAcceptMediaType(type),
     )
   } catch (error) {
+    // Collect metrics on bad request
     recordPayIdLookupBadAcceptHeader()
 
-    // TODO:(tkalaw): Should we mention all of the invalid types?
     return handleHttpError(
       HttpStatus.BadRequest,
-      `Invalid Accept header. Must be of the form "application/{payment_network}(-{environment})+json".
+      `Invalid Accept header. Must be of the form 'application/{paymentNetwork}(-{environment})+json'.
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'
       - 'Accept: application/ach+json'
+      - 'Accept: application/payid+json'
       `,
       res,
+      error,
     )
   }
 
-  // TODO: If Accept is just application/json, just return all addresses, for all environments?
-  const result = await getPaymentInfoForAcceptTypes(payId, parsedAcceptTypes)
+  // Content-negotiation to get preferred payment information
+  const result = await getAddressInfoForAcceptTypes(payId, parsedAcceptTypes)
 
   // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Or is `application/json` the appropriate response Content-Type?
@@ -137,21 +146,23 @@ export default async function getPaymentInfo(
     throw new LookupError(message, LookupErrorType.Unknown)
   }
 
-  const { acceptType, paymentInformation } = result
+  const { acceptType, addressInformation } = result
   // Set the content-type to the media type corresponding to the returned address
   res.set('Content-Type', acceptType.mediaType)
 
   // TODO:(hbergren) Create a helper function for this?
   let response: PaymentInformation = {
-    addressDetailType: AddressDetailType.CryptoAddress,
-    addressDetails: paymentInformation.details as CryptoAddressDetails,
+    addressDetailsType: AddressDetailsType.CryptoAddress,
+    addressDetails: addressInformation.details as CryptoAddressDetails,
   }
-  if (paymentInformation.payment_network === 'ACH') {
+  if (addressInformation.paymentNetwork === 'ACH') {
     response = {
-      addressDetailType: AddressDetailType.AchAddress,
-      addressDetails: paymentInformation.details as AchAddressDetails,
+      addressDetailsType: AddressDetailsType.AchAddress,
+      addressDetails: addressInformation.details as AchAddressDetails,
     }
   }
+
+  response = appendMemo(response)
 
   // Store response information (or information to be used in other middlewares)
   // TODO:(hbergren), come up with a less hacky way to pipe around data than global state.
@@ -159,8 +170,8 @@ export default async function getPaymentInfo(
   res.locals.paymentInformation = response
   res.locals.response = response
   recordPayIdLookupResult(
-    paymentInformation.payment_network,
-    paymentInformation.environment || 'unknown',
+    addressInformation.paymentNetwork,
+    addressInformation.environment ?? 'unknown',
     true,
   )
   return next()

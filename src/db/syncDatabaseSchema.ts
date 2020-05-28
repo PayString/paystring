@@ -1,5 +1,4 @@
 /* eslint-disable no-await-in-loop */
-/* eslint-disable no-restricted-syntax */
 /* eslint-disable no-sync */
 
 import * as fs from 'fs'
@@ -11,7 +10,8 @@ import config from '../config'
 import logger from '../utils/logger'
 
 /**
- * Syncs the database schema with our database (optionally seeds with test values).
+ * Syncs the database schema with our database.
+ * Depending on the config provided, it may seed the database with test values.
  *
  * @param databaseConfig - Contains the database connection configuration, and some options for controlling behavior.
  */
@@ -47,13 +47,10 @@ export default async function syncDatabaseSchema(
 }
 
 /**
- * HELPER FUNCTIONS
- */
-
-/**
- * Run the SQL file containing queries on the database.
+ * Run the SQL file containing DDL or DML on the database.
  *
- * @param string - A SQL file that we would like to execute against our database.
+ * @param file - A SQL file that we would like to execute against our database.
+ * @param databaseConfig - A database config object that holds connection information.
  */
 async function executeSqlFile(
   file: string,

@@ -4,9 +4,7 @@ import * as express from 'express'
 
 import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
-import metricsRouter from './routes/metricsRouter'
-import privateAPIRouter from './routes/privateAPIRouter'
-import publicAPIRouter from './routes/publicAPIRouter'
+import { metricsRouter, privateAPIRouter, publicAPIRouter } from './routes'
 import {
   isPushMetricsEnabled,
   scheduleRecurringMetricsPush,

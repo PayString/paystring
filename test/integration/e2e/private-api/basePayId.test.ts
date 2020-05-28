@@ -17,10 +17,10 @@ describe('E2E - privateAPIRouter - GET API', function (): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
     const expectedResponse = {
-      pay_id: 'alice$xpring.money',
+      payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
@@ -68,17 +68,17 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 201 when creating a new user', function (done): void {
     // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
-      pay_id: 'johndoe$xpring.money',
+      payId: 'johndoe$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
           },
         },
         {
-          payment_network: 'BTC',
+          paymentNetwork: 'BTC',
           environment: 'TESTNET',
           details: {
             address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
@@ -93,7 +93,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .send(userInformation)
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
-      .expect('Location', `/v1/users/${userInformation.pay_id}`)
+      .expect('Location', `/v1/users/${userInformation.payId}`)
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
@@ -101,10 +101,10 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 201 when creating a new user with an address without an environment (ACH)', function (done): void {
     // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
-      pay_id: 'janedoe$xpring.money',
+      payId: 'janedoe$xpring.money',
       addresses: [
         {
-          payment_network: 'ACH',
+          paymentNetwork: 'ACH',
           details: {
             accountNumber: '000123456789',
             routingNumber: '123456789',
@@ -119,7 +119,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
       .send(userInformation)
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
-      .expect('Location', `/v1/users/${userInformation.pay_id}`)
+      .expect('Location', `/v1/users/${userInformation.payId}`)
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
@@ -127,10 +127,10 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 201 - creates PayID containing a "."', function (done): void {
     // GIVEN a user with a PayID containing a period
     const userInformation = {
-      pay_id: 'alice.smith$xpring.money',
+      payId: 'alice.smith$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
@@ -151,10 +151,10 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
   it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
     // GIVEN a user with a PayID known already on the PayID service
     const userInformation = {
-      pay_id: 'alice$xpring.money',
+      payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
@@ -166,7 +166,7 @@ describe('E2E - privateAPIRouter - POST API', function (): void {
     const expectedErrorResponse = {
       statusCode: 409,
       error: 'Conflict',
-      message: 'There already exists a user with the PayID alice$xpring.money',
+      message: 'There already exists a user with the provided PayID',
     }
 
     // WHEN we make a POST request to /v1/users with that user information
@@ -192,10 +192,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
     const updatedInformation = {
-      pay_id: 'alice$xpring.money',
+      payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -217,10 +217,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
     const updatedInformation = {
-      pay_id: 'charlie$xpring.money',
+      payId: 'charlie$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -242,10 +242,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'notjohndoe$xpring.money'
     const insertedInformation = {
-      pay_id: 'johndoe$xpring.money',
+      payId: 'johndoe$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -261,7 +261,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       .expect('Content-Type', /json/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the PayID inserted is that of the request body, not the URL path
-      .expect('Location', `/v1/users/${insertedInformation.pay_id}`)
+      .expect('Location', `/v1/users/${insertedInformation.payId}`)
       // AND we expect back a 201 - CREATED, with the inserted user information
       .expect(HttpStatus.Created, insertedInformation, done)
   })
@@ -275,10 +275,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       statusCode: 400,
     }
     const updatedInformation = {
-      pay_id: 'alice$xpring.money',
+      payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -304,10 +304,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       statusCode: 400,
     }
     const updatedInformation = {
-      pay_id: 'alice$xpring.money',
+      payId: 'alice$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -333,10 +333,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
       statusCode: 400,
     }
     const updatedInformation = {
-      pay_id: 'alice$bob$xpring.money',
+      payId: 'alice$bob$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -358,10 +358,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     const payId = 'charlie$xpring.money'
     const updatedInformation = {
       // AND a request to update that PayID to one known to already exist on the PayID Service
-      pay_id: 'bob$xpring.money',
+      payId: 'bob$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -373,7 +373,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     const expectedErrorResponse = {
       statusCode: 409,
       error: 'Conflict',
-      message: 'There already exists a user with the PayID bob$xpring.money',
+      message: 'There already exists a user with the provided PayID',
     }
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update
@@ -390,10 +390,10 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     const payId = 'janedoe$xpring.money'
     // AND a request to update that PayID to one known to already exist on the PayID Service
     const updatedInformation = {
-      pay_id: 'bob$xpring.money',
+      payId: 'bob$xpring.money',
       addresses: [
         {
-          payment_network: 'XRPL',
+          paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
             address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
@@ -405,7 +405,7 @@ describe('E2E - privateAPIRouter - PUT API', function (): void {
     const expectedErrorResponse = {
       statusCode: 409,
       error: 'Conflict',
-      message: 'There already exists a user with the PayID bob$xpring.money',
+      message: 'There already exists a user with the provided PayID',
     }
 
     // WHEN we make a PUT request to /v1/users/ with the new information to update

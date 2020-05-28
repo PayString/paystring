@@ -5,10 +5,10 @@ import { CryptoAddressDetails, AchAddressDetails } from './publicAPI'
  */
 export interface Account {
   readonly id: string
-  pay_id: string
+  payId: string
 
-  readonly created_at: Date
-  readonly updated_at: Date
+  readonly createdAt: Date
+  readonly updatedAt: Date
 }
 
 /**
@@ -16,14 +16,14 @@ export interface Account {
  */
 export interface Address {
   readonly id: number
-  account_id: string
+  accountId: string
 
-  payment_network: string
+  paymentNetwork: string
   environment?: string | null
   details: CryptoAddressDetails | AchAddressDetails
 
-  readonly created_at: Date
-  readonly updated_at: Date
+  readonly createdAt: Date
+  readonly updatedAt: Date
 }
 
 /**
@@ -31,5 +31,5 @@ export interface Address {
  */
 export type AddressInformation = Pick<
   Address,
-  'payment_network' | 'environment' | 'details'
+  'paymentNetwork' | 'environment' | 'details'
 >

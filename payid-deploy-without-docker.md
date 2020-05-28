@@ -1,8 +1,9 @@
 If you want to set up and run a PayID server, you have several options. This document describes how to run a PayID server without using Docker.
 
 For other ways to deploy a PayID server, see:
-* [Run the demo script](https://github.com/xpring-eng/payid/blob/loisrp-no-docker-deploy/readme.md#set-up-a-payid-server)
-* [Set up PayID on AWS](aws-deploy.md)
+
+- [Run the demo script](https://github.com/xpring-eng/payid/blob/loisrp-no-docker-deploy/readme.md#set-up-a-payid-server)
+- [Set up PayID on AWS](aws-deploy.md)
 
 Before you begin, make sure that you have installed Postgres locally, or in an otherwise accessible location.
 
@@ -11,9 +12,11 @@ Before you begin, make sure that you have installed Postgres locally, or in an o
 2. Install dependencies.
 
    `npm i`
+
 3. Generate the build files in `build/*` (app code + SQL scripts).
 
    `npm run build`
+
 4. Start PayID. The `npm run start` command generates the schema if it does not yet exist.
 
    ```
@@ -21,9 +24,11 @@ Before you begin, make sure that you have installed Postgres locally, or in an o
 
    DB_PASSWORD='xxxxx' npm run start
    ```
+
 5. To make sure PayID runs continuously, run PayID through a tool like `forever`.
 
    `npm install forever -g`
+
 6. Run PayID with `forever`.
 
    ```

@@ -30,6 +30,9 @@ export default function errorHandler(
 // Needed to make Express handle errors raised by async middlewares
 export function wrapAsync(handler: RequestHandler): RequestHandler {
   // Catch async errors and pass them along to our custom error handler.
-  return (req, res, next): Promise<void> =>
-    Promise.resolve(handler(req, res, next)).catch(next)
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => Promise.resolve(handler(req, res, next)).catch(next)
 }

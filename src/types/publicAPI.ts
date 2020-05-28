@@ -3,13 +3,13 @@
 /**
  * Type of payment address in PaymentInformation.
  */
-export enum AddressDetailType {
+export enum AddressDetailsType {
   CryptoAddress = 'CryptoAddressDetails',
   AchAddress = 'AchAddressDetails',
 }
 
 /**
- * Matching schema for AddressDetailType.CryptoAddress.
+ * Matching schema for AddressDetailsType.CryptoAddress.
  */
 export interface CryptoAddressDetails {
   address: string
@@ -17,7 +17,7 @@ export interface CryptoAddressDetails {
 }
 
 /**
- * Matching schema for AddressDetailType.AchAddress.
+ * Matching schema for AddressDetailsType.AchAddress.
  */
 export interface AchAddressDetails {
   accountNumber: string
@@ -25,29 +25,33 @@ export interface AchAddressDetails {
 }
 
 /**
- * Payment information included in an Invoice or by itself (in the case of a GET request to the base path /)
+ * Payment information included in a PaymentSetupDetails or by itself (in the
+ * case of a GET request to the base path /).
  */
 export interface PaymentInformation {
-  addressDetailType: AddressDetailType
+  addressDetailsType: AddressDetailsType
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
   payId?: string
+  memo?: string
 }
 
 /**
- * Invoice should always contain the PayID.
+ * PaymentSetupDetails should always contain the PayID.
  */
-export interface InvoicePaymentInformation extends PaymentInformation {
+export interface PaymentSetupDetailsPaymentInformation
+  extends PaymentInformation {
   payId: string
 }
 
 /**
- * Invoice included in a SignatureWrapper when a GET request is made to the /invoice endpoint.
+ * PaymentSetupDetails included in a SignatureWrapper when a GET request is made to
+ * the /payment-setup-details endpoint.
  */
-export interface Invoice {
-  nonce: string // numeric string
+export interface PaymentSetupDetails {
+  txId: number
   expirationTime: number // unix timestamp
-  paymentInformation: InvoicePaymentInformation
+  paymentInformation: PaymentSetupDetailsPaymentInformation
   complianceRequirements: ComplianceType[] // e.g. TravelRule
   memo?: string // 1 kb max
   complianceHashes: ComplianceHash[]
@@ -92,28 +96,32 @@ export enum ComplianceType {
 }
 
 /**
- * Compliance data included in a SignatureWrapper when POSTing to the /invoice endpoint.
+ * Compliance data included in a SignatureWrapper when POSTing to the
+ * /payment-setup-details endpoint.
  */
 export interface Compliance {
   type: ComplianceType
   data: TravelRule
+  memo?: string // 1 kb max
 }
 
 /**
- * A receipt included in a SignatureWrapper when POSTing to the /receipt endpoint.
+ * A payment proof included in a SignatureWrapper when POSTing to the /payment-proofs endpoint.
  */
-export interface Receipt {
-  invoiceHash: string
+export interface PaymentProof {
+  paymentSetupDetailsHash: string
   transactionConfirmation: string
+  txId: number
+  memo?: string
 }
 
 /**
  * Supported custom message types for requests/responses in PayID.
  */
 export enum MessageType {
-  Invoice = 'Invoice',
+  PaymentSetupDetails = 'PaymentSetupDetails',
   Compliance = 'Compliance',
-  Receipt = 'Receipt',
+  PaymentProof = 'PaymentProof',
 }
 
 /**
@@ -121,7 +129,7 @@ export enum MessageType {
  */
 export interface SignatureWrapper {
   messageType: MessageType
-  message: Invoice | Compliance | Receipt
+  message: PaymentSetupDetails | Compliance | PaymentProof
   publicKeyType: string
   publicKeyData: string[]
   publicKey: string

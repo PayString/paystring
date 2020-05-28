@@ -27,14 +27,14 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
     - [4.2.3. Update a PayID user](#423-update-a-payid-user)
     - [4.2.4. Delete a PayID user](#424-delete-a-payid-user)
   - [4.3. Public API endpoints](#43-public-api-endpoints)
-    - [4.3.1. Get a Travel Rule compliance invoice](#431-get-a-travel-rule-compliance-invoice)
+    - [4.3.1. Get a Travel Rule compliance payment setup details object](#431-get-a-travel-rule-compliance-payment-setup-details-object)
     - [4.3.2. Send compliance information](#432-send-compliance-information)
-    - [4.3.3. Send confirmation receipt](#433-send-confirmation-receipt)
+    - [4.3.3. Send payment proof](#433-send-payment-proof)
     - [4.3.4. Get user information](#434-get-user-information)
 - [5. Schemas](#5-schemas)
   - [5.1 Example single user schema](#51-example-single-user-schema)
   - [5.2 Example error schema](#52-example-error-schema)
-  - [5.3. Example invoice schema](#53-example-invoice-schema)
+  - [5.3. Example payment setup details schema](#53-example-payment-setup-details-schema)
   - [5.4. Example compliance message schema](#54-example-compliance-message-schema)
   - [5.5. Request headers](#55-request-headers)
 - [6. Code examples](#6-code-examples)
@@ -117,7 +117,7 @@ You can then use the Private PayID API to:
 
 ### 4.2. Private API endpoints
 
-The private APIs run by default on port 8081. Make sure to adjust this value if needed.  
+The private APIs run by default on port 8081. Make sure to adjust this value if needed.
 The list of private endpoints is:
 
 | HTTP Method                              | Endpoint                 |                     Description |
@@ -172,10 +172,10 @@ Response (Success)
 
 ```json
 {
-  "pay_id": "bob$127.0.0.1",
+  "payId": "bob$127.0.0.1",
   "addresses": [
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "TESTNET",
       "details": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
@@ -218,16 +218,17 @@ Create PayID user requires the body parameter that contains the `PaymentInformat
 
 | Field     | Type   |                                                                       Description |
 | --------- | :----- | --------------------------------------------------------------------------------: |
-| pay_id    | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
-| addresses | List   |                                 List of addresses associated with your PayID user |
+| payId     | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
+| addresses | array  |                                 List of addresses associated with your PayID user |
+| memo      | string |              optional string field to include meta data surrounding a transaction |
 
 **Addresses Array Data Fields**
 
-| Field           | Type   |                                                                                                            Description |
-| --------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
-| payment_network | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
-| environment     | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
-| details         | Object |                                                                      JSON object containing the network wallet details |
+| Field          | Type   |                                                                                                            Description |
+| -------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
+| paymentNetwork | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
+| environment    | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
+| details        | Object |                                                                      JSON object containing the network wallet details |
 
 **Details Object Data Fields**
 
@@ -252,17 +253,17 @@ The addresses array can contain 1 or more objects.
 POST http://127.0.0.1:8081/v1/users HTTP/1.1
 
 {
-  "pay_id": "bob$127.0.0.1",
+  "payId": "bob$127.0.0.1",
   "addresses": [
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "TESTNET",
       "details": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
       }
     },
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "MAINNET",
       "details": {
         "address": "X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn"
@@ -282,11 +283,11 @@ Created
 
 The following table lists the HTTP status codes and messages returned for this method.
 
-| HTTP Status code |                                                                     Description |
-| ---------------- | ------------------------------------------------------------------------------: |
-| 201              |                                        Successfully created a PayID information |
-| 409              | Conflict, it already exists a user with the PayID specified in the pay_id field |
-| 500              |                           Internal server error. A body field might be missing. |
+| HTTP Status code |                                                                    Description |
+| ---------------- | -----------------------------------------------------------------------------: |
+| 201              |                                       Successfully created a PayID information |
+| 409              | Conflict, it already exists a user with the PayID specified in the payId field |
+| 500              |                          Internal server error. A body field might be missing. |
 
 #### 4.2.3. Update a PayID user
 
@@ -317,16 +318,17 @@ Update a PayID user requires the body parameter that contains the `PaymentInform
 
 | Field     | Type   |                                                                       Description |
 | --------- | :----- | --------------------------------------------------------------------------------: |
-| pay_id    | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
-| addresses | List   |                                 List of addresses associated with your PayID user |
+| payId     | string | String containing the PayID user name and the host (FQDN) separated by a `$` sign |
+| addresses | array  |                                 List of addresses associated with your PayID user |
+| memo      | string |              optional string field to include meta data surrounding a transaction |
 
 **Addresses Array Data Fields**
 
-| Field           | Type   |                                                                                                            Description |
-| --------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
-| payment_network | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
-| environment     | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
-| details         | Object |                                                                      JSON object containing the network wallet details |
+| Field          | Type   |                                                                                                            Description |
+| -------------- | :----- | ---------------------------------------------------------------------------------------------------------------------: |
+| paymentNetwork | string |                                                         A payment network, like the bitcoin network, the XRPL, or ACH. |
+| environment    | string | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET. |
+| details        | Object |                                                                      JSON object containing the network wallet details |
 
 **Details Object Data Fields**
 
@@ -348,10 +350,10 @@ Request (Success)
 PUT http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
 
 {
-	"pay_id": "bob$127.0.0.1",
+	"payId": "bob$127.0.0.1",
 	"addresses": [
 		{
-			"payment_network": "XRPL",
+			"paymentNetwork": "XRPL",
 			"environment": "TESTNET",
 			"details": {
 			  "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ2"
@@ -371,14 +373,14 @@ Created
 
 The following table lists the HTTP status codes and messages returned for this method.
 
-| HTTP Status code |                                                                     Description |
-| ---------------- | ------------------------------------------------------------------------------: |
-| 200              |                                   Successfully updated a PayID user information |
-| 400              |                                                                     Bad request |
-| 404              |                                                                       Not found |
-| 409              | Conflict. it already exists a user with the PayID specified in the pay_id field |
-| 500              |                           Internal server error. A body field might be missing. |
-| 503              |                                                             Service unavailable |
+| HTTP Status code |                                                                    Description |
+| ---------------- | -----------------------------------------------------------------------------: |
+| 200              |                                  Successfully updated a PayID user information |
+| 400              |                                                                    Bad request |
+| 404              |                                                                      Not found |
+| 409              | Conflict. it already exists a user with the PayID specified in the payId field |
+| 500              |                          Internal server error. A body field might be missing. |
+| 503              |                                                            Service unavailable |
 
 #### 4.2.4. Delete a PayID user
 
@@ -417,10 +419,10 @@ Request (Success)
 DELETE http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
 
 {
-	"pay_id": "bob$127.0.0.1",
+	"payId": "bob$127.0.0.1",
 	"addresses": [
 		{
-			"payment_network": "XRPL",
+			"paymentNetwork": "XRPL",
 			"environment": "TESTNET",
 			"details": {
 			  "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ2"
@@ -449,32 +451,32 @@ The following table lists the HTTP status codes and messages returned for this m
 
 ### 4.3. Public API endpoints
 
-The public APIs runs by default on port 8080. Make sure to update this value if needed.  
+The public APIs runs by default on port 8080. Make sure to update this value if needed.
 The list of public endpoints is:
 
-| HTTP Method                                      | Endpoint                     |                          Description |
-| ------------------------------------------------ | :--------------------------- | -----------------------------------: |
-| [GET](#431-get-a-travel-rule-compliance-invoice) | /{user}/invoice?nonce=<uuid> | Get a Travel Rule compliance invoice |
-| [POST](#432-send-compliance-information)         | /{user}/invoice?nonce=<uuid> |          Send compliance information |
-| [POST](#433-send-confirmation-receipt)           | /{user}/receipt              |            Send confirmation receipt |
-| [GET](#434-get-user-information)                 | /{user}                      |         Get a PayID user information |
+| HTTP Method                                                           | Endpoint                      |                                               Description |
+| --------------------------------------------------------------------- | :---------------------------- | --------------------------------------------------------: |
+| [GET](#431-get-a-travel-rule-compliance-payment-setup-details-object) | /{user}/payment-setup-details | Get a Travel Rule compliance payment setup details object |
+| [POST](#432-send-compliance-information)                              | /{user}/payment-setup-details |                               Send compliance information |
+| [POST](#433-send-payment-proof)                                       | /{user}/payment-proof         |                                        Send payment proof |
+| [GET](#434-get-user-information)                                      | /{user}                       |                              Get a PayID user information |
 
-#### 4.3.1. Get a Travel Rule compliance invoice
+#### 4.3.1. Get a Travel Rule compliance payment setup details object
 
 **Description**
 
-In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request an invoice. When you get the invoice, you notice the `complianceRequirements` field of the invoice, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the invoice, you then post the compliance data to the same URL to update the invoice with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded invoice.
+In a typical scenario that involves Travel Rule compliance, you, as the sender of the payment, first request a payment setup details object. When you get the payment setup details, you notice the `complianceRequirements` field of the payment setup details, which any institution that is a VASP (Virtual Asset Service Provider) must adhere to. Because you originated the payment setup details, you then post the compliance data to the same URL to update the payment setup details with this compliance information, thus fulfilling the requirements of the Travel Rule. The beneficiary confirms that you have sent this information by sending an upgraded payment setup details object.
 
 **API**
-The API returns an invoice for the specified user and nonce.  
-The nonce used in this call is a [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier).
+
+The API returns a payment setup details object for the specified user.
 
 **Request format**
 
 ```HTTP
-GET {pay_id_base_url}/{user}/invoice?nonce=<uuid> HTTP/1.1
+GET {pay_id_base_url}/{user}/payment-setup-details HTTP/1.1
 
-Accept: application/{payment_network}-{environment}+json
+Accept: application/{paymentNetwork}-{environment}+json
 Content-Type: application/json
 ```
 
@@ -486,11 +488,7 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Get Invoice" method accepts the required query parameter described in the following table:
-
-| Parameter | Type |                                                                                                                                      Description |
-| --------- | :--- | -----------------------------------------------------------------------------------------------------------------------------------------------: |
-| nonce     | UUID | Unique [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier). Can be generated [here](https://www.uuidgenerator.net/) for example. |
+The "Get payment setup details" method does not accept any query parameters.
 
 **Headers parameters (Required)**
 
@@ -504,7 +502,7 @@ Update a PayID user requires the body parameter that contains the `Update PayID 
 
 ### Response format <!-- omit in toc -->
 
-A successful response to the "Get invoice" method returns a 200 HTTP status code.
+A successful response to the "Get payment setup details" method returns a 200 HTTP status code.
 
 ### Example <!-- omit in toc -->
 
@@ -513,7 +511,7 @@ A successful response to the "Get invoice" method returns a 200 HTTP status code
 Request (Success)
 
 ```HTTP
-GET https://sender.institution.com/bob/invoice?nonce=8743e9ba-ee96-4ec0-b388-6df3fd3a7c64 HTTP/1.1
+GET https://sender.institution.com/bob/payment-setup-details HTTP/1.1
 
 Accept: application/xrpl-testnet+json
 Content-Type: application/json
@@ -523,16 +521,16 @@ Response (Success)
 
 ```json
 {
-  "messageType": "Invoice",
+  "messageType": "PaymentSetupDetails",
   "message": {
-    "nonce": "8743e9ba-ee96-4ec0-b388-6df3fd3a7c64",
     "expirationTime": 1588502198568,
     "paymentInformation": {
-      "addressDetailType": "CryptoAddressDetails",
+      "addressDetailsType": "CryptoAddressDetails",
       "addressDetails": {
         "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
       },
-      "payId": "bob$127.0.0.1"
+      "payId": "bob$127.0.0.1",
+      "memo": "this is bob's XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
     "complianceHashes": []
@@ -548,21 +546,21 @@ Response (Success)
 
 The following table lists the HTTP status codes and messages returned for this method.
 
-| HTTP Status code |                    Description |
-| ---------------- | -----------------------------: |
-| 200              | Invoice successfully retrieved |
-| 400              |                    Bad request |
-| 404              |                      Not found |
-| 503              |            Service unavailable |
+| HTTP Status code |                                Description |
+| ---------------- | -----------------------------------------: |
+| 200              | PaymentSetupDetails successfully retrieved |
+| 400              |                                Bad request |
+| 404              |                                  Not found |
+| 503              |                        Service unavailable |
 
 #### 4.3.2. Send compliance information
 
-If an invoice contains information in the `complianceRequirements` field, then upon receipt of the invoice, the sender institution must send back compliance information.
+If a payment setup details object contains information in the `complianceRequirements` field, then upon receipt of that object, the sender institution must send back compliance information.
 
 **Request format**
 
 ```HTTP
-POST {pay_id_base_url}/{user}/invoice?nonce=<uuid> HTTP/1.1
+POST {pay_id_base_url}/{user}/payment-setup-details HTTP/1.1
 
 Content-Type: application/json
 ```
@@ -575,11 +573,7 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Get Invoice" method accepts the required query parameter described in the following table:
-
-| Parameter | Type |                                                                                                                                                      Description |
-| --------- | :--- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| nonce     | UUID | Unique [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier). `IMPORTANT:` The value must be the same as the one returned by the "GET invoice" API |
+The "Get payment setup details" method does not accept any query parameters.
 
 **Body parameters (Required)**
 
@@ -587,7 +581,7 @@ The "Get Invoice" method accepts the required query parameter described in the f
 
 ### Response format <!-- omit in toc -->
 
-A successful response to the "Get invoice" method returns a 200 HTTP status code.
+A successful response to the "Get payment setup details" method returns a 200 HTTP status code.
 
 ### Example <!-- omit in toc -->
 
@@ -598,7 +592,7 @@ Request (Success)
 The body contains the [compliance message](#example-compliance-message-schema). This message contains information about the originator, the value of the transaction, and the beneficiary, and the message is signed cryptographically.
 
 ```HTTP
-POST https://sender.institution.com/bob/invoice?nonce=8743e9ba-ee96-4ec0-b388-6df3fd3a7c64 HTTP/1.1
+POST https://sender.institution.com/bob/payment-setup-details HTTP/1.1
 
 {
 	"messageType": "compliance",
@@ -619,6 +613,7 @@ POST https://sender.institution.com/bob/invoice?nonce=8743e9ba-ee96-4ec0-b388-6d
 			"beneficiary": {
 				"institutionName": "xpring"
 			}
+                        "memo": "transaction by Theodore Kalaw for software development services",
 
 		}
 	},
@@ -633,20 +628,21 @@ Response (Success)
 
 ```json
 {
-  "messageType": "Invoice",
+  "messageType": "PaymentSetupDetails",
   "message": {
-    "nonce": "123456",
+    "txId": 368213,
     "expirationTime": 1584753369,
     "paymentInformation": {
-      "addressDetailType": "CryptoAddressDetails",
+      "addressDetailsType": "CryptoAddressDetails",
       "addressDetails": {
         "address": "T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
       },
       "proofOfControlSignature": "9743b52063cd84097a65d1633f5c74f5",
-      "payId": "alice$xpring.money"
+      "payId": "alice$xpring.money",
+      "memo": "this is alice's XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
-    "memo": "thanks for travel rule data, here is your new invoice",
+    "memo": "thanks for travel rule data, here are your new payment setup details",
     "complianceHashes": [
       {
         "type": "TravelRule",
@@ -673,14 +669,14 @@ The following table lists the HTTP status codes and messages returned for this m
 | 422              | Unprocessable Entity |
 | 503              |  Service unavailable |
 
-#### 4.3.3. Send confirmation receipt
+#### 4.3.3. Send payment proof
 
-The originator of the transaction sends a receipt after the payment clears and settles.
+The originator of the transaction sends a payment proof after the payment clears and settles.
 
 **Request format**
 
 ```HTTP
-POST {pay_id_base_url}/{user}/receipt HTTP/1.1
+POST {pay_id_base_url}/{user}/payment-proofs HTTP/1.1
 
 Content-Type: application/json
 ```
@@ -693,22 +689,23 @@ Content-Type: application/json
 
 **Query parameters (None)**
 
-The "Send confirmation receipt" method does not accept any query parameters.
+The "Send payment proof" method does not accept any query parameters.
 
 **Body parameters (Required)**
 
-"Send confirmation receipt" requires the body parameter that contains the `Send confirmation receipt Object` object.
+"Send payment proof" requires the body parameter that contains the `Send payment proof Object` object.
 
-**Send confirmation receipt Object Data Fields**
+**Send payment proof Object Data Fields**
 
-| Field                   | Type   |    Description |
-| ----------------------- | :----- | -------------: |
-| invoiceHash             | string |   Invoice hash |
-| transactionConfirmation | UUID   | Transaction ID |
+| Field                   | Type   | Description                |
+| ----------------------- | :----- | -------------------------: |
+| paymentSetupDetailsHash | string | Payment setup details hash |
+| transactionConfirmation | UUID   | Transaction ID             |
+| memo                    | string | Optional metadata          |
 
 ### Response format <!-- omit in toc -->
 
-A successful response to the "Send confirmation receipt" method returns a 200 HTTP status code.
+A successful response to the "Send payment proof" method returns a 200 HTTP status code.
 
 ### Example <!-- omit in toc -->
 
@@ -717,10 +714,10 @@ A successful response to the "Send confirmation receipt" method returns a 200 HT
 Request (Success)
 
 ```HTTP
-POST https://sender.institution.com/bob/receipt HTTP/1.1
+POST https://sender.institution.com/bob/payment-proofs HTTP/1.1
 
 {
-	"invoiceHash": "8743b52063cd84097a65d1633f5c74f5",
+	"paymentSetupDetailsHash": "8743b52063cd84097a65d1633f5c74f5",
 	"transactionConfirmation": "797A887A269FEAFFEC446389DC1BB8C0DFBF9421C2FA72CA244AA5EB027008FC"
 }
 ```
@@ -740,7 +737,7 @@ The PayID Public API does not require authentication, as it is open to any user.
 ```HTTP
 GET {pay_id_base_url}/{user} HTTP/1.1
 
-Accept: application/{payment_network}-{environment}+json
+Accept: application/{paymentNetwork}-{environment}+json
 ```
 
 **Path parameters (Required)**
@@ -751,7 +748,7 @@ Accept: application/{payment_network}-{environment}+json
 
 **Query parameters (None)**
 
-The "Send confirmation receipt" method does not accept any query parameters.
+The "Send payment proofs" method does not accept any query parameters.
 
 **Headers parameters (Required)**
 
@@ -781,10 +778,11 @@ A [PaymentInformation](#71-paymentinformation-type) PaymentInformation type) obj
 
 ```json
 {
-  "addressDetailType": "CryptoAddressDetails",
+  "addressDetailsType": "CryptoAddressDetails",
   "addressDetails": {
     "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
-  }
+  },
+  "memo": "this is an XRP testnet address"
 }
 ```
 
@@ -809,17 +807,17 @@ A single user can have multiple destinations, because the same user can have add
 
 ```json
 {
-  "pay_id": "johndoe$xpring.money",
+  "payId": "johndoe$xpring.money",
   "addresses": [
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "TESTNET",
       "details": {
         "address": "TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth"
       }
     },
     {
-      "payment_network": "XRPL",
+      "paymentNetwork": "XRPL",
       "environment": "MAINNET",
       "details": {
         "address": "X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn"
@@ -829,13 +827,13 @@ A single user can have multiple destinations, because the same user can have add
 }
 ```
 
-| Field                       | Description                                                                                                                                    |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pay_id`                    | PayID user address                                                                                                                             |
-| `addresses`                 | Object that includes payment address information for one or more payment networks.                                                             |
-| `addresses.payment_network` | A payment network, like the bitcoin network, the XRPL, or ACH.                                                                                 |
-| `addresses.environment`     | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.                         |
-| `address.details`           | Actual payment information for this address. Must be in the form `CryptoAddressDetails` or `AchAddressDetails`. See [Interfaces](#interfaces). |
+| Field                      | Description                                                                                                                                    |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `payId`                    | PayID user address                                                                                                                             |
+| `addresses`                | Object that includes payment address information for one or more payment networks.                                                             |
+| `addresses.paymentNetwork` | A payment network, like the bitcoin network, the XRPL, or ACH.                                                                                 |
+| `addresses.environment`    | "Environment" of the payment network for this payment address. For example, the XPRL has MAINNET, TESTNET, and DEVNET.                         |
+| `address.details`          | Actual payment information for this address. Must be in the form `CryptoAddressDetails` or `AchAddressDetails`. See [Interfaces](#interfaces). |
 
 ### 5.2 Example error schema
 
@@ -849,23 +847,24 @@ This example shows the format of an error payload.
 }
 ```
 
-### 5.3. Example invoice schema
+### 5.3. Example payment setup details schema
 
-This example shows the format of an invoice.
+This example shows the format of a payment setup details object.
 
 ```JSON
 {
-  "messageType": "Invoice",
+  "messageType": "PaymentSetupDetails",
   "message": {
-    "nonce": "123e4567-e89b-12d3-a456-426655440000",
+    "txId": 578392,
     "expirationTime": "2020-03-18T04:04:02",
     "paymentInformation": {
-      "addressDetailType": "CryptoAddressDetails",
+      "addressDetailsType": "CryptoAddressDetails",
       "addressDetails": {
         "address": "T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm"
       },
       "proofOfControlSignature": "9743b52063cd84097a65d1633f5c74f5",
-      "paymentPointer": "$xpring.money/dino"
+      "paymentPointer": "$xpring.money/dino",
+      "memo": "this is an XRP testnet address"
     },
     "complianceRequirements": ["TravelRule"],
     "memo": "please send me travel rule data",
@@ -900,7 +899,8 @@ This example shows the format of an invoice.
          "beneficiary":{
             "institutionName":"xpring"
          }
-      }
+      },
+      "memo": "payment from Theodore for consulting",
    },
    "pkiType":"x509+sha256",
    "pkiData":[
@@ -981,10 +981,11 @@ const tx = await wallet.send(0.63, 'alice$institution.com')
 
 ```ts
 interface PaymentInformation {
-  addressDetailType: AddressDetailType
+  addressDetailsType: AddressDetailsType
   addressDetails: CryptoAddressDetails | AchAddressDetails
   proofOfControlSignature?: string
   payId?: string
+  memo?: string
 }
 ```
 

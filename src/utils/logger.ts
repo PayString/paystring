@@ -27,7 +27,13 @@ enum LogLevel {
 }
 
 // Get the current log level from configuration
-const LOG_LEVEL = config.app.log_level as LogLevel
+const LOG_LEVEL = config.app.logLevel.toUpperCase()
+
+if (!isLogLevel(LOG_LEVEL)) {
+  throw new Error(
+    `The log level '${LOG_LEVEL}' specified in config is not an acceptable log level`,
+  )
+}
 
 configure({
   appenders: {
@@ -60,3 +66,9 @@ if ([LogLevel.TRACE, LogLevel.ALL].includes(LOG_LEVEL)) {
 const logger = getLogger(logCategory)
 
 export default logger
+
+// HELPER FUNCTIONS
+// TODO:(hbergren) Could possibly make this a generic (for stringy enums, but not numeric enums)
+function isLogLevel(member: string): member is LogLevel {
+  return Object.values(LogLevel).includes(member as LogLevel)
+}

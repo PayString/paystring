@@ -7,10 +7,10 @@ const HTTP = 'http://'
 /**
  * Gets the full URL from request components. To be used to create the PayID.
  *
- * @param protocol - HTTPS/HTTP
- * @param hostname - Used to create the host in the PayID (user$host)
- * @param path - Used to create the "user" in the PayID (user$host)
- * @param port? - Maybe used in the PayID, if included
+ * @param protocol - HTTP or HTTPS.
+ * @param hostname - Used to create the host in the PayID (user$host).
+ * @param path - Used to create the "user" in the PayID (user$host).
+ * @param port - Used in the PayID if included (optional).
  *
  * @returns A constructed URL.
  */
@@ -27,7 +27,7 @@ export function constructUrl(
 }
 
 /**
- * Converts a PayID from `https://...` representation to `user$...` representation
+ * Converts a PayID from `https://...` representation to `user$...` representation.
  *
  * @param url - The url string to convert to a PayId.
  * @param httpsRequired - Indicates if we only support URLs with HTTPS.
@@ -53,11 +53,10 @@ export function urlToPayId(
 /**
  * Validate if the input is ASCII based text.
  *
- * Shamelessly taken from:
- * https://stackoverflow.com/questions/14313183/javascript-regex-how-do-i-check-if-the-string-is-ascii-only
+ * Shamelessly taken from: https://stackoverflow.com/questions/14313183/javascript-regex-how-do-i-check-if-the-string-is-ascii-only.
  *
- * @param input - The input to check
- * @returns A boolean indicating the result.
+ * @param input - The string to verify.
+ * @returns A boolean indicating whether or not the string is ASCII.
  */
 function isASCII(input: string): boolean {
   // eslint-disable-next-line no-control-regex

@@ -1,26 +1,29 @@
 import { Request, Response, NextFunction } from 'express'
 
-import { parseReceipt, handleReceipt } from '../services/receipts'
+import {
+  parsePaymentProof,
+  handlePaymentProof,
+} from '../services/paymentProofs'
 import HttpStatus from '../types/httpStatus'
 import { handleHttpError } from '../utils/errors'
 
-export default function receiveReceipt(
+export default function receivePaymentProof(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  const receipt = parseReceipt(req.body)
+  const paymentProof = parsePaymentProof(req.body)
   /* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */
-  if (!receipt) {
+  if (!paymentProof) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'Receipt payload is invalid.',
+      'Payment proof payload is invalid.',
       res,
     )
   }
 
   try {
-    handleReceipt(receipt)
+    handlePaymentProof(paymentProof)
   } catch (err) {
     handleHttpError(
       HttpStatus.InternalServerError,

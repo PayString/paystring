@@ -1,18 +1,18 @@
-/* eslint-disable import/no-unused-modules */
-
 import {
-  Invoice,
-  AddressDetailType,
+  PaymentSetupDetails,
+  AddressDetailsType,
   ComplianceType,
   Compliance,
-  Receipt,
+  PaymentProof,
 } from '../types/publicAPI'
 
 // TODO: update mocks with 'real' information from from a transaction so they
 // can be used in e2e and unit tests
-export const mockReceipt: Receipt = {
-  invoiceHash: '',
+export const mockPaymentProof: PaymentProof = {
+  paymentSetupDetailsHash: '',
+  txId: 318188,
   transactionConfirmation: '',
+  memo: 'the payment succeeded!',
 }
 
 export const mockComplianceData: Compliance = {
@@ -33,37 +33,41 @@ export const mockComplianceData: Compliance = {
       institutionName: 'xpring',
     },
   },
+  memo: 'Example travel rule transaction',
 }
 
-export const mockInvoice: Invoice = {
-  nonce: '123456',
+export const mockPaymentSetupDetails: PaymentSetupDetails = {
+  txId: 581203,
   expirationTime: 1584723369,
   paymentInformation: {
-    addressDetailType: AddressDetailType.CryptoAddress,
+    addressDetailsType: AddressDetailsType.CryptoAddress,
     addressDetails: {
       address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
     },
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
     payId: 'alice$xpring.money',
+    memo: 'for a travel rule transaction',
   },
   complianceRequirements: [ComplianceType.TravelRule],
   memo: 'please send me travel rule data',
   complianceHashes: [],
 }
 
-export const mockInvoiceWithComplianceHashes: Invoice = {
-  nonce: '123456',
+// eslint-disable-next-line max-len
+export const mockPaymentSetupDetailsWithComplianceHashes: PaymentSetupDetails = {
+  txId: 583289,
   expirationTime: 1584753369,
   paymentInformation: {
-    addressDetailType: AddressDetailType.CryptoAddress,
+    addressDetailsType: AddressDetailsType.CryptoAddress,
     addressDetails: {
       address: 'T71Qcu6Txyi5y4aa6ZaVBD3aKC4oCbQTBQr3QfmJBywhnwm',
     },
     proofOfControlSignature: '9743b52063cd84097a65d1633f5c74f5',
     payId: 'alice$xpring.money',
+    memo: 'travel rule transaction with compliance hash',
   },
   complianceRequirements: [ComplianceType.TravelRule],
-  memo: 'thanks for travel rule data, here is your new invoice',
+  memo: 'thanks for travel rule data, here are your new payment setup details',
   complianceHashes: [
     {
       type: ComplianceType.TravelRule,

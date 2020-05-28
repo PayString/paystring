@@ -4,21 +4,21 @@ import * as request from 'supertest'
 
 import App from '../../../../src/app'
 import {
-  mockInvoiceWithComplianceHashes,
+  mockPaymentSetupDetailsWithComplianceHashes,
   mockComplianceData,
 } from '../../../../src/data/travelRuleData'
 import { wrapMessage } from '../../../../src/services/signatureWrapper'
 import HttpStatus from '../../../../src/types/httpStatus'
 import {
   MessageType,
-  AddressDetailType,
+  AddressDetailsType,
   ComplianceType,
-  Invoice,
+  PaymentSetupDetails,
 } from '../../../../src/types/publicAPI'
 import {
   appSetup,
   appCleanup,
-  isExpectedInvoice,
+  isExpectedPaymentSetupDetails,
 } from '../../../helpers/helpers'
 
 let app: App
@@ -29,7 +29,7 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     app = await appSetup()
   })
 
-  it('Returns a mock invoice on GET /invoice', function (done): void {
+  it('Returns a mock PaymentSetupDetails on GET /payment-setup-details', function (done): void {
     // GIVEN a PayID known to have a testnet address
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
@@ -38,11 +38,11 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
     // eslint-disable-next-line @typescript-eslint/no-magic-numbers
     const TIME_TO_EXPIRY = 60 * 60 * 1000
 
-    const expectedInvoice: Invoice = {
-      nonce: '123',
+    const expectedPaymentSetupDetails: PaymentSetupDetails = {
+      txId: 148689,
       expirationTime: Date.now() + TIME_TO_EXPIRY,
       paymentInformation: {
-        addressDetailType: AddressDetailType.CryptoAddress,
+        addressDetailsType: AddressDetailsType.CryptoAddress,
         addressDetails: {
           address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
         },
@@ -51,51 +51,35 @@ describe('E2E - publicAPIRouter - GET API', function (): void {
       complianceRequirements: [ComplianceType.TravelRule],
       complianceHashes: [],
     }
-    const expectedResponse = wrapMessage(expectedInvoice, MessageType.Invoice)
+    const expectedResponse = wrapMessage(
+      expectedPaymentSetupDetails,
+      MessageType.PaymentSetupDetails,
+    )
 
-    // WHEN we make a GET request to the public endpoint to retrieve the invoice
+    // WHEN we make a GET request to the public endpoint to retrieve the PaymentSetupDetails
     request(app.publicAPIExpress)
-      .get(`${payId}/invoice?nonce=123`)
+      .get(`${payId}/payment-setup-details`)
       .set('Accept', acceptHeader)
-      // THEN we get back a 200 - OK with the invoice
-      .expect(isExpectedInvoice(expectedResponse))
+      // THEN we get back a 200 - OK with the PaymentSetupDetails
+      .expect(isExpectedPaymentSetupDetails(expectedResponse))
       .expect(HttpStatus.OK, done)
   })
 
   // TODO(dino): implement this to not use mock data
-  it('Returns 400 on request to GET /invoice without a nonce', function (done): void {
-    // GIVEN a PayID known to have a testnet address
-    const payId = '/hbergren'
-    const acceptHeader = 'application/xrpl-testnet+json'
-    const expectedResponse = {
-      statusCode: 400,
-      message: 'Missing nonce query parameter.',
-      error: 'Bad Request',
-    }
-
-    // WHEN we make a GET request to the public endpoint to retrieve the invoice
-    request(app.publicAPIExpress)
-      .get(`${payId}/invoice`)
-      .set('Accept', acceptHeader)
-      // THEN we get back a 400 - Bad Request with the invoice
-      .expect(HttpStatus.BadRequest, expectedResponse, done)
-  })
-
-  // TODO(dino): implement this to not use mock data
-  it('Returns an updated mock invoice on POST /invoice', function (done): void {
+  it('Returns an updated mock PaymentSetupDetails on POST /payment-setup-details', function (done): void {
     // GIVEN a PayID known to have a testnet address
     const payId = '/alice'
     const expectedResponse = wrapMessage(
-      mockInvoiceWithComplianceHashes,
-      MessageType.Invoice,
+      mockPaymentSetupDetailsWithComplianceHashes,
+      MessageType.PaymentSetupDetails,
     )
 
-    // WHEN we make a GET request to the public endpoint to retrieve the invoice
+    // WHEN we make a GET request to the public endpoint to retrieve the PaymentSetupDetails
     request(app.publicAPIExpress)
-      .post(`${payId}/invoice`)
+      .post(`${payId}/payment-setup-details`)
       .send(wrapMessage(mockComplianceData, MessageType.Compliance))
       .expect('Content-Type', /json/u)
-      // THEN we get back the invoice
+      // THEN we get back the PaymentSetupDetails
       .expect(HttpStatus.OK, expectedResponse, done)
   })
 
