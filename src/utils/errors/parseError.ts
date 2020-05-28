@@ -4,6 +4,9 @@ import PayIDError from './payIdError'
 
 export enum ParseErrorType {
   InvalidMediaType = 'InvalidMediaType',
+  MissingPayIdVersionHeader = 'MissingPayIdVersionHeader',
+  InvalidPayIdVersionHeader = 'InvalidPayIdVersionHeader',
+  UnsupportedPayIdVersionHeader = 'UnsupportedPayIdVersionHeader',
 }
 
 export default class ParseError extends PayIDError {

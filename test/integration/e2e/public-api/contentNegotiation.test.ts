@@ -40,6 +40,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // both testnet and mainnet, with no q for either
     request(app.publicAPIExpress)
       .get(payId)
+      .set('PayID-Version', '0.2')
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as our Content-Type
       .expect((res) => {
@@ -74,6 +75,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // and mainnet, with testnet having a higher q-value
     request(app.publicAPIExpress)
       .get(payId)
+      .set('PayID-Version', '0.2')
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as the Content-Type
       .expect((res) => {
@@ -108,6 +110,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // xrpl-testnet and xrpl-mainnet, with a higher q for xrpl-mainnet
     request(app.publicAPIExpress)
       .get(payId)
+      .set('PayID-Version', '0.2')
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-mainnet accept header as the Content-Type
       .expect((res) => {
@@ -143,6 +146,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // a non-existent network+environment most preferred, followed by xrpl-mainnet and xrpl-testnet
     request(app.publicAPIExpress)
       .get(payId)
+      .set('PayID-Version', '0.2')
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-mainnet accept header as the Content-Type
       .expect((res) => {

@@ -2,6 +2,7 @@ import * as path from 'path'
 
 import * as express from 'express'
 
+import checkPublicApiVersionHeaders from '../middlewares/checkPublicApiVersionHeaders'
 import receiveComplianceData from '../middlewares/compliance'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import getPaymentInfo from '../middlewares/payIds'
@@ -33,6 +34,7 @@ publicAPIRouter
   // PaymentSetupDetails routes
   .get(
     '/*/payment-setup-details',
+    checkPublicApiVersionHeaders,
     wrapAsync(parsePaymentSetupDetailsPath),
     wrapAsync(getPaymentInfo),
     wrapAsync(getPaymentSetupDetails),
@@ -41,6 +43,7 @@ publicAPIRouter
   .post(
     '/*/payment-setup-details',
     express.json(),
+    checkPublicApiVersionHeaders,
     wrapAsync(receiveComplianceData),
     wrapAsync(getPaymentSetupDetails),
     sendSuccess,
@@ -50,12 +53,18 @@ publicAPIRouter
   .post(
     '/*/payment-proofs',
     express.json(),
+    checkPublicApiVersionHeaders,
     wrapAsync(receivePaymentProof),
     sendSuccess,
   )
 
   // Base PayID routes
-  .get('/*', wrapAsync(getPaymentInfo), sendSuccess)
+  .get(
+    '/*',
+    checkPublicApiVersionHeaders,
+    wrapAsync(getPaymentInfo),
+    sendSuccess,
+  )
 
   // Error handling middleware needs to be defined last
   .use(errorHandler)

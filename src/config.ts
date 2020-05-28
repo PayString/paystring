@@ -1,9 +1,8 @@
-/**
- * Private API version.
- */
-enum Version {
+export enum PrivateApiVersion {
   V1 = '/v1',
 }
+
+export const payIdServerVersions: readonly string[] = ['0.2']
 
 /**
  * Application configuration.
@@ -27,7 +26,8 @@ const config = {
   app: {
     publicAPIPort: Number(process.env.PUBLIC_API_PORT) || 8080,
     privateAPIPort: Number(process.env.PRIVATE_API_PORT) || 8081,
-    version: process.env.VERSION ?? Version.V1,
+    payIdVersion: payIdServerVersions[payIdServerVersions.length - 1],
+    privateApiVersion: PrivateApiVersion.V1,
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
     httpsRequired: process.env.HTTPS_REQUIRED === 'true',
   },
