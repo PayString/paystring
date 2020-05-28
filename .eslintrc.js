@@ -20,13 +20,14 @@ module.exports = {
     es2020: true, // Add all ECMAScript 2020 globals and automatically set the ecmaVersion parser option to ES2020
   },
 
-  plugins: ['import'],
+  plugins: ['import', 'node'],
 
   extends: ['@xpring-eng/eslint-config-base/loose'],
 
   rules: {
     // We explicitly use `process.exit()` because all other errors should really be handled.
     'no-process-exit': 'off',
+    'node/no-process-exit': 'off',
 
     // TODO:(hbergren) These are all rules we should remove eventually
     'import/no-unused-modules': 'off',
