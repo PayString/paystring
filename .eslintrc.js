@@ -30,10 +30,9 @@ module.exports = {
     'node/no-process-exit': 'off',
 
     // TODO:(hbergren) These are all rules we should remove eventually
-    'import/no-unused-modules': 'off',
     'import/max-dependencies': ['warn', { max: 9 }],
-    'max-lines-per-function': ['warn', { max: 110 }],
-    'max-statements': ['warn', { max: 32 }],
+    'max-lines-per-function': ['warn', { max: 82 }],
+    'max-statements': ['warn', { max: 26 }],
     complexity: ['warn', { max: 11 }],
   },
 

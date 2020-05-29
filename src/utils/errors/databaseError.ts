@@ -51,7 +51,10 @@ export default class DatabaseError extends PayIDError {
 }
 
 // HELPER FUNCTIONS
-
+/* eslint-disable max-lines-per-function --
+ * TODO:(hbergren), it might be worth refactoring this into smaller helper functions,
+ * to make this easier to reason about.
+ */
 export function handleDatabaseError(error: Error): never {
   logger.debug(error)
 
@@ -153,3 +156,4 @@ export function handleDatabaseError(error: Error): never {
   // TODO:(hbergren) Knex does not yet handle connection errors:
   // https://github.com/knex/knex/issues/3113
 }
+/* eslint-enable max-lines-per-function */

@@ -1,4 +1,6 @@
-/* eslint-disable mocha/no-top-level-hooks */
+/* eslint-disable mocha/no-top-level-hooks --
+ * This is the file specifically for top-level hooks to run before/after ALL tests.
+ */
 import 'mocha'
 import knex from '../src/db/knex'
 import logger from '../src/utils/logger'

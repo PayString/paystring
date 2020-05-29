@@ -8,18 +8,24 @@ const knexConfig = {
   client: 'pg',
   connection: config.database.connection,
   pool: {
-    /* eslint-disable */
-  afterCreate(conn: any, done: Function): void {
-    conn.query('SET timezone="UTC";', (err: Error) => {
-      if (err) return done(err, conn)
+    /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types --
+     * Knex doesn't have great types for the afterCreate parameters
+     */
+    afterCreate(conn: any, done: Function): void {
+      conn.query('SET timezone="UTC";', async (err?: Error) => {
+        if (err) {
+          return done(err, conn)
+        }
 
-      conn.query('SET statement_timeout TO 3000;', (err: Error) => {
-        // if err is not falsy, connection is discarded from pool
-        done(err, conn)
+        conn.query('SET statement_timeout TO 3000;', async (error: Error) => {
+          // if err is not falsy, connection is discarded from pool
+          done(error, conn)
+        })
+
+        return undefined
       })
-    })
-  },
-  /* eslint-enable */
+    },
+    /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
   },
 }
 

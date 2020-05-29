@@ -32,8 +32,7 @@ describe('Data Access - Database Errors', function (): void {
     const payId = null
 
     // WHEN we insert the user into the database
-    // eslint-disable-next-line
-    // @ts-ignore
+    // @ts-expect-error
     const insertedAddresses = insertUser(payId, exampleAddresses)
 
     // THEN we get a DatabaseError with our expected error message
@@ -102,8 +101,7 @@ describe('Data Access - Database Errors', function (): void {
     ]
 
     // WHEN we insert the user into the database
-    // eslint-disable-next-line
-    // @ts-ignore
+    // @ts-expect-error
     const insertedAddresses = insertUser(payId, addresses)
 
     // THEN we get a DatabaseError with our expected error message

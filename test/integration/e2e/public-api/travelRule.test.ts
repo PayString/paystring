@@ -34,8 +34,7 @@ describe('E2E - publicAPIRouter - Travel Rule', function (): void {
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-testnet+json'
 
-    // This is 1 hour in milliseconds
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- This is 1 hour in milliseconds
     const TIME_TO_EXPIRY = 60 * 60 * 1000
 
     const expectedPaymentSetupDetails: PaymentSetupDetails = {

@@ -31,8 +31,7 @@ export default function generatePaymentSetupDetails(
   // other than travel rule), so maybe this should be deleted.
   // TODO(dino): figure out where this hardcoded value should live or if it should be in a database
 
-  // This is 1 hour in milliseconds
-  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- This is 1 hour in milliseconds
   const TIME_TO_EXPIRY = 60 * 60 * 1000
 
   const paymentSetupDetails: PaymentSetupDetails = {

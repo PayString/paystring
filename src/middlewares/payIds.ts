@@ -60,7 +60,7 @@ export default async function getPaymentInfo(
     if (parsedAcceptHeaders.length === 1) {
       const { paymentNetwork, environment } = parsedAcceptHeaders[0]
       message = `Payment information for ${payId} in ${paymentNetwork} `
-      // eslint-disable-next-line max-depth
+      // eslint-disable-next-line max-depth -- TODO:(@dino-rodriguez) This should be refactored
       if (environment) {
         message += `on ${environment} `
       }

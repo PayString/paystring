@@ -59,7 +59,7 @@ export function urlToPayId(
  * @returns A boolean indicating whether or not the string is ASCII.
  */
 function isASCII(input: string): boolean {
-  // eslint-disable-next-line no-control-regex
+  // eslint-disable-next-line no-control-regex -- Regex for checking if ASCII uses control characters
   return /^[\x00-\x7F]*$/u.test(input)
 }
 

@@ -1,4 +1,7 @@
-/* eslint-disable no-inline-comments */
+/* eslint-disable no-inline-comments --
+ * It's reasonable to use inline-comments for enums and interfaces,
+ * and there is (not yet) a TypeScript aware version of this rule.
+ */
 
 /**
  * Type of payment address in PaymentInformation.

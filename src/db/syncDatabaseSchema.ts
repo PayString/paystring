@@ -1,5 +1,7 @@
-/* eslint-disable no-await-in-loop */
-/* eslint-disable node/no-sync */
+/* eslint-disable no-await-in-loop --
+ * We need to await in a loop because we _want_ to block each operation until the previous one completes.
+ * Executing the SQL DDL statements and running migrations relies on a specific order of operations.
+ */
 
 import * as fs from 'fs'
 import * as path from 'path'
@@ -34,7 +36,7 @@ export default async function syncDatabaseSchema(
 
   // Loop through directories holding SQL files and execute them against the database
   for (const directory of sqlDirectories) {
-    const files = fs.readdirSync(path.join(__dirname, directory))
+    const files = await fs.promises.readdir(path.join(__dirname, directory))
 
     // Note that this loops through the files in alphabetical order
     for (const file of files) {
@@ -56,7 +58,7 @@ async function executeSqlFile(
   file: string,
   databaseConfig: typeof config.database,
 ): Promise<void> {
-  const sql = fs.readFileSync(file, 'utf8')
+  const sql = await fs.promises.readFile(file, 'utf8')
   const client = new Client(databaseConfig.connection)
 
   try {

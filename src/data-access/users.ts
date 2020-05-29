@@ -1,4 +1,6 @@
-/* eslint-disable @typescript-eslint/unbound-method */
+/* eslint-disable @typescript-eslint/unbound-method --
+ * Knex transaction commits and rollbacks are "unbound methods"
+ */
 import { Transaction } from 'knex'
 
 import knex from '../db/knex'

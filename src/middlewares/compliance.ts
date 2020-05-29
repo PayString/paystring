@@ -13,7 +13,9 @@ export default function receiveComplianceData(
   next: NextFunction,
 ): void {
   const complianceData = parseComplianceData(req.body)
-  /* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition */
+  /* eslint-disable @typescript-eslint/no-unnecessary-condition --
+   * TODO:(@dino-rodriguez): This should be refactored to be in parseComplianceData
+   */
   if (!complianceData) {
     return handleHttpError(
       HttpStatus.BadRequest,
@@ -21,6 +23,7 @@ export default function receiveComplianceData(
       res,
     )
   }
+  /* eslint-enable @typescript-eslint/no-unnecessary-condition */
   try {
     handleComplianceData(complianceData)
   } catch (err) {

@@ -1,5 +1,4 @@
 import DatabaseError, {
-  DatabaseErrorType,
   DatabaseErrorMessage,
   handleDatabaseError,
 } from './databaseError'
@@ -10,7 +9,6 @@ import PayIDError from './payIdError'
 
 export {
   DatabaseError,
-  DatabaseErrorType,
   DatabaseErrorMessage,
   handleDatabaseError,
   handleHttpError,

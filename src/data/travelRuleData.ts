@@ -36,6 +36,7 @@ export const mockComplianceData: Compliance = {
   memo: 'Example travel rule transaction',
 }
 
+// eslint-disable-next-line import/no-unused-modules -- TODO:(@dino-rodriguez) Should this be exported?
 export const mockPaymentSetupDetails: PaymentSetupDetails = {
   txId: 581203,
   expirationTime: 1584723369,
@@ -59,7 +60,7 @@ export const mockPaymentSetupDetails: PaymentSetupDetails = {
   complianceHashes: [],
 }
 
-// eslint-disable-next-line max-len
+// eslint-disable-next-line max-len -- Prettier cannot reformat this line to be <= 80 characters
 export const mockPaymentSetupDetailsWithComplianceHashes: PaymentSetupDetails = {
   txId: 583289,
   expirationTime: 1584753369,
