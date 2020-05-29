@@ -48,10 +48,11 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
 - [8. Use Xpring SDK with PayID](#8-use-xpring-sdk-with-payid)
   - [8.1. Demo](#81-demo)
 - [9. Headers for GET requests for PayID Public API](#9-headers-for-get-requests-for-payid-public-api)
-  - [9.1. Headers for XRP](#91-headers-for-xrp)
-  - [9.2. Headers for ACH](#92-headers-for-ach)
-  - [9.3. Headers for BTC](#93-headers-for-btc)
-  - [9.4. Headers for ETH](#94-headers-for-eth)
+  - [9.1. Header for All Addresses](#91-headers-for-all-addresses)
+  - [9.2. Headers for XRP](#92-headers-for-xrp)
+  - [9.3. Headers for ACH](#93-headers-for-ach)
+  - [9.4. Headers for BTC](#94-headers-for-btc)
+  - [9.5. Headers for ETH](#95-headers-for-eth)
 
 ## 1. Web standards
 
@@ -697,11 +698,11 @@ The "Send payment proof" method does not accept any query parameters.
 
 **Send payment proof Object Data Fields**
 
-| Field                   | Type   | Description                |
+| Field                   | Type   |                Description |
 | ----------------------- | :----- | -------------------------: |
 | paymentSetupDetailsHash | string | Payment setup details hash |
-| transactionConfirmation | UUID   | Transaction ID             |
-| memo                    | string | Optional metadata          |
+| transactionConfirmation | UUID   |             Transaction ID |
+| memo                    | string |          Optional metadata |
 
 ### Response format <!-- omit in toc -->
 
@@ -778,10 +779,16 @@ A [PaymentInformation](#71-paymentinformation-type) PaymentInformation type) obj
 
 ```json
 {
-  "addressDetailsType": "CryptoAddressDetails",
-  "addressDetails": {
-    "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
-  },
+  "addresses": [
+    {
+      "paymentNetwork": "XRP",
+      "addressDetailsType": "CryptoAddressDetails",
+      "addressDetails": {
+        "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ1"
+      }
+    }
+  ],
+  "payId": "alice$example.com",
   "memo": "this is an XRP testnet address"
 }
 ```
@@ -938,6 +945,7 @@ The different header options are shown here, with example values.
 | BTC      | application/btc+json          | { <br>address: '1BvBMSEYstWetAu4m4GFg7xJaNVN2'<br> }                   |
 | XRP      | application/xrpl-mainnet+json | { <br>address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'<br> } |
 | ACH      | application/ach+json          | { <br> account: '363023456079',<br>routing: '011302838'<br>}           |
+| All      | application/payid+json        | Variable depending on the contents of each address                     |
 
 ## 6. Code examples
 
@@ -1038,7 +1046,13 @@ View [index-payid.js](https://github.com/xpring-eng/Xpring-SDK-Demo/blob/master/
 
 This launch of PayID includes those headers specific to the Xpring ecosystem. Each payment network is free to establish its own standard headers. These headers should be submitted with every GET request, but not POST.
 
-### 9.1. Headers for XRP
+### 9.1. Header for All Addresses
+
+|     Accept header      |            Description            |
+| :--------------------: | :-------------------------------: |
+| application/payid+json | Returns all addresses for a PayID |
+
+### 9.2. Headers for XRP
 
 |         Accept header         |       Description        |
 | :---------------------------: | :----------------------: |
@@ -1046,20 +1060,20 @@ This launch of PayID includes those headers specific to the Xpring ecosystem. Ea
 | application/xrpl-testnet+json | Returns testnet xAddress |
 | application/xrpl-devnet+json  | Returns devnet xAddress  |
 
-### 9.2. Headers for ACH
+### 9.3. Headers for ACH
 
 |    Accept header     |            Description             |
 | :------------------: | :--------------------------------: |
 | application/ach+json | Returns account and routing number |
 
-### 9.3. Headers for BTC
+### 9.4. Headers for BTC
 
 |        Accept header         |       Description       |
 | :--------------------------: | :---------------------: |
 | application/btc-mainnet+json | Returns mainnet address |
 | application/btc-testnet+json | Returns testnet address |
 
-### 9.4. Headers for ETH
+### 9.5. Headers for ETH
 
 <table>
 <tr>

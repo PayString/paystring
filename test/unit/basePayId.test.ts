@@ -106,7 +106,6 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         },
       },
     ]
-
     const expectedPaymentInfo = {
       addresses: [
         {
