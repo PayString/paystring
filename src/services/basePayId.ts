@@ -1,6 +1,5 @@
 import { AddressInformation } from '../types/database'
 import { AddressDetailsType, PaymentInformation } from '../types/publicAPI'
-import createMemo from '../utils/memo'
 
 import { ParsedAcceptHeader } from './headers'
 
@@ -16,6 +15,7 @@ import { ParsedAcceptHeader } from './headers'
 export function formatPaymentInfo(
   addresses: readonly AddressInformation[],
   payId?: string,
+  memoFn?: () => string,
 ): PaymentInformation {
   return {
     addresses: addresses.map((address) => {
@@ -27,7 +27,7 @@ export function formatPaymentInfo(
       }
     }),
     ...(payId && { payId }),
-    ...(createMemo() && { memo: createMemo() }),
+    ...(memoFn?.() && { memo: memoFn() }),
   }
 }
 
@@ -92,7 +92,7 @@ export function getPreferredAddressHeaderPair(
  * @param address - The address information associated with a PayID.
  * @returns - The AddressDetailsType for the address.
  */
-function getAddressDetailsType(
+export function getAddressDetailsType(
   address: AddressInformation,
 ): AddressDetailsType {
   if (address.paymentNetwork === 'ACH') {
