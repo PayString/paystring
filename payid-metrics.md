@@ -128,7 +128,7 @@ docker run -it -p 8080:8080 -p 8081:8081 --name payid-server --network payid-net
 Test whether the PayID server is running by creating a PayID with this cURL command.
 
 ```
- curl --location --request POST 'http://127.0.0.1:8081/v1/users' --header 'Content-Type: application/json' --header 'Content-Type: text/plain' --data-raw '{
+ curl --location --request POST 'http://127.0.0.1:8081/users' --header 'Content-Type: application/json' --header 'Content-Type: text/plain' --data-raw '{
      "payId": "alice$127.0.0.1",
      "addresses": [
          {

@@ -5,7 +5,7 @@ In this tutorial, we'll be walking through the travel rule handshake protocol
 We'll start off by creating a user:
 
 ```
-curl --location --request POST http://localhost:8081/v1/users --header 'Content-Type: application/json' --data-raw '{
+curl --location --request POST http://localhost:8081/users --header 'Content-Type: application/json' --data-raw '{
   "payId": "$127.0.0.1/exampleUser",
   "addresses": [
   {
@@ -26,6 +26,7 @@ curl --location --request GET 'http://127.0.0.1:8080/exampleUser' --header 'Acce
 ```
 
 We've confirmed that our PayID is working as expected so let's send a payment setup details request:
+
 ```
 curl --location --request GET 'http://127.0.0.1:8080/exampleUser/payment-setup-details' \
 --header 'Accept: application/xrpl-testnet+json' \
@@ -33,6 +34,7 @@ curl --location --request GET 'http://127.0.0.1:8080/exampleUser/payment-setup-d
 ```
 
 The returned JSON object is our payment setup details. In this example, the institution is a VASP and has listed any laws that must be complied with in the `complianceRequirements` field of the payment setup details. Specifically, as the originator of the payment we are being asked to comply with the Travel Rule. In order to do that, we'll POST the compliance data to the same URL in order to upgrade our payment setup details object.
+
 ```
 curl --location --request POST 'http://127.0.0.1:8080/exampleUser/payment-setup-details' \
 --header 'Content-Type: application/json' \
@@ -65,8 +67,8 @@ curl --location --request POST 'http://127.0.0.1:8080/exampleUser/payment-setup-
 }'
 ```
 
-
 Upon submission of this data, the beneficiary should identify that we have fulfilled all compliance requirements and send us an upgraded payment setup details object. This upgraded payment setup details cryptographically correlates our submission of compliance data through the complianceHashes field. Now that we have been informed of all compliance requirements, and fulfilled them, we can submit our transaction on ledger and POST back the payment proof.
+
 ```
 curl --location --request POST 'http://127.0.0.1:8080/exampleUser/payment-proofs' \
 --header 'Content-Type: application/json' \

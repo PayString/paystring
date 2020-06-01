@@ -121,12 +121,12 @@ You can then use the Private PayID API to:
 The private APIs run by default on port 8081. Make sure to adjust this value if needed.
 The list of private endpoints is:
 
-| HTTP Method                              | Endpoint                 |                     Description |
-| ---------------------------------------- | :----------------------- | ------------------------------: |
-| [GET](#421-get-a-payid-user-information) | /v1/users/{user}\${host} |    Get a PayID user information |
-| [POST](#422-create-a-payid-user)         | /v1/users                |             Create a PayID user |
-| [PUT](#423-update-a-payid-user)          | /v1/users/{user}\${host} | Update a PayID user information |
-| [DELETE](#424-delete-a-payid-user)       | /v1/users/{user}\${host} |             Delete a PayID user |
+| HTTP Method                              | Endpoint              |                     Description |
+| ---------------------------------------- | :-------------------- | ------------------------------: |
+| [GET](#421-get-a-payid-user-information) | /users/{user}\${host} |    Get a PayID user information |
+| [POST](#422-create-a-payid-user)         | /users                |             Create a PayID user |
+| [PUT](#423-update-a-payid-user)          | /users/{user}\${host} | Update a PayID user information |
+| [DELETE](#424-delete-a-payid-user)       | /users/{user}\${host} |             Delete a PayID user |
 
 Once you have set up your PayID server, you can access the Private PayID API endpoints using Postman or these cURL commands.
 
@@ -135,7 +135,7 @@ Once you have set up your PayID server, you can access the Private PayID API end
 **Request format**
 
 ```
-GET {pay_id_base_url}/v1/users/{user}${host}
+GET {pay_id_base_url}/users/{user}${host}
 ```
 
 **Path parameters (Required)**
@@ -166,7 +166,7 @@ This operation creates a single user.
 Request (Success)
 
 ```HTTP
-GET http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
+GET http://127.0.0.1:8081/users/bob$127.0.0.1 HTTP/1.1
 ```
 
 Response (Success)
@@ -200,7 +200,7 @@ The following table lists the HTTP status codes and messages returned for this m
 **Request format**
 
 ```
-POST {pay_id_base_url}/v1/users
+POST {pay_id_base_url}/users
 ```
 
 **Path parameters (None)**
@@ -251,7 +251,7 @@ Request (Success)
 The addresses array can contain 1 or more objects.
 
 ```HTTP
-POST http://127.0.0.1:8081/v1/users HTTP/1.1
+POST http://127.0.0.1:8081/users HTTP/1.1
 
 {
   "payId": "bob$127.0.0.1",
@@ -297,7 +297,7 @@ You can modify the user information associated with a particular PayID address.
 **Request format**
 
 ```
-PUT {pay_id_base_url}/v1/users/{user}${host}
+PUT {pay_id_base_url}/users/{user}${host}
 ```
 
 **Path parameters (Required)**
@@ -348,7 +348,7 @@ A successful response to the "Update a PayID user" method returns a 201 HTTP sta
 Request (Success)
 
 ```HTTP
-PUT http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
+PUT http://127.0.0.1:8081/users/bob$127.0.0.1 HTTP/1.1
 
 {
 	"payId": "bob$127.0.0.1",
@@ -388,7 +388,7 @@ The following table lists the HTTP status codes and messages returned for this m
 **Request format**
 
 ```
-DELETE {pay_id_base_url}/v1/users/{user}${host}
+DELETE {pay_id_base_url}/users/{user}${host}
 ```
 
 **Path parameters (Required)**
@@ -417,7 +417,7 @@ A successful response to the "Delete a PayID user" method returns a 204 HTTP sta
 Request (Success)
 
 ```HTTP
-DELETE http://127.0.0.1:8081/v1/users/bob$127.0.0.1 HTTP/1.1
+DELETE http://127.0.0.1:8081/users/bob$127.0.0.1 HTTP/1.1
 
 {
 	"payId": "bob$127.0.0.1",

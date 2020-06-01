@@ -9,9 +9,9 @@ export default function sendSuccess(req: Request, res: Response): void {
   if (status === HttpStatus.Created) {
     // The first part of the destructured array will be "", because the string starts with "/"
     // And for PUT commands, the path could potentially hold more after `userPath`.
-    const [, version, userPath] = req.originalUrl.split('/')
+    const [, userPath] = req.originalUrl.split('/')
 
-    const locationHeader = ['', version, userPath, res.locals.payId].join('/')
+    const locationHeader = ['', userPath, res.locals.payId].join('/')
 
     res.location(locationHeader)
   }

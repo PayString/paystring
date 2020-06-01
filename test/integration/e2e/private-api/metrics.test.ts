@@ -8,6 +8,7 @@ import HttpStatus from '../../../../src/types/httpStatus'
 import { appCleanup, appSetup } from '../../../helpers/helpers'
 
 let app: App
+const payIdApiVersion = '2020-05-28'
 
 describe('E2E - privateAPIRouter - GET /metrics', function (): void {
   const mainnet = 'MAINNET'
@@ -96,6 +97,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
   async function assertMetrics(expectedMetric: RegExp): Promise<request.Test> {
     return request(app.privateAPIExpress)
       .get('/metrics')
+      .set('PayID-API-Version', payIdApiVersion)
       .expect((res) => {
         assert.match(res.text, expectedMetric)
       })
@@ -135,7 +137,8 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
       ],
     }
     return request(app.privateAPIExpress)
-      .post(`/v1/users`)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(payIdRequest)
       .expect((res) => {
         assert.strictEqual(res.status, HttpStatus.Created)

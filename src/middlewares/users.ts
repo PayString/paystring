@@ -24,7 +24,7 @@ export async function getUser(
   if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A `payId` must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
+      'A `payId` must be provided in the path. A well-formed API call would look like `GET /users/alice$xpring.money`.',
       res,
     )
   }
@@ -106,7 +106,7 @@ export async function putUser(
   if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A `payId` must be provided in the path. A well-formed API call would look like `PUT /v1/users/alice$xpring.money`.',
+      'A `payId` must be provided in the path. A well-formed API call would look like `PUT /users/alice$xpring.money`.',
       res,
     )
   }
@@ -178,7 +178,7 @@ export async function deleteUser(
   if (!payId) {
     return handleHttpError(
       HttpStatus.BadRequest,
-      'A PayID must be provided in the path. A well-formed API call would look like `GET /v1/users/alice$xpring.money`.',
+      'A PayID must be provided in the path. A well-formed API call would look like `GET /users/alice$xpring.money`.',
       res,
     )
   }

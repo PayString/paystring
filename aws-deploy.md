@@ -46,7 +46,7 @@ You can set up a PayID server on AWS (Amazon Web Services).
 13. Load up your desired PayID to the database using the [private PayID API](readme.md). If you use a subdomain rather than a path, then you must set up a DNS record for the subdomain as described in step 3.
     **Note:** You can add PayIDs for each (payId, network, environment) tuple. Use this cURL command to set up a PayID.
     ```
-    curl --location --request POST 'http://127.0.0.1:8081/v1/users' \
+    curl --location --request POST 'http://127.0.0.1:8081/users' \
     --header 'Content-Type: application/json' \
     --data-raw '{
      "payId": "$<your-pay-id-address>",

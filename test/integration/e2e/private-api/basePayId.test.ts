@@ -6,6 +6,7 @@ import HttpStatus from '../../../../src/types/httpStatus'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
+const payIdApiVersion = '2020-05-28'
 
 describe('E2E - privateAPIRouter - GET /users', function (): void {
   before(async function () {
@@ -29,9 +30,10 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
       ],
     }
 
-    // WHEN we make a GET request to /v1/users/ with that PayID as our user
+    // WHEN we make a GET request to /users/ with that PayID as our user
     request(app.privateAPIExpress)
-      .get(`/v1/users/${payId}`)
+      .get(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /json/u)
       // THEN We expect back a 200 - OK, with the account information
       .expect(HttpStatus.OK, expectedResponse, done)
@@ -47,9 +49,10 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
         'No information could be found for the PayID johndoe$xpring.money.',
     }
 
-    // WHEN we make a GET request to /v1/users/ with that PayID as our user
+    // WHEN we make a GET request to /users/ with that PayID as our user
     request(app.privateAPIExpress)
-      .get(`/v1/users/${payId}`)
+      .get(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /json/u)
       // THEN We expect back a 404 - Not Found, with the expected error response object
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
@@ -87,13 +90,14 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
       ],
     }
 
-    // WHEN we make a POST request to /v1/users with that user information
+    // WHEN we make a POST request to /users with that user information
     request(app.privateAPIExpress)
-      .post(`/v1/users`)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
-      .expect('Location', `/v1/users/${userInformation.payId}`)
+      .expect('Location', `/users/${userInformation.payId}`)
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
@@ -113,13 +117,14 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
       ],
     }
 
-    // WHEN we make a POST request to /v1/users with that user information
+    // WHEN we make a POST request to /users with that user information
     request(app.privateAPIExpress)
-      .post(`/v1/users`)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
-      .expect('Location', `/v1/users/${userInformation.payId}`)
+      .expect('Location', `/users/${userInformation.payId}`)
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
@@ -139,9 +144,10 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
       ],
     }
 
-    // WHEN we make a POST request to /v1/users with that user information
+    // WHEN we make a POST request to /users with that user information
     request(app.privateAPIExpress)
-      .post(`/v1/users`)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect back a 201 - CREATED
@@ -169,9 +175,10 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
       message: 'There already exists a user with the provided PayID',
     }
 
-    // WHEN we make a POST request to /v1/users with that user information
+    // WHEN we make a POST request to /users with that user information
     request(app.privateAPIExpress)
-      .post(`/v1/users`)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT and our expected error response
@@ -204,9 +211,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       ],
     }
 
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${payId}`)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
@@ -229,9 +237,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       ],
     }
 
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${payId}`)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
@@ -254,14 +263,15 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       ],
     }
 
-    // WHEN we make a PUT request to /v1/users/ with the information to insert
+    // WHEN we make a PUT request to /users/ with the information to insert
     request(app.privateAPIExpress)
-      .put(`/v1/users/${payId}`)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(insertedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the PayID inserted is that of the request body, not the URL path
-      .expect('Location', `/v1/users/${insertedInformation.payId}`)
+      .expect('Location', `/users/${insertedInformation.payId}`)
       // AND we expect back a 201 - CREATED, with the inserted user information
       .expect(HttpStatus.Created, insertedInformation, done)
   })
@@ -286,9 +296,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
         },
       ],
     }
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${badPayId}`)
+      .put(`/users/${badPayId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
@@ -315,9 +326,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
         },
       ],
     }
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${badPayId}`)
+      .put(`/users/${badPayId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
@@ -344,9 +356,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
         },
       ],
     }
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${badPayId}`)
+      .put(`/users/${badPayId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
@@ -376,9 +389,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       message: 'There already exists a user with the provided PayID',
     }
 
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${payId}`)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT and our expected error response
@@ -408,9 +422,10 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       message: 'There already exists a user with the provided PayID',
     }
 
-    // WHEN we make a PUT request to /v1/users/ with the new information to update
+    // WHEN we make a PUT request to /users/ with the new information to update
     request(app.privateAPIExpress)
-      .put(`/v1/users/${payId}`)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT and our expected error response
@@ -436,16 +451,21 @@ describe('E2E - privateAPIRouter - DELETE /users', function (): void {
       statusCode: 404,
     }
 
-    // WHEN we make a DELETE request to /v1/users/ with the PayID to delete
+    // WHEN we make a DELETE request to /users/ with the PayID to delete
     request(app.privateAPIExpress)
-      .delete(`/v1/users/${payId}`)
+      .delete(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       // THEN we expect back a 204-No Content, indicating successful deletion
       .expect(HttpStatus.NoContent)
       .then((_res) => {
         // AND subsequent GET requests to that PayID now return a 404
         request(app.privateAPIExpress)
-          .get(`/v1/users/${payId}`)
+          .get(`/users/${payId}`)
+          .set('PayID-API-Version', payIdApiVersion)
           .expect(HttpStatus.NotFound, missingPayIdError, done)
+      })
+      .catch((err) => {
+        done(err)
       })
   })
 
@@ -453,9 +473,10 @@ describe('E2E - privateAPIRouter - DELETE /users', function (): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'johndoe$xpring.money'
 
-    // WHEN we make a DELETE request to /v1/users/ with the PayID to delete
+    // WHEN we make a DELETE request to /users/ with the PayID to delete
     request(app.privateAPIExpress)
-      .delete(`/v1/users/${payId}`)
+      .delete(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       // THEN we expect back a 204 - No Content
       .expect(HttpStatus.NoContent, done)
   })
