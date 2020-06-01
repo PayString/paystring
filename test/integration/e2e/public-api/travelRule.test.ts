@@ -64,7 +64,7 @@ describe('E2E - publicAPIRouter - Travel Rule', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve the PaymentSetupDetails
     request(app.publicAPIExpress)
       .get(`${payId}/payment-setup-details`)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       // THEN we get back a 200 - OK with the PaymentSetupDetails
       .expect(isExpectedPaymentSetupDetails(expectedResponse))
@@ -83,7 +83,7 @@ describe('E2E - publicAPIRouter - Travel Rule', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve the PaymentSetupDetails
     request(app.publicAPIExpress)
       .post(`${payId}/payment-setup-details`)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .send(wrapMessage(mockComplianceData, MessageType.Compliance))
       .expect('Content-Type', /json/u)
       // THEN we get back the PaymentSetupDetails

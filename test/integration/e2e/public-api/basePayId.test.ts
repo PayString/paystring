@@ -52,7 +52,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
     request(app.publicAPIExpress)
       .get(payId)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -83,7 +83,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicAPIExpress)
       .get(payId)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -114,7 +114,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
     request(app.publicAPIExpress)
       .get(payId)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -145,7 +145,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
     request(app.publicAPIExpress)
       .get(payId)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -169,7 +169,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicAPIExpress)
       .get(payId)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
@@ -190,7 +190,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-devnet
     request(app.publicAPIExpress)
       .get(payId)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.

@@ -111,7 +111,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
   ): Promise<request.Test> {
     return request(app.publicAPIExpress)
       .get(`/${account}`)
-      .set('PayID-Version', '0.2')
+      .set('PayID-Version', '1.0')
       .set('Accept', accept)
       .expect((res) => {
         assert.strictEqual(res.status, status)
