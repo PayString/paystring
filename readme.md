@@ -22,15 +22,17 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
 - [4. PayID integration and the PayID APIs](#4-payid-integration-and-the-payid-apis)
   - [4.1. Set up a PayID server for demonstration purposes](#41-set-up-a-payid-server-for-demonstration-purposes)
   - [4.2. Private API endpoints](#42-private-api-endpoints)
-    - [4.2.1. Get a PayID user information](#421-get-a-payid-user-information)
-    - [4.2.2. Create a PayID user](#422-create-a-payid-user)
-    - [4.2.3. Update a PayID user](#423-update-a-payid-user)
-    - [4.2.4. Delete a PayID user](#424-delete-a-payid-user)
+    - [4.2.1. Private API Version Header](#421-private-api-version-header)
+    - [4.2.2. Get a PayID user information](#422-get-a-payid-user-information)
+    - [4.2.3. Create a PayID user](#423-create-a-payid-user)
+    - [4.2.4. Update a PayID user](#424-update-a-payid-user)
+    - [4.2.5. Delete a PayID user](#425-delete-a-payid-user)
   - [4.3. Public API endpoints](#43-public-api-endpoints)
-    - [4.3.1. Get a Travel Rule compliance payment setup details object](#431-get-a-travel-rule-compliance-payment-setup-details-object)
-    - [4.3.2. Send compliance information](#432-send-compliance-information)
-    - [4.3.3. Send payment proof](#433-send-payment-proof)
-    - [4.3.4. Get user information](#434-get-user-information)
+    - [4.3.1. - Public API Version Header](#431---public-api-version-header)
+    - [4.3.2. Get a Travel Rule compliance payment setup details object](#432-get-a-travel-rule-compliance-payment-setup-details-object)
+    - [4.3.3. Send compliance information](#433-send-compliance-information)
+    - [4.3.4. Send payment proof](#434-send-payment-proof)
+    - [4.3.5. Get user information](#435-get-user-information)
 - [5. Schemas](#5-schemas)
   - [5.1 Example single user schema](#51-example-single-user-schema)
   - [5.2 Example error schema](#52-example-error-schema)
@@ -48,7 +50,7 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
 - [8. Use Xpring SDK with PayID](#8-use-xpring-sdk-with-payid)
   - [8.1. Demo](#81-demo)
 - [9. Headers for GET requests for PayID Public API](#9-headers-for-get-requests-for-payid-public-api)
-  - [9.1. Header for All Addresses](#91-headers-for-all-addresses)
+  - [9.1. Header for All Addresses](#91-header-for-all-addresses)
   - [9.2. Headers for XRP](#92-headers-for-xrp)
   - [9.3. Headers for ACH](#93-headers-for-ach)
   - [9.4. Headers for BTC](#94-headers-for-btc)
@@ -130,7 +132,14 @@ The list of private endpoints is:
 
 Once you have set up your PayID server, you can access the Private PayID API endpoints using Postman or these cURL commands.
 
-#### 4.2.1. Get a PayID user information
+#### 4.2.1. Private API Version Header
+
+All private API requests MUST include an HTTP header of the following form:
+`PayID-API-Version: YYYY-MM-DD`.
+
+Currently, the only version of the Private API is `2020-05-28`. Any date on or after that date is acceptable to use as a `PayID-API-Version` header.
+
+#### 4.2.2. Get a PayID user information
 
 **Request format**
 
@@ -195,7 +204,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 200              | Successfully retrieved a PayID information |
 | 404              |                PayID information not found |
 
-#### 4.2.2. Create a PayID user
+#### 4.2.3. Create a PayID user
 
 **Request format**
 
@@ -290,7 +299,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 409              | Conflict, it already exists a user with the PayID specified in the payId field |
 | 500              |                          Internal server error. A body field might be missing. |
 
-#### 4.2.3. Update a PayID user
+#### 4.2.4. Update a PayID user
 
 You can modify the user information associated with a particular PayID address.
 
@@ -383,7 +392,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 500              |                          Internal server error. A body field might be missing. |
 | 503              |                                                            Service unavailable |
 
-#### 4.2.4. Delete a PayID user
+#### 4.2.5. Delete a PayID user
 
 **Request format**
 
@@ -462,7 +471,24 @@ The list of public endpoints is:
 | [POST](#433-send-payment-proof)                                       | /{user}/payment-proof         |                                        Send payment proof |
 | [GET](#434-get-user-information)                                      | /{user}                       |                              Get a PayID user information |
 
-#### 4.3.1. Get a Travel Rule compliance payment setup details object
+#### 4.3.1. - Public API Version Header
+
+The PayID protocol requires all requests to include a `PayID-Version` HTTP header of the form:
+`PayID-Version: {major}.{minor}`, where `major` and `minor` are integers.
+
+As of right now, the only PayID Protocol version is `1.0`, so all PayID requests must include `PayID-Version: 1.0` as an HTTP header.
+
+All PayID servers must respond with the _latest_ version of the PayID protocol they know how to respond to,
+as well as the PayID protocol version the response payload adheres to.
+
+So, a public API response to a `PayID-Version: 1.0` request could look something like this:
+
+```http
+PayID-Version: 1.0
+PayID-Server-Version: 1.1
+```
+
+#### 4.3.2. Get a Travel Rule compliance payment setup details object
 
 **Description**
 
@@ -554,7 +580,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 404              |                                  Not found |
 | 503              |                        Service unavailable |
 
-#### 4.3.2. Send compliance information
+#### 4.3.3. Send compliance information
 
 If a payment setup details object contains information in the `complianceRequirements` field, then upon receipt of that object, the sender institution must send back compliance information.
 
@@ -670,7 +696,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 422              | Unprocessable Entity |
 | 503              |  Service unavailable |
 
-#### 4.3.3. Send payment proof
+#### 4.3.4. Send payment proof
 
 The originator of the transaction sends a payment proof after the payment clears and settles.
 
@@ -729,7 +755,7 @@ Response (Success)
 200 OK
 ```
 
-#### 4.3.4. Get user information
+#### 4.3.5. Get user information
 
 The PayID Public API does not require authentication, as it is open to any user. The PayID Private API is meant for administrators who are building a payment network.
 
