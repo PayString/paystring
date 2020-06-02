@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import getAllAddressInfoFromDatabase from '../data-access/payIds'
+import createMemo from '../hooks/memo'
 import {
   formatPaymentInfo,
   getPreferredAddressHeaderPair,
@@ -10,7 +11,6 @@ import { recordPayIdLookupResult } from '../services/metrics'
 import { urlToPayId, constructUrl } from '../services/urls'
 import HttpStatus from '../types/httpStatus'
 import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
-import createMemo from '../utils/memo'
 
 /**
  * Resolves inbound requests to a PayID to their respective ledger addresses or other payment information.
