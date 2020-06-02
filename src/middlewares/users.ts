@@ -97,8 +97,8 @@ export async function putUser(
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
   const payId = req.params[0]
-  const newPayId = req?.body?.payId
-  const addresses = req?.body?.addresses
+  const newPayId = req.body?.payId
+  const addresses = req.body?.addresses
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
