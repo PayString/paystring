@@ -2,7 +2,7 @@ import {
   PaymentSetupDetails,
   AddressDetailsType,
   ComplianceType,
-  Compliance,
+  ComplianceData,
   PaymentProof,
 } from '../types/publicAPI'
 
@@ -15,7 +15,7 @@ export const mockPaymentProof: PaymentProof = {
   memo: 'the payment succeeded!',
 }
 
-export const mockComplianceData: Compliance = {
+export const mockComplianceData: ComplianceData = {
   type: ComplianceType.TravelRule,
   data: {
     originator: {

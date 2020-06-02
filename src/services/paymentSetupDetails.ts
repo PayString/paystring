@@ -2,7 +2,7 @@ import { mockPaymentSetupDetailsWithComplianceHashes } from '../data/travelRuleD
 import {
   PaymentSetupDetails,
   PaymentInformation,
-  Compliance,
+  ComplianceData,
   ComplianceType,
 } from '../types/publicAPI'
 
@@ -21,7 +21,7 @@ import {
 export default function generatePaymentSetupDetails(
   payId: string,
   paymentInformation: PaymentInformation,
-  complianceData?: Compliance,
+  complianceData?: ComplianceData,
 ): PaymentSetupDetails {
   // TODO(dino): Store whether a server needs to be travel rule compliant in the env
   // TODO(dino): Actually hash the compliance data

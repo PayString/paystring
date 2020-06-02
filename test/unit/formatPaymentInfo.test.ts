@@ -146,9 +146,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     }
 
     // AND GIVEN a createMemo() that returns a truthy value
-    function memoFn(): string {
-      return 'memo'
-    }
+    const memoFn = (): string => 'memo'
 
     // WHEN we format the address information
     const paymentInfo = formatPaymentInfo(addressInfo, payId, memoFn)

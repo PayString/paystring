@@ -10,14 +10,17 @@ import { ParsedAcceptHeader } from './headers'
  *
  * @param addresses - Array of address information associated with a PayID.
  * @param payId - Optionally include a PayId.
- * @returns - The formatted PaymentInformation object.
+ * @param memoFn - A function, taking an optional PaymentInformation object,
+ *                 that returns a string to be used as the memo.
+ *
+ * @returns The formatted PaymentInformation object.
  */
 export function formatPaymentInfo(
   addresses: readonly AddressInformation[],
   payId?: string,
-  memoFn?: () => string,
+  memoFn?: (paymentInformation: PaymentInformation) => string,
 ): PaymentInformation {
-  return {
+  const paymentInformation = {
     addresses: addresses.map((address) => {
       return {
         paymentNetwork: address.paymentNetwork,
@@ -27,7 +30,11 @@ export function formatPaymentInfo(
       }
     }),
     ...(payId && { payId }),
-    ...(memoFn?.() && { memo: memoFn() }),
+  }
+
+  return {
+    ...paymentInformation,
+    ...(memoFn?.(paymentInformation) && { memo: memoFn(paymentInformation) }),
   }
 }
 

@@ -111,7 +111,7 @@ export enum ComplianceType {
  * Compliance data included in a SignatureWrapper when POSTing to the
  * /payment-setup-details endpoint.
  */
-export interface Compliance {
+export interface ComplianceData {
   type: ComplianceType
   data: TravelRule
   memo?: string // 1 kb max
@@ -141,7 +141,7 @@ export enum MessageType {
  */
 export interface SignatureWrapper {
   messageType: MessageType
-  message: PaymentSetupDetails | Compliance | PaymentProof
+  message: PaymentSetupDetails | ComplianceData | PaymentProof
   publicKeyType: string
   publicKeyData: string[]
   publicKey: string

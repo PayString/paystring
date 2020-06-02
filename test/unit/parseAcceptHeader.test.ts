@@ -24,6 +24,21 @@ describe('Parsing - Headers - parseAcceptHeader()', function (): void {
     assert.deepStrictEqual(parsedAcceptHeader, expectedParsedAcceptHeader)
   })
 
+  it('Parses a string with a valid media type without an environment', function () {
+    // GIVEN a string with a valid Accept type
+    const validAcceptMediaType = 'application/ach+json'
+    const expectedParsedAcceptHeader: ParsedAcceptHeader = {
+      mediaType: validAcceptMediaType,
+      paymentNetwork: 'ACH',
+    }
+
+    // WHEN we attempt to parse it
+    const parsedAcceptHeader = parseAcceptHeader(validAcceptMediaType)
+
+    // THEN we successfully parsed the parts
+    assert.deepStrictEqual(parsedAcceptHeader, expectedParsedAcceptHeader)
+  })
+
   it('Throws an error when parsing a string with an invalid media type', function () {
     // GIVEN a string with an invalid Accept type
     const invalidAcceptMediaType = 'invalid-type'
