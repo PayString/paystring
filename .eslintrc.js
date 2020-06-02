@@ -31,7 +31,7 @@ module.exports = {
 
     // TODO:(hbergren) These are all rules we should remove eventually
     'import/max-dependencies': ['warn', { max: 9 }],
-    'max-lines-per-function': ['warn', { max: 82 }],
+    'max-lines-per-function': ['warn', { max: 86 }],
     'max-statements': ['warn', { max: 26 }],
     complexity: ['warn', { max: 11 }],
   },
