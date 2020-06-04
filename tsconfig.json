@@ -1,32 +1,35 @@
 {
+  "includes": ["src/**/*.ts"],
+
   "compileOnSave": true,
   "compilerOptions": {
     // Basic Options
     "project": ".",
     "outDir": "./build",
-    "target": "es2017",
+    "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    // Add custom typings
+    "incremental": true,
+
+    // Add support for custom typings
     "baseUrl": "./",
     "paths": {
       "*": ["@types/*"]
     },
 
-    "downlevelIteration": true,
-
-    // Source Map Stuff
+    // Source Maps & Declaration Files
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
 
-    // Checks
+    // Strict Mode
     "strict": true,
+
     // Checks not in "strict" mode
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
-  },
-  "includes": ["src/**/*.ts"]
+    "noFallthroughCasesInSwitch": true,
+    "forceConsistentCasingInFileNames": true
+  }
 }

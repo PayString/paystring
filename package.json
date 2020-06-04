@@ -1,31 +1,32 @@
 {
   "name": "payid",
   "version": "1.0.0",
-  "main": "./build/src/index.js",
-  "scripts": {
-    "copySQL": "copyfiles -u 1 **/*.sql build/src",
-    "copyHTML": "copyfiles -u 1 src/html/* build/src",
-    "start": "node build/src/index.js",
-    "startWatch": "tsc-watch --onSuccess 'npm run start'",
-    "test": "nyc mocha 'test/**/*.test.ts'",
-    "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
-    "lintNoFix": "eslint . --ext .ts",
-    "lint": "eslint . --ext .ts --fix",
-    "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
-    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML",
-    "buildWatch": "tsc --watch --project ."
+  "description": "The PayID Server reference implementation",
+  "keywords": [],
+  "homepage": "https://github.com/xpring-eng/payid#readme",
+  "bugs": {
+    "url": "https://github.com/xpring-eng/payid/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xpring-eng/identity-system.git"
+    "url": "git+https://github.com/xpring-eng/payid.git"
   },
-  "keywords": [],
-  "author": "",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/xpring-eng/identity-system/issues"
+  "author": "",
+  "main": "./build/src/index.js",
+  "scripts": {
+    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML",
+    "buildWatch": "tsc --watch --project .",
+    "copyHTML": "copyfiles -u 1 src/html/* build/src",
+    "copySQL": "copyfiles -u 1 **/*.sql build/src",
+    "lint": "eslint . --ext .ts --fix",
+    "lintNoFix": "eslint . --ext .ts",
+    "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
+    "start": "node build/src/index.js",
+    "startWatch": "tsc-watch --onSuccess 'npm run start'",
+    "test": "nyc mocha 'test/**/*.test.ts'",
+    "testWatch": "nyc mocha --watch 'test/**/*.test.ts'"
   },
-  "homepage": "https://github.com/xpring-eng/identity-system#readme",
   "dependencies": {
     "boom": "^7.3.0",
     "express": "^4.17.1",
@@ -70,16 +71,7 @@
     "ts-node": "^8.10.2",
     "tsc-watch": "^4.2.8"
   },
-  "description": "",
-  "nyc": {
-    "extension": [
-      ".ts",
-      ".tsx"
-    ],
-    "include": [
-      "src/**/*.ts"
-    ],
-    "all": true,
-    "check-leaks": true
+  "engines": {
+    "node": ">=12.0.0"
   }
 }
