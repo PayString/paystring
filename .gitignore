@@ -136,5 +136,9 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
-# End of https://www.gitignore.io/api/osx,node
+# IntelliJ nonsense
 /.idea
+
+# Lefthook
+/.lefthook-local
+lefthook-local.yml

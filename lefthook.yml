@@ -1,0 +1,25 @@
+# Refer to following link for examples and full documentation:
+# https://github.com/Arkweid/lefthook/blob/master/docs/full_guide.md
+#
+pre-push:
+  parallel: true
+  commands:
+    packages-audit:
+      tags: security
+      run: npm audit
+    eslint:
+      tags: style
+      run: npm run lintNoFix
+    test:
+      tags: test
+      run: npm run test
+    tsc:
+      tags: typescript
+      run: tsc --noEmit
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: '*.{js,ts}'
+      run: npx eslint {staged_files}

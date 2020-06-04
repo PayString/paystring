@@ -39,6 +39,7 @@
     "typescript": "^3.9.3"
   },
   "devDependencies": {
+    "@arkweid/lefthook": "^0.7.2",
     "@types/boom": "^7.3.0",
     "@types/chai": "^4.2.11",
     "@types/chai-as-promised": "^7.1.2",
