@@ -11,10 +11,17 @@ export type MessageWithType =
   | [ComplianceData, MessageType.Compliance]
   | [PaymentProof, MessageType.PaymentProof]
 
+/**
+ * A function that generates a mock SignatureWrapper, used for some rough tests for Travel Rule.
+ *
+ * @param args - A tuple of the [Message, MessageType] to wrap in a SignatureWrapper.
+ *
+ * @returns The provided message in a SignatureWrapper format.
+ */
 export function wrapMessage(...args: MessageWithType): SignatureWrapper {
   return {
-    messageType: args[1],
     message: args[0],
+    messageType: args[1],
     publicKeyType: 'x509+sha256',
     publicKeyData: [],
     publicKey: `00:c9:22:69:31:8a:d6:6c:ea:da:c3:7f:2c:ac:a5:af:c0:02:ea:81:cb:65:b9:fd:0c:6d:46:5b:c9:1e:9d:3b:ef`,

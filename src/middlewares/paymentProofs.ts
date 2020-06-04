@@ -7,6 +7,15 @@ import {
 import HttpStatus from '../types/httpStatus'
 import { handleHttpError } from '../utils/errors'
 
+/**
+ * An Express middleware used to handle POST requests with PaymentProofs to the /payment-proofs endpoint.
+ *
+ * @param req - An Express Request object, holding the PaymentProof in the request body.
+ * @param res - An Express Response object, used for error handling.
+ * @param next - An Express next() function.
+ *
+ * @returns The Express next function provided, to call the next middleware in the pipeline.
+ */
 export default function receivePaymentProof(
   req: Request,
   res: Response,

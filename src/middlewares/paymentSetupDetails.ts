@@ -9,11 +9,12 @@ import { handleHttpError } from '../utils/errors'
 /**
  * Parses off the /payment-setup-details path and nonce query parameter from the request URL.
  *
- * @param req - Contains the request URL, which is the PayID + /payment-setup-details + nonce.
- * @param _res - Response used for erroring.
- * @param next - Passes req/res to the next Express middleware.
+ * @param req - An Express Request object.
+ *              Contains the request URL, which is the PayID + /payment-setup-details + nonce.
+ * @param _res - An Express Response object (unused).
+ * @param next - An Express next() function.
  *
- * @returns Either the Express next() function or undefined.
+ * @returns The Express next() function, to trigger the next middleware in the pipeline.
  */
 export function parsePaymentSetupDetailsPath(
   req: Request,
@@ -27,6 +28,17 @@ export function parsePaymentSetupDetailsPath(
   return next()
 }
 
+/**
+ * A middleware to handle a GET /payment-setup-details request.
+ * Generates the PaymentSetupDetails object and wraps it in a SignatureWrapper.
+ *
+ * @param _req - An Express Request object (unused).
+ * @param res - An Express Response object. Holds (payId, paymentInformation, complianceData) on res.locals.
+ *              Also used for setting the eventual response for a GET /payment-setup-details.
+ * @param next - An Express next() function.
+ *
+ * @returns An Express next() function, to trigger the next middleware in the pipeline.
+ */
 export default function getPaymentSetupDetails(
   _req: Request,
   res: Response,
