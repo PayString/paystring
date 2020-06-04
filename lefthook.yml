@@ -15,7 +15,7 @@ pre-push:
       run: npm run test
     tsc:
       tags: typescript
-      run: tsc --noEmit
+      run: tsc --noEmit --incremental false
 
 pre-commit:
   parallel: true
