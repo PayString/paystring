@@ -2,9 +2,10 @@ import knex from '../db/knex'
 import { Address, AddressInformation } from '../types/database'
 
 /**
- * Retrieve all of the address information associated with a given PayID.
+ * Retrieve all of the address information associated with a given PayID from the database.
  *
  * @param payId - The PayID used to retrieve address information.
+ * @returns All of the address information associated with a given PayID.
  */
 export default async function getAllAddressInfoFromDatabase(
   payId: string,

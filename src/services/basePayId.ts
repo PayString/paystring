@@ -42,10 +42,10 @@ export function formatPaymentInfo(
  * Gets the best payment information associated with a PayID given a set of sorted
  * Accept types and a list of payment information.
  *
- * @param paymentInformation - The payment information to look through.
- * @param sortedAcceptTypes - An array of AcceptTypes, sorted by preference.
+ * @param allAddresses - The array of AddressInformation objects to look through.
+ * @param sortedParsedAcceptHeaders - An array of ParsedAcceptHeader objects, sorted by preference.
  *
- * @returns - An object containing the AcceptMediaType and its associated AddressInformation
+ * @returns An object containing the AcceptMediaType and its associated AddressInformation
  * if one exists; returns undefined otherwise.
  */
 export function getPreferredAddressHeaderPair(
@@ -97,7 +97,7 @@ export function getPreferredAddressHeaderPair(
  * Gets the associated AddressDetailsType for an address.
  *
  * @param address - The address information associated with a PayID.
- * @returns - The AddressDetailsType for the address.
+ * @returns The AddressDetailsType for the address.
  */
 export function getAddressDetailsType(
   address: AddressInformation,

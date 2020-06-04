@@ -69,6 +69,13 @@ export default logger
 
 // HELPER FUNCTIONS
 // TODO:(hbergren) Could possibly make this a generic (for stringy enums, but not numeric enums)
+/**
+ * A type guard function that determines if a provided string is a LogLevel enum member.
+ *
+ * @param member - A string which may or may not be a LogLevel.
+ *
+ * @returns A type predicate (boolean for type narrowing) indicating whether the string is a LogLevel.
+ */
 function isLogLevel(member: string): member is LogLevel {
   return Object.values(LogLevel).includes(member as LogLevel)
 }

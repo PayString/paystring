@@ -32,7 +32,7 @@ describe('Data Access - Database Errors', function (): void {
     const payId = null
 
     // WHEN we insert the user into the database
-    // @ts-expect-error
+    // @ts-expect-error -- In production we verify that the PayID is not null, but we want to test the DatabaseError
     const insertedAddresses = insertUser(payId, exampleAddresses)
 
     // THEN we get a DatabaseError with our expected error message
@@ -101,7 +101,7 @@ describe('Data Access - Database Errors', function (): void {
     ]
 
     // WHEN we insert the user into the database
-    // @ts-expect-error
+    // @ts-expect-error -- We are testing the DatabaseError, so need to ignore the typing information
     const insertedAddresses = insertUser(payId, addresses)
 
     // THEN we get a DatabaseError with our expected error message

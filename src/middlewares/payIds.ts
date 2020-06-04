@@ -18,6 +18,8 @@ import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
  * @param req - Contains PayID and payment network header.
  * @param res - Stores payment information to be returned to the client.
  * @param next - Passes req/res to next middleware.
+ *
+ * @returns A Promise resolving to nothing.
  */
 export default async function getPaymentInfo(
   req: Request,

@@ -58,6 +58,14 @@ export async function seedDatabase(): Promise<void> {
   await syncDatabaseSchema(testConfig.database)
 }
 
+/**
+ * Gets the definition of a database constraint.
+ *
+ * @param constraintName - The name of the constraint.
+ * @param tableName - The name of the table associated with the constraint.
+ *
+ * @returns The constraint definition from the database.
+ */
 export async function getDatabaseConstraintDefinition(
   constraintName: string,
   tableName: string,
