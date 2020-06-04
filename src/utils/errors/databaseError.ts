@@ -3,11 +3,9 @@ import logger from '../logger'
 
 import PayIDError from './payIdError'
 
-// These errors are triggered when we encounter a problem running a database query,
-// which causes the query to not complete.
-//
-// For example, a NotNullViolation error would be raised if we tried updating/inserting
-// a non-nullable column with a `null` value.
+/**
+ * An enum containing the different kinds of DatabaseErrors.
+ */
 export enum DatabaseErrorType {
   InvalidPayId = 'InvalidPayId',
   EmptyStringViolation = 'EmptyStringViolation',
@@ -17,7 +15,11 @@ export enum DatabaseErrorType {
   Unknown = 'Unknown',
 }
 
-// Exported for testing purposes
+/**
+ * A enum for the different error messages associated with different kinds of DatabaseErrors.
+ *
+ * Exported for testing purposes.
+ */
 export enum DatabaseErrorMessage {
   InvalidPayId = 'The PayID provided was in an invalid format',
 
@@ -36,9 +38,24 @@ export enum DatabaseErrorMessage {
   Unknown = 'An unknown error occurred.',
 }
 
+/**
+ * A custom error class for problems encountered with running a database query.
+ *
+ * For example, A DatabaseError[NotNullViolation] is raised if we try updating/inserting
+ * a non-nullable column with a NULL value.
+ *
+ * Exported for testing purposes.
+ */
 export default class DatabaseError extends PayIDError {
   public readonly kind: DatabaseErrorType
 
+  /**
+   * The constructor for new DatabaseErrors.
+   *
+   * @param message - The error message.
+   * @param kind - The kind of DatabaseError.
+   * @param status - An HTTP response code.
+   */
   public constructor(
     message: string,
     kind: DatabaseErrorType,
@@ -50,10 +67,14 @@ export default class DatabaseError extends PayIDError {
   }
 }
 
-// HELPER FUNCTIONS
 /* eslint-disable max-lines-per-function --
  * TODO:(hbergren), it might be worth refactoring this into smaller helper functions,
  * to make this easier to reason about.
+ */
+/**
+ * Map a raw error raised by Postgres/Knex into a custom DatabaseError.
+ *
+ * @param error - A raw SQL error raised by Postgres/Knex.
  */
 export function handleDatabaseError(error: Error): never {
   logger.debug(error)
