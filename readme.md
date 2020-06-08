@@ -43,7 +43,7 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
   - [6.1 Payment](#61-payment)
   - [6.2 Generate a seed-based wallet](#62-generate-a-seed-based-wallet)
 - [7. Interfaces](#7-interfaces)
-  - [7.1. PaymentInformation type](#71-paymentinformation-type)
+  - [7.1. PaymentInformation](#71-paymentinformation)
   - [7.2. CryptoAddressDetails](#72-cryptoaddressdetails)
   - [7.3. AchAddressDetails](#73-achaddressdetails)
   - [7.4. Error](#74-error)
@@ -1011,7 +1011,7 @@ const tx = await wallet.send(0.63, 'alice$institution.com')
 
 ## 7. Interfaces
 
-### 7.1. PaymentInformation type
+### 7.1. PaymentInformation
 
 ```ts
 interface PaymentInformation {
