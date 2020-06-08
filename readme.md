@@ -21,18 +21,25 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
 - [3. Future features and integrations](#3-future-features-and-integrations)
 - [4. PayID integration and the PayID APIs](#4-payid-integration-and-the-payid-apis)
   - [4.1. Set up a PayID server for demonstration purposes](#41-set-up-a-payid-server-for-demonstration-purposes)
-  - [4.2. Private API endpoints](#42-private-api-endpoints)
-    - [4.2.1. Private API Version Header](#421-private-api-version-header)
-    - [4.2.2. Get a PayID user information](#422-get-a-payid-user-information)
-    - [4.2.3. Create a PayID user](#423-create-a-payid-user)
-    - [4.2.4. Update a PayID user](#424-update-a-payid-user)
-    - [4.2.5. Delete a PayID user](#425-delete-a-payid-user)
-  - [4.3. Public API endpoints](#43-public-api-endpoints)
-    - [4.3.1. - Public API Version Header](#431---public-api-version-header)
-    - [4.3.2. Get a Travel Rule compliance payment setup details object](#432-get-a-travel-rule-compliance-payment-setup-details-object)
-    - [4.3.3. Send compliance information](#433-send-compliance-information)
-    - [4.3.4. Send payment proof](#434-send-payment-proof)
-    - [4.3.5. Get user information](#435-get-user-information)
+  - [4.2. Integrate PayID with existing user bases](#42-integrate-payid-with-existing-user-bases)
+    - [4.2.1. Extend tables with new columns](#421-extend-tables-with-new-columns)
+    - [4.2.2. Matching columns names in data access functions](#422-matching-column-names-in-data-access-functions)
+    - [4.2.3. Change the type of database](#423-change-the-type-of-database)
+    - [4.2.4. Set environment variables](#424-set-environment-variables)
+    - [4.2.5. Update database migrations](#425-update-database-migrations)
+    - [4.2.6. Update SQL files](#426-update-sql-files)
+  - [4.3. Private API endpoints](#43-private-api-endpoints)
+    - [4.3.1. Private API Version Header](#431-private-api-version-header)
+    - [4.3.2. Get a PayID user information](#432-get-a-payid-user-information)
+    - [4.3.3. Create a PayID user](#433-create-a-payid-user)
+    - [4.3.4. Update a PayID user](#434-update-a-payid-user)
+    - [4.3.5. Delete a PayID user](#435-delete-a-payid-user)
+  - [4.4. Public API endpoints](#44-public-api-endpoints)
+    - [4.4.1. - Public API Version Header](#441---public-api-version-header)
+    - [4.4.2. Get a Travel Rule compliance payment setup details object](#442-get-a-travel-rule-compliance-payment-setup-details-object)
+    - [4.4.3. Send compliance information](#443-send-compliance-information)
+    - [4.4.4. Send payment proof](#444-send-payment-proof)
+    - [4.4.5. Get user information](#445-get-user-information)
 - [5. Schemas](#5-schemas)
   - [5.1 Example single user schema](#51-example-single-user-schema)
   - [5.2 Example error schema](#52-example-error-schema)
@@ -118,7 +125,50 @@ You can then use the Private PayID API to:
 
 ![Open Source](img/open_source.png)
 
-### 4.2. Private API endpoints
+### 4.2. Integrate PayID with existing user bases
+
+If you have an existing user database, you will need to take the following steps to integrate PayID functionality into your product.
+
+#### 4.2.1. Extend tables with new columns
+
+The PayID [account schema](./src/db/schema/01_account.sql) is used to define a table for users.
+
+The account table contains two fields: `id` and `pay_id`. The address table uses a foreign key column called `account_id` which depends on id as a foreign key to associate addresses with individual accounts. The second column is `pay_id` which is where we store the string identifier (ex: `alice$wallet.com`). With an existing user database, you will need to add the `pay_id` column. It is likely that your user data base already has the equivalent of an `id` field, but if not it will be important to add this as well so that addresses can reference a specific user.
+
+Regarding constraints, there are three constraints in our account schema that could be useful in applying to your existing user database. The first two guarantee that all entered PayIDs are lowercase and are not empty strings. The final and most important constraint is the regex constraint `valid_pay_id` which guarantees that all entered PayIDs are in compliance with the format outlined in the PayID whitepaper.
+
+The PayID [address schema](./src/db/schema/02_address.sql) is used to define a table of addresses associated with users.
+
+Whenever a PayID is queried the payment network and environment are sent via an accept header. Therefore, it is important that each address stored has an associated payment network and environment. For example, upon receipt of the accept header `application/xrpl-testnet+json` you should query your address table for the address associated with the `xrpl` payment network and `testnet` environment.
+
+
+#### 4.2.2. Matching column names in data access functions
+
+All functions that query the database are located in [src/data-access](./src/data-access). If you decide to use column names that do not match what we have defined in [src/db/schema](./src/db/schema) then you must reflect those changes in the data access functions. Below is a table of all the files contained within [src/data-access](./src/data-access) and the corresponding column names they use:
+
+| File name                  | Columns used                                                                                                  |
+| -------------------------- | :------------------------------------------------------------------------------------------------------------ |
+| src/data-access/payIds.ts  | address.payment_network, address.environment, address.details                                                 |
+| src/data-access/reports.ts | address.payment_network, address.environment                                                                  |
+| src/data-access/users.ts   | account.pay_id, account.id, address.account_id, address.payment_network, address.environment, address.details |
+
+#### 4.2.3. Change the type of database
+
+In this reference implementation we use a Postgres database. If you would like to use a different type of database, you need to either update settings in the [knexfile](./src/db/knex.ts) or replace the use of knex throughout the repository with your preferred database connection tool.
+
+#### 4.2.4. Set environment variables
+
+PayID depends on a number of environment variables. All environment variables are read in [src/config.ts](./src/config.ts) and assigned to variables. During integration you should look through all of the environment variables used in [src/config.ts](./src/config.ts) and [example.production.env](./example.production.env) to ensure all are set properly for your environment.
+
+#### 4.2.5. Update database migrations
+
+If you are using your own database, there are migration files written specifically for the tables outlined in [src/db/schema](./src/db/schema). You will need to either remove these migration files or update them to match your database.
+
+#### 4.2.6. Update SQL files
+
+There are a number of .sql files within [src/db](./src/db) that are all executed by the function syncDatabaseSchema located in [src/db/syncDatabaseSchema.ts](./src/db/syncDatabaseSchema.ts). For integration into an existing system it is important to look through the directories in [src/db](./src/db) to identify any .sql files that you need to modify to fit your existing system or remove because they do not apply.
+
+### 4.3. Private API endpoints
 
 The private APIs run by default on port 8081. Make sure to adjust this value if needed.
 The list of private endpoints is:
@@ -132,14 +182,14 @@ The list of private endpoints is:
 
 Once you have set up your PayID server, you can access the Private PayID API endpoints using Postman or these cURL commands.
 
-#### 4.2.1. Private API Version Header
+#### 4.3.1. Private API Version Header
 
 All private API requests MUST include an HTTP header of the following form:
 `PayID-API-Version: YYYY-MM-DD`.
 
 Currently, the only version of the Private API is `2020-05-28`. Any date on or after that date is acceptable to use as a `PayID-API-Version` header.
 
-#### 4.2.2. Get a PayID user information
+#### 4.3.2. Get a PayID user information
 
 **Request format**
 
@@ -204,7 +254,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 200              | Successfully retrieved a PayID information |
 | 404              |                PayID information not found |
 
-#### 4.2.3. Create a PayID user
+#### 4.3.3. Create a PayID user
 
 **Request format**
 
@@ -299,7 +349,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 409              | Conflict, it already exists a user with the PayID specified in the payId field |
 | 500              |                          Internal server error. A body field might be missing. |
 
-#### 4.2.4. Update a PayID user
+#### 4.3.4. Update a PayID user
 
 You can modify the user information associated with a particular PayID address.
 
@@ -392,7 +442,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 500              |                          Internal server error. A body field might be missing. |
 | 503              |                                                            Service unavailable |
 
-#### 4.2.5. Delete a PayID user
+#### 4.3.5. Delete a PayID user
 
 **Request format**
 
@@ -459,7 +509,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 404              |                                   Not found |
 | 503              |                         Service unavailable |
 
-### 4.3. Public API endpoints
+### 4.4. Public API endpoints
 
 The public APIs runs by default on port 8080. Make sure to update this value if needed.
 The list of public endpoints is:
@@ -471,7 +521,7 @@ The list of public endpoints is:
 | [POST](#433-send-payment-proof)                                       | /{user}/payment-proof         |                                        Send payment proof |
 | [GET](#434-get-user-information)                                      | /{user}                       |                              Get a PayID user information |
 
-#### 4.3.1. - Public API Version Header
+#### 4.4.1. - Public API Version Header
 
 The PayID protocol requires all requests to include a `PayID-Version` HTTP header of the form:
 `PayID-Version: {major}.{minor}`, where `major` and `minor` are integers.
@@ -488,7 +538,7 @@ PayID-Version: 1.0
 PayID-Server-Version: 1.1
 ```
 
-#### 4.3.2. Get a Travel Rule compliance payment setup details object
+#### 4.4.2. Get a Travel Rule compliance payment setup details object
 
 **Description**
 
@@ -580,7 +630,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 404              |                                  Not found |
 | 503              |                        Service unavailable |
 
-#### 4.3.3. Send compliance information
+#### 4.4.3. Send compliance information
 
 If a payment setup details object contains information in the `complianceRequirements` field, then upon receipt of that object, the sender institution must send back compliance information.
 
@@ -696,7 +746,7 @@ The following table lists the HTTP status codes and messages returned for this m
 | 422              | Unprocessable Entity |
 | 503              |  Service unavailable |
 
-#### 4.3.4. Send payment proof
+#### 4.4.4. Send payment proof
 
 The originator of the transaction sends a payment proof after the payment clears and settles.
 
@@ -755,7 +805,7 @@ Response (Success)
 200 OK
 ```
 
-#### 4.3.5. Get user information
+#### 4.4.5. Get user information
 
 The PayID Public API does not require authentication, as it is open to any user. The PayID Private API is meant for administrators who are building a payment network.
 
