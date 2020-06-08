@@ -15,8 +15,8 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
 # Table of Contents <!-- omit in toc -->
 
 - [1. Web standards](#1-web-standards)
-  - [1a. Decentralized and trust-minimized](#1a-decentralized-and-trust-minimized)
-  - [1b. Protocol abstraction](#1b-protocol-abstraction)
+  - [1.1. Decentralized and trust-minimized](#12-decentralized-and-trust-minimized)
+  - [1.2. Protocol abstraction](#12-protocol-abstraction)
 - [2. Extensions and Travel Rule compliance](#2-extensions-and-travel-rule-compliance)
 - [3. Future features and integrations](#3-future-features-and-integrations)
 - [4. PayID integration and the PayID APIs](#4-payid-integration-and-the-payid-apis)
@@ -62,11 +62,11 @@ PayID uses existing web standards and infrastructure, including HTTP and DNS. Ea
 
 PayID does not rely on any consensus protocols, which simplifies infrastructure demands.
 
-### 1a. Decentralized and trust-minimized
+### 1.1. Decentralized and trust-minimized
 
 PayID is built on the most successful decentralized network in history: the web. PayID is fully peer-to-peer with no central counterparty. Anyone can set up their own personal PayID server so they have no counterparty risk.
 
-### 1b. Protocol abstraction
+### 1.2. Protocol abstraction
 
 PayID fully abstracts away underlying payment rail details from end users. A user only needs to keep track of a single PayID rather than a complex address for each network. Service operators can manage the underlying addresses behind the scenes according to their own security and privacy best practices without requiring the end user to take any action.
 
