@@ -1,6 +1,6 @@
 # PayID: A Protocol for Human-Readable, Travel-Rule-Compliant Addresses <!-- omit in toc -->
 
-You can also view the PayID documentation at [docs.payid.org](https://docs.payid.org).
+<!-- You can also view the PayID documentation at [docs.payid.org](https://docs.payid.org). -->
 
 With PayID, you can use human-readable addresses to transmit value in the currency of your choice. The PayID network allows participants to reach one another through a standardized address. For example, `alice$wallet.com` maps to the corresponding URL `https://wallet.com/alice`.
 
