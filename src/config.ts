@@ -31,26 +31,19 @@ const config = {
   metrics: {
     /**
      * Name of the individual or organization that operates this PayID server.
-     * Organization is used to identify who is pushing the metrics in cases where
-     * multiple PayID servers are pushing to a shared metrics server.
-     * Required to push metrics.
+     * Used to identify who is pushing the metrics in cases where multiple PayID servers are pushing to a shared metrics server.
+     * Required for pushing metrics.
      */
     organization: process.env.PAYID_ORG,
 
-    /**
-     * URL to Prometheus push gateway. Defaulted to the Xpring Prometheus server.
-     */
+    /** URL to a Prometheus push gateway, defaulting to the Xpring Prometheus server. */
     gatewayUrl:
       process.env.PUSH_GATEWAY_URL ?? 'https://push00.mon.payid.tech/',
 
-    /**
-     * How frequently to push metrics to the gateway (in seconds).
-     */
+    /** How frequently (in seconds) to push metrics to the Prometheus push gateway. */
     pushIntervalInSeconds: Number(process.env.PUSH_METRICS_INTERVAL) || 15,
 
-    /**
-     * How frequently (in seconds) to refresh the Pay ID Count report data from the database.
-     */
+    /** How frequently (in seconds) to refresh the PayID Count report data from the database. */
     payIdCountRefreshIntervalInSeconds:
       Number(process.env.PAYID_COUNT_REFRESH_INTERVAL) || 60,
   },

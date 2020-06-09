@@ -1,3 +1,4 @@
+import config from '../config'
 import getPayIdCounts from '../data-access/reports'
 import logger from '../utils/logger'
 
@@ -17,23 +18,32 @@ export async function generatePayIdCountMetrics(): Promise<void> {
   })
 }
 
-export default function scheduleRecurringPayIdCountMetrics(
-  refreshIntervalInSeconds: number,
-): NodeJS.Timeout | undefined {
-  if (refreshIntervalInSeconds <= 0) {
+/**
+ * Set a recurring timer that will generate PayID count metrics every PAYID_COUNT_REFRESH_INTERVAL seconds.
+ *
+ * @returns A timer that will generate PayID count metrics every X seconds.
+ */
+export default function scheduleRecurringPayIdCountMetrics():
+  | NodeJS.Timeout
+  | undefined {
+  const refreshIntervalInSeconds =
+    config.metrics.payIdCountRefreshIntervalInSeconds
+
+  if (refreshIntervalInSeconds <= 0 || Number.isNaN(refreshIntervalInSeconds)) {
     logger.warn(
-      `invalid refreshIntervalInSeconds value ${refreshIntervalInSeconds}. skipping scheduling.`,
+      `Invalid PAYID_COUNT_REFRESH_INTERVAL value: ${refreshIntervalInSeconds}. PayID count metrics will not be scheduled.`,
     )
     return undefined
   }
+
   setTimeout(() => {
     generatePayIdCountMetrics().catch((err) =>
-      logger.warn('failed to generate initial payid count metrics', err),
+      logger.warn('Failed to generate initial PayID count metrics', err),
     )
   }, 1)
   return setInterval(() => {
     generatePayIdCountMetrics().catch((err) =>
-      logger.warn('failed to generate scheduled payid count metrics', err),
+      logger.warn('Failed to generate scheduled PayID count metrics', err),
     )
   }, refreshIntervalInSeconds * 1000)
 }

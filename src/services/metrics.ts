@@ -8,6 +8,7 @@ import logger from '../utils/logger'
 const payIdCounterRegistry = new Registry()
 const payIdGaugeRegistry = new Registry()
 
+/** Prometheus Counter reporting the number of PayID lookups by [network, environment, org, result]. */
 const requestCounter = new Counter({
   name: 'payid_lookup_request',
   help: 'count of requests to lookup a PayID',
@@ -15,9 +16,7 @@ const requestCounter = new Counter({
   registers: [payIdCounterRegistry],
 })
 
-/**
- * Prometheus Gauge for reporting the current count of PayIDs by network/environment/org.
- */
+/** Prometheus Gauge for reporting the current count of PayIDs by [network, environment, org]. */
 const payIdCountGauge = new Gauge({
   name: 'payid_count',
   help: 'count of total PayIDs',
@@ -25,31 +24,43 @@ const payIdCountGauge = new Gauge({
   registers: [payIdGaugeRegistry],
 })
 
-export function isPushMetricsEnabled(): boolean {
-  if (config.metrics.gatewayUrl) {
-    if (!config.metrics.organization) {
-      logger.warn(
-        'PAYID_ORG must be set if push enabled. Metrics will not be pushed.',
-      )
-      return false
-    }
-    return true
+/**
+ * Determines whether push metrics are enabled by looking at config / environment variables.
+ * Used to determine whether we should schedule pushing events for metrics.
+ *
+ * @returns A boolean for whether push metrics are enabled.
+ */
+function isPushMetricsEnabled(): boolean {
+  // TODO:(hbergren) Maybe check that this is actually a valid url as well using Node.URL
+  if (!config.metrics.gatewayUrl) {
+    logger.warn(
+      'PUSH_GATEWAY_URL must be set for metrics to be pushed. Metrics will not be pushed.',
+    )
+    return false
   }
-  return false
+
+  if (!config.metrics.organization) {
+    logger.warn(
+      'PAYID_ORG must be set for metrics to be pushed. Metrics will not be pushed.',
+    )
+    return false
+  }
+
+  if (
+    config.metrics.pushIntervalInSeconds <= 0 ||
+    Number.isNaN(config.metrics.pushIntervalInSeconds)
+  ) {
+    logger.warn(
+      `Invalid PUSH_METRICS_INTERVAL value: ${config.metrics.pushIntervalInSeconds}. Metrics will not be pushed.`,
+    )
+    return false
+  }
+
+  return true
 }
 
 export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
-  if (!config.metrics.gatewayUrl) {
-    // this shouldn't be possible if isPushMetricsEnabled() is being checked first but just in case
-    logger.debug('gatewayUrl not set. Metrics will not be pushed.')
-    return undefined
-  }
-
-  if (config.metrics.pushIntervalInSeconds <= 0) {
-    // this shouldn't be possible if isPushMetricsEnabled() is being checked first but just in case
-    logger.warn(
-      `invalid pushIntervalInSeconds value ${config.metrics.pushIntervalInSeconds}. Metrics will not be pushed.`,
-    )
+  if (!isPushMetricsEnabled()) {
     return undefined
   }
 
@@ -70,14 +81,14 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
       {
         jobName: 'payid_counter_metrics',
         groupings: {
-          instance: `${config.metrics.organization ?? 'null'}_${hostname()}_${
+          instance: `${config.metrics.organization as string}_${hostname()}_${
             process.pid
           }`,
         },
       },
       (err, _resp, _body): void => {
         if (err) {
-          logger.warn('metrics push failed with ', err)
+          logger.warn('counter metrics push failed with ', err)
         }
       },
     )
