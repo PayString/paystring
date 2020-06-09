@@ -22,6 +22,7 @@
     "lint": "eslint . --ext .ts --fix",
     "lintNoFix": "eslint . --ext .ts",
     "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
+    "prestart": "npm run build",
     "start": "node build/src/index.js",
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
