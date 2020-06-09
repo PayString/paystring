@@ -8,6 +8,10 @@ import PayIDError from './payIdError'
 export enum ParseErrorType {
   InvalidMediaType = 'InvalidMediaType',
 
+  // PayID Stuff
+  MissingPayId = 'MissingPayId',
+  InvalidPayId = 'InvalidPayId',
+
   // These are the Public API version header errors for the PayID Protocol.
   MissingPayIdVersionHeader = 'MissingPayIdVersionHeader',
   InvalidPayIdVersionHeader = 'InvalidPayIdVersionHeader',

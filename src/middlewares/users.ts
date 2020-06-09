@@ -3,13 +3,25 @@ import { Request, Response, NextFunction } from 'express'
 import getAllAddressInfoFromDatabase from '../data-access/payIds'
 import { insertUser, replaceUser, removeUser } from '../data-access/users'
 import HttpStatus from '../types/httpStatus'
-import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
+import {
+  LookupError,
+  LookupErrorType,
+  ParseError,
+  ParseErrorType,
+} from '../utils/errors'
 
-// TODO:(hbergren): Go through https://github.com/goldbergyoni/nodebestpractices, especially
-// Stop passing req, res, and next in here and do that stuff on the outside.
-
-// TODO:(hbergren) Handle both a single user and an array of users
-// TODO:(hbergren) Should this handle being hit with the UUID identifying the user account as well?
+/**
+ * Retrieve all the information about that PayID.
+ *
+ * @param req - An Express Request object, holding the PayID.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ *
+ * @throws A ParseError if the PayID is missing.
+ * @throws A LookupError if the PayID has no associated addresses.
+ *
+ * TODO:(hbergren): Handle retrieving an array of users as well as a single user?
+ */
 export async function getUser(
   req: Request,
   res: Response,
@@ -19,29 +31,18 @@ export async function getUser(
   const payId = req.params[0]
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
-  // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
   if (!payId) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
+    throw new ParseError(
       'A `payId` must be provided in the path. A well-formed API call would look like `GET /users/alice$xpring.money`.',
-      res,
+      ParseErrorType.MissingPayId,
     )
   }
 
-  let addresses
-  try {
-    // TODO:(hbergren) Does not work for multiple accounts
-    addresses = await getAllAddressInfoFromDatabase(payId)
-  } catch (err) {
-    return handleHttpError(
-      HttpStatus.InternalServerError,
-      err.message,
-      res,
-      err,
-    )
-  }
+  // TODO:(hbergren) Does not work for multiple accounts
+  const addresses = await getAllAddressInfoFromDatabase(payId)
 
+  // TODO:(hbergren) Should it be possible to have a PayID with no addresses?
   if (addresses.length === 0) {
     throw new LookupError(
       `No information could be found for the PayID ${payId}.`,
@@ -54,13 +55,22 @@ export async function getUser(
     addresses,
   }
 
-  return next()
+  next()
 }
 
 // TODO:(hbergren) Handle both single user and array of new users
 // TODO:(hbergren) Any sort of validation? Validate XRP addresses have both X-Address & Classic/DestinationTag?
 // TODO:(hbergren) Any sort of validation on the PayID? Check the domain name to make sure it's owned by that organization?
 // TODO:(hbergren) Use joi to validate the `req.body`. All required properties present, and match some sort of validation.
+/**
+ * Create a new PayID.
+ *
+ * @param req - An Express Request object, holding PayID information.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ *
+ * @throws ParseError if the PayID is missing from the request body.
+ */
 export async function postUser(
   req: Request,
   res: Response,
@@ -71,10 +81,9 @@ export async function postUser(
   // Could use a similar regex to the one used by the database. Also look at validation in the conversion functions.
   const payId = req.body.payId
   if (!payId) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
+    throw new ParseError(
       'A `payId` must be provided in the request body.',
-      res,
+      ParseErrorType.MissingPayId,
     )
   }
 
@@ -86,9 +95,18 @@ export async function postUser(
   // Set HTTP status and save the PayID to generate the Location header in later middleware
   res.locals.status = HttpStatus.Created
   res.locals.payId = payId
-  return next()
+  next()
 }
 
+/**
+ * Either create a new PayID, or update an existing PayID.
+ *
+ * @param req - An Express Request object, with a body holding the new PayID information.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ *
+ * @throws A ParseError if either PayID is missing or invalid.
+ */
 export async function putUser(
   req: Request,
   res: Response,
@@ -104,44 +122,39 @@ export async function putUser(
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
   if (!payId) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
+    throw new ParseError(
       'A `payId` must be provided in the path. A well-formed API call would look like `PUT /users/alice$xpring.money`.',
-      res,
+      ParseErrorType.MissingPayId,
     )
   }
 
   if (!newPayId) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
+    throw new ParseError(
       'A `payId` must be provided in the request body.',
-      res,
+      ParseErrorType.MissingPayId,
     )
   }
 
   // TODO:(dino) move this to validation
   if (!payId.includes('$') || !newPayId.includes('$')) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
+    throw new ParseError(
       'Bad input. PayIDs must contain a "$"',
-      res,
+      ParseErrorType.InvalidPayId,
     )
   }
 
-  // TODO:(dino) move this to validation
+  // TODO:(hbergren) We should rip this out since PayIDs now officially support multiple '$'.
   if (
     (payId.match(/\$/gu) || []).length !== 1 ||
     (newPayId.match(/\$/gu) || []).length !== 1
   ) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
+    throw new ParseError(
       'Bad input. PayIDs must contain only one "$"',
-      res,
+      ParseErrorType.InvalidPayId,
     )
   }
 
-  // TODO:(hbergren) Remove all these try/catches. This is ridiculous
-  // TODO(dino): validate body params before this
+  // TODO:(dino) validate body params before this
   let updatedAddresses
   let statusCode = HttpStatus.OK
 
@@ -162,9 +175,18 @@ export async function putUser(
     addresses: updatedAddresses,
   }
 
-  return next()
+  next()
 }
 
+/**
+ * Removes a PayID from the PayID server.
+ *
+ * @param req - An Express Request object, holding the PayID.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ *
+ * @throws A ParseError if the PayID is missing from the request.
+ */
 export async function deleteUser(
   req: Request,
   res: Response,
@@ -176,24 +198,14 @@ export async function deleteUser(
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
   if (!payId) {
-    return handleHttpError(
-      HttpStatus.BadRequest,
-      'A PayID must be provided in the path. A well-formed API call would look like `GET /users/alice$xpring.money`.',
-      res,
+    throw new ParseError(
+      'A PayID must be provided in the path. A well-formed API call would look like `DELETE /users/alice$xpring.money`.',
+      ParseErrorType.MissingPayId,
     )
   }
 
-  try {
-    await removeUser(payId)
-  } catch (err) {
-    return handleHttpError(
-      HttpStatus.InternalServerError,
-      err.message,
-      res,
-      err,
-    )
-  }
+  await removeUser(payId)
 
   res.locals.status = HttpStatus.NoContent
-  return next()
+  next()
 }
