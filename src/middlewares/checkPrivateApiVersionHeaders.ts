@@ -3,6 +3,15 @@ import { Request, Response, NextFunction } from 'express'
 import config, { privateApiVersions } from '../config'
 import { ParseError, ParseErrorType } from '../utils/errors'
 
+/**
+ * A middleware asserting that all private API HTTP requests have an appropriate PayID-API-Version header.
+ *
+ * It also sets version headers on all private API HTTP responses for informational purposes.
+ *
+ * @param req - An Express Request object.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ */
 export default function checkPublicApiVersionHeaders(
   req: Request,
   res: Response,

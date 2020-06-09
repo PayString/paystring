@@ -2,6 +2,14 @@ import { Request, Response } from 'express'
 
 import HttpStatus from '../types/httpStatus'
 
+/**
+ * Sends an HTTP response with the appropriate HTTP status and JSON-formatted payload (if any).
+ *
+ * It also sets the Location header on responses for 201 - Created responses.
+ *
+ * @param req - An Express Request object.
+ * @param res - An Express Response object.
+ */
 export default function sendSuccess(req: Request, res: Response): void {
   const status = Number(res.locals?.status) || HttpStatus.OK
 

@@ -4,6 +4,15 @@ import * as semver from 'semver'
 import config, { payIdServerVersions } from '../config'
 import { ParseError, ParseErrorType } from '../utils/errors'
 
+/**
+ * A middleware asserting that all public API HTTP requests have an appropriate PayID-Version header.
+ *
+ * It also sets a PayID-Server-Version header on all public API responses to allow for PayID Protocol version negotiation.
+ *
+ * @param req - An Express Request object.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ */
 export default function checkPublicApiVersionHeaders(
   req: Request,
   res: Response,
