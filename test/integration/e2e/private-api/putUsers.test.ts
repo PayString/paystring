@@ -94,6 +94,41 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       .expect(HttpStatus.Created, insertedInformation, done)
   })
 
+  it('Returns a 201 and inserted user payload for a private API PUT creating a new user with an uppercase PayID provided', function (done): void {
+    // GIVEN a PayID known to not exist on the PayID service
+    const payId = 'notjohndoe$xpring.money'
+    const newPayId = 'johnsmith$xpring.money'
+
+    const insertedInformation = {
+      payId: newPayId.toUpperCase(),
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /users/ with the information to insert
+    request(app.privateAPIExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(insertedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      // Note that the PayID inserted is that of the request body, not the URL path, and we expect a lowercase response
+      .expect('Location', `/users/${newPayId}`)
+      // AND we expect back a 201 - CREATED, with the inserted user information (but the PayID lowercased)
+      .expect(
+        HttpStatus.Created,
+        { ...insertedInformation, ...{ payId: newPayId } },
+        done,
+      )
+  })
+
   it('Returns a 400 - Bad Request with an error payload for a request with a malformed PayID', function (done): void {
     // GIVEN a PayID known to be in a bad format (missing $) and an expected error response payload
     const badPayId = 'alice.xpring.money'

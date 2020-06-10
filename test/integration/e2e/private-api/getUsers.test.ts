@@ -39,6 +39,31 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
       .expect(HttpStatus.OK, expectedResponse, done)
   })
 
+  it('Returns a 200 and correct information for a user known to exist, when we use an uppercase PayID', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'ALICE$XPRING.MONEY'
+    const expectedResponse = {
+      payId: 'alice$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a GET request to /users/ with that PayID as our user
+    request(app.privateAPIExpress)
+      .get(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 200 - OK, with the account information
+      .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
   it('Returns a 404 for an unknown PayID', function (done): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'johndoe$xpring.money'

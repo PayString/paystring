@@ -28,7 +28,7 @@ export async function getUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(dino) Validate PayID
-  const payId = req.params[0]
+  const payId = req.params[0].toLowerCase()
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Could use a similar regex to the one used by the database.
@@ -79,13 +79,15 @@ export async function postUser(
   // TODO:(hbergren) Any validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database. Also look at validation in the conversion functions.
-  const payId = req.body.payId
-  if (!payId) {
+  const rawPayId = req.body.payId
+  if (!rawPayId || typeof rawPayId !== 'string') {
     throw new ParseError(
       'A `payId` must be provided in the request body.',
       ParseErrorType.MissingPayId,
     )
   }
+
+  const payId = rawPayId.toLowerCase()
 
   // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
   // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
@@ -114,21 +116,21 @@ export async function putUser(
 ): Promise<void> {
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
-  const payId = req.params[0]
-  const newPayId = req.body?.payId
+  const rawPayId = req.params[0]
+  const rawNewPayId = req.body?.payId
   const addresses = req.body?.addresses
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
   // Could use a similar regex to the one used by the database.
-  if (!payId) {
+  if (!rawPayId) {
     throw new ParseError(
       'A `payId` must be provided in the path. A well-formed API call would look like `PUT /users/alice$xpring.money`.',
       ParseErrorType.MissingPayId,
     )
   }
 
-  if (!newPayId) {
+  if (!rawNewPayId || typeof rawNewPayId !== 'string') {
     throw new ParseError(
       'A `payId` must be provided in the request body.',
       ParseErrorType.MissingPayId,
@@ -136,7 +138,7 @@ export async function putUser(
   }
 
   // TODO:(dino) move this to validation
-  if (!payId.includes('$') || !newPayId.includes('$')) {
+  if (!rawPayId.includes('$') || !rawNewPayId.includes('$')) {
     throw new ParseError(
       'Bad input. PayIDs must contain a "$"',
       ParseErrorType.InvalidPayId,
@@ -145,14 +147,17 @@ export async function putUser(
 
   // TODO:(hbergren) We should rip this out since PayIDs now officially support multiple '$'.
   if (
-    (payId.match(/\$/gu) || []).length !== 1 ||
-    (newPayId.match(/\$/gu) || []).length !== 1
+    (rawPayId.match(/\$/gu) || []).length !== 1 ||
+    (rawNewPayId.match(/\$/gu) || []).length !== 1
   ) {
     throw new ParseError(
       'Bad input. PayIDs must contain only one "$"',
       ParseErrorType.InvalidPayId,
     )
   }
+
+  const payId = rawPayId.toLowerCase()
+  const newPayId = rawNewPayId.toLowerCase()
 
   // TODO:(dino) validate body params before this
   let updatedAddresses
@@ -192,8 +197,8 @@ export async function deleteUser(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  // TODO(hbergren): This absolutely needs to live in middleware
-  const payId = req.params[0]
+  // TODO:(hbergren) This absolutely needs to live in middleware
+  const payId = req.params[0].toLowerCase()
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
