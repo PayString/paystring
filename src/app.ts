@@ -4,6 +4,7 @@ import * as express from 'express'
 
 import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
+import sendSuccess from './middlewares/sendSuccess'
 import { metricsRouter, privateAPIRouter, publicAPIRouter } from './routes'
 import { scheduleRecurringMetricsPush } from './services/metrics'
 import scheduleRecurringPayIdCountMetrics from './services/payIdReport'
@@ -93,6 +94,7 @@ export default class App {
   private launchPrivateAPI(appConfig: typeof config.app): Server {
     this.privateAPIExpress.use('/users', privateAPIRouter)
     this.privateAPIExpress.use('/metrics', metricsRouter)
+    this.privateAPIExpress.use('/status/health', sendSuccess)
 
     return this.privateAPIExpress.listen(appConfig.privateAPIPort, () =>
       logger.info(`Private API listening on ${appConfig.privateAPIPort}`),
