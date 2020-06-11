@@ -32,7 +32,7 @@ Please include as much detail as possible to help us properly address your issue
 
 <!-- TODO:(hbergren) Update this link when we migrate to `payid-org` -->
 
-If you have found a vulnerability, please read our [Vulnerability Disclosure Policy](https://github.com/xpring-eng/.github/blob/master/SECURITY.md) to learn how to responsibility report the vulnerability.
+If you have found a vulnerability, please read our [Vulnerability Disclosure Policy](https://github.com/xpring-eng/.github/blob/master/SECURITY.md) to learn how to responsibly report the vulnerability.
 
 ## Pull Request Guidelines
 
