@@ -33,7 +33,7 @@ module.exports = {
     'import/max-dependencies': ['warn', { max: 9 }],
     'max-lines-per-function': ['warn', { max: 86 }],
     'max-statements': ['warn', { max: 26 }],
-    complexity: ['warn', { max: 11 }],
+    complexity: ['warn', { max: 12 }],
   },
 
   // TODO:(hbergren) Should be able tor remove these overrides when we remove the above rules

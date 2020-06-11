@@ -94,6 +94,13 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     )
   })
 
+  /**
+   * A helper function that fetches PayID metrics and matches them against
+   * expected metrics.
+   *
+   * @param expectedMetric - The expected metric to match on.
+   * @returns The HTTP response from a GET to the /metrics endpoint on the Private API.
+   */
   async function assertMetrics(expectedMetric: RegExp): Promise<request.Test> {
     return request(app.privateAPIExpress)
       .get('/metrics')
@@ -104,21 +111,39 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
       .then(async (res) => res.body)
   }
 
+  /**
+   * A helper function to return address information for a PayID.
+   *
+   * @param account - The PayID to retrieve.
+   * @param acceptHeader - The Accept header to send.
+   * @param status - The status code returned by the request.
+   *
+   * @returns The HTTP response from a GET to the / endpoint on the Public API.
+   */
   async function lookupPayId(
     account: string,
-    accept: string,
+    acceptHeader: string,
     status: HttpStatus,
   ): Promise<request.Test> {
     return request(app.publicAPIExpress)
       .get(`/${account}`)
       .set('PayID-Version', '1.0')
-      .set('Accept', accept)
+      .set('Accept', acceptHeader)
       .expect((res) => {
         assert.strictEqual(res.status, status)
       })
       .then(async (res) => res.body)
   }
 
+  /**
+   * A helper function to create a PayID.
+   *
+   * @param payId - The PayID to create.
+   * @param paymentNetwork - The payment network for the address entry (e.g. XRPL).
+   * @param environment - The environment for the address entry (e.g. TESTNET).
+   *
+   * @returns The HTTP response from a POST to the /users endpoint on the Private API.
+   */
   async function createPayId(
     payId: string,
     paymentNetwork: string,

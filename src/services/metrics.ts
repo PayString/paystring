@@ -62,6 +62,13 @@ function isPushMetricsEnabled(): boolean {
   return true
 }
 
+/**
+ * Attempt to schedule a recurring metrics push to the metrics gateway URL.
+ * Configured through the environment/defaults set in the PayID
+ * app config.
+ *
+ * @returns A timer object if push metrics are enabled, undefined otherwise.
+ */
 export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
   if (!isPushMetricsEnabled()) {
     return undefined
@@ -109,6 +116,9 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
   }, config.metrics.pushIntervalInSeconds * 1000)
 }
 
+/**
+ * Record a PayID lookup that failed due to a bad accept header.
+ */
 export function recordPayIdLookupBadAcceptHeader(): void {
   payIdLookupCounter.inc(
     {
@@ -121,6 +131,14 @@ export function recordPayIdLookupBadAcceptHeader(): void {
   )
 }
 
+/**
+ * Record a PayID count for a given [paymentNetwork, environment] tuple.
+ * Used when calculating the total count of PayIDs for this server.
+ *
+ * @param paymentNetwork - The payment network of the address.
+ * @param environment - The environment of the address.
+ * @param count - The current count.
+ */
 export function setPayIdCount(
   paymentNetwork: string,
   environment: string,
@@ -136,6 +154,13 @@ export function setPayIdCount(
   )
 }
 
+/**
+ * Increments the PayID Lookup Counter with the [paymentNetwork, environment, found] tuple].
+ *
+ * @param paymentNetwork - The payment network of the lookup.
+ * @param environment - The environment of the lookup.
+ * @param found - Whether the PayID lookup was successful or not.
+ */
 export function recordPayIdLookupResult(
   paymentNetwork: string,
   environment: string,
@@ -152,6 +177,11 @@ export function recordPayIdLookupResult(
   )
 }
 
+/**
+ * Get PayID metrics from the registry.
+ *
+ * @returns A string representation of metrics.
+ */
 export function getMetrics(): string {
   return payIdRegistry.metrics()
 }
