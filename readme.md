@@ -1,24 +1,5 @@
-# PayID: A Protocol for Human-Readable, Travel-Rule-Compliant Addresses <!-- omit in toc -->
-
-<!-- You can also view the PayID documentation at [docs.payid.org](https://docs.payid.org). -->
-
-With PayID, you can use human-readable addresses to transmit value in the currency of your choice. The PayID network allows participants to reach one another through a standardized address. For example, `alice$wallet.com` maps to the corresponding URL `https://wallet.com/alice`.
-
-When you make an HTTP GET request that follows the PayID protocol, it resolves to an address on the underlying payment network. PayID is a payment-network-agnostic protocol, capable of sending payments in BTC, ETH, XRP, or fiat networks like ACH.
-
-Each request must have a valid `Accept` request HTTP header. For example: `Accept: application/xrpl-mainnet+json` indicates the XRP Ledger Mainnet payment network and the JSON format of the response payload.
-
-PayID is fully peer-to-peer with no central counterparty. Anyone can set up their own PayID server or integrate with a trustless blockchain solution so they have no counterparty risk.
-
-The PayID protocol is designed to be simple, general, open, and universal. This makes it composable with any other existing namespace, including blockchain namespace projects like ENS and Unstoppable Domains or app-specific usernames. Anyone with an existing username or address can get a PayID address that works across all platforms.
-
 # Table of Contents <!-- omit in toc -->
 
-- [1. Web standards](#1-web-standards)
-  - [1.1. Decentralized and trust-minimized](#11-decentralized-and-trust-minimized)
-  - [1.2. Protocol abstraction](#12-protocol-abstraction)
-- [2. Extensions and Travel Rule compliance](#2-extensions-and-travel-rule-compliance)
-- [3. Future features and integrations](#3-future-features-and-integrations)
 - [4. PayID integration and the PayID APIs](#4-payid-integration-and-the-payid-apis)
   - [4.1. Set up a PayID environment for development purposes](#41-set-up-a-payid-environment-for-development-purposes)
   - [4.2. Integrate PayID with existing user bases](#42-integrate-payid-with-existing-user-bases)
@@ -50,41 +31,6 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
   - [9.3. Headers for ACH](#93-headers-for-ach)
   - [9.4. Headers for BTC](#94-headers-for-btc)
   - [9.5. Headers for ETH](#95-headers-for-eth)
-
-## 1. Web standards
-
-PayID uses existing web standards and infrastructure, including HTTP and DNS. Each institution supports its users through its domain, creating a decentralized network where institutions maintain sovereignty over their own users. Each institution is empowered to participate in the network by deploying its own server with its own users. Additionally, a user who prefers to self-custody their cryptocurrency can deploy a personal PayID server, as described in [Set up a PayID server](#set-up-a-payid-server).
-
-PayID does not rely on any consensus protocols, which simplifies infrastructure demands.
-
-### 1.1. Decentralized and trust-minimized
-
-PayID is built on the most successful decentralized network in history: the web. PayID is fully peer-to-peer with no central counterparty. Anyone can set up their own personal PayID server so they have no counterparty risk.
-
-### 1.2. Protocol abstraction
-
-PayID fully abstracts away underlying payment rail details from end users. A user only needs to keep track of a single PayID rather than a complex address for each network. Service operators can manage the underlying addresses behind the scenes according to their own security and privacy best practices without requiring the end user to take any action.
-
-## 2. Extensions and Travel Rule compliance
-
-PayID is an extensible and flexible open standard. PayID can be extended to provide a simple solution for [Travel Rule](https://www.fatf-gafi.org/media/fatf/documents/recommendations/RBA-VA-VASPs.pdf) compliance, a relevant capability for many crypto services. Financial institutions can communicate regulatory requirements and the corresponding necessary data by using the PayID Public API, which is a standard REST API.
-
-PayID improves the user experience of sending cryptocurrency payments, and it also provides a platform for present-day features like Travel Rule compliance and future features like subscriptions and pull payments. To achieve mainstream cryptocurrency adoption, we must build on top of PayID and other systems that integrate well with traditional financial infrastructure.
-
-PayID provides an abstraction layer so that users can send payments to human-readable addresses while virtual asset service providers (VASPs) can meet the necessary compliance requirements in the background.
-
-**Coming soon:** When a payment is sent to a PayID address, then if both entities are VASPs and must comply with the Travel Rule, they will exchange the user data in a secure handshake.
-
-![Travel Rule](img/travel_rule.png)
-
-## 3. Future features and integrations
-
-Features and integrations on the roadmap include:
-
-- Additional payment rail standards
-- Payment request ([W3C Standard](https://www.w3.org/TR/payment-request/)) integration
-- Advanced payment type support: pull, push, streaming, subscription
-- PayID forwarding and redirection
 
 ## 4. PayID integration and the PayID APIs
 
