@@ -15,9 +15,6 @@
   - [5.3. Example payment setup details schema](#53-example-payment-setup-details-schema)
   - [5.4. Example compliance message schema](#54-example-compliance-message-schema)
   - [5.5. Request headers](#55-request-headers)
-- [6. Code examples](#6-code-examples)
-  - [6.1 Payment](#61-payment)
-  - [6.2 Generate a seed-based wallet](#62-generate-a-seed-based-wallet)
 - [7. Interfaces](#7-interfaces)
   - [7.1. PaymentInformation](#71-paymentinformation)
   - [7.2. CryptoAddressDetails](#72-cryptoaddressdetails)
@@ -261,42 +258,6 @@ The different header options are shown here, with example values.
 | XRP      | application/xrpl-mainnet+json | { <br>address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'<br> } |
 | ACH      | application/ach+json          | { <br> account: '363023456079',<br>routing: '011302838'<br>}           |
 | All      | application/payid+json        | Variable depending on the contents of each address                     |
-
-## 6. Code examples
-
-### 6.1 Payment
-
-This example demonstrates a payment to `alice$institution.com`.
-
-```javascript
-const axios = require('axios')
-const btc = require('bitcoinjs-lib')
-
-async function pay(payId, amount) {
-  const user = payId.split('$')[0]
-  const url = payId.split('$')[1]
-
-  const response = await axios.get({
-    method: 'GET',
-    baseURL: 'https://' + url + '/' + user
-    headers: { accept: 'application/btc+json' }
-  }
-  const tx = await new btc.Transaction(address, amount)
-}
-pay('alice$institution.com', 0.63)
-```
-
-### 6.2 Generate a seed-based wallet
-
-In this example, you generate a seed-based wallet using the Xpring SDK. See [Xpring SDK docs](https://xpring.io/docs).
-
-```javascript
-// Xpring SDK
-const { Wallet } = require('xpring-js')
-
-const wallet = Wallet.generateWalletFromSeed('snRiAJGe3zRwiYDBm1M')
-const tx = await wallet.send(0.63, 'alice$institution.com')
-```
 
 ## 7. Interfaces
 
