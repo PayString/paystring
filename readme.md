@@ -25,12 +25,6 @@
   - [7.4. Error](#74-error)
 - [8. Use Xpring SDK with PayID](#8-use-xpring-sdk-with-payid)
   - [8.1. Demo](#81-demo)
-- [9. Headers for GET requests for PayID Public API](#9-headers-for-get-requests-for-payid-public-api)
-  - [9.1. Header for All Addresses](#91-header-for-all-addresses)
-  - [9.2. Headers for XRP](#92-headers-for-xrp)
-  - [9.3. Headers for ACH](#93-headers-for-ach)
-  - [9.4. Headers for BTC](#94-headers-for-btc)
-  - [9.5. Headers for ETH](#95-headers-for-eth)
 
 ## 4. PayID integration and the PayID APIs
 
@@ -362,51 +356,3 @@ To execute this demo:
 4. Run `node src/index-payid.js` to execute the demo.
 
 View [index-payid.js](https://github.com/xpring-eng/Xpring-SDK-Demo/blob/master/node/src/index-payid.js).
-
-## 9. Headers for GET requests for PayID Public API
-
-This launch of PayID includes those headers specific to the Xpring ecosystem. Each payment network is free to establish its own standard headers. These headers should be submitted with every GET request, but not POST.
-
-### 9.1. Header for All Addresses
-
-|     Accept header      |            Description            |
-| :--------------------: | :-------------------------------: |
-| application/payid+json | Returns all addresses for a PayID |
-
-### 9.2. Headers for XRP
-
-|         Accept header         |       Description        |
-| :---------------------------: | :----------------------: |
-| application/xrpl-mainnet+json | Returns mainnet xAddress |
-| application/xrpl-testnet+json | Returns testnet xAddress |
-| application/xrpl-devnet+json  | Returns devnet xAddress  |
-
-### 9.3. Headers for ACH
-
-|    Accept header     |            Description             |
-| :------------------: | :--------------------------------: |
-| application/ach+json | Returns account and routing number |
-
-### 9.4. Headers for BTC
-
-|        Accept header         |       Description       |
-| :--------------------------: | :---------------------: |
-| application/btc-mainnet+json | Returns mainnet address |
-| application/btc-testnet+json | Returns testnet address |
-
-### 9.5. Headers for ETH
-
-<table>
-<tr>
-<th>Accept header</th>
-<th>Description</th>
-</tr>
-<tr>
-<td>application/eth-mainnet+json</td>
-<td>Returns mainnet address</td>
-</tr>
-<tr>
-<td>application/eth-testnet-name+json</td>
-<td>Returns testnet-name address. Ethernet has a number of different testnets. Refer to <a href="https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md">EIP 155</a>.</td>
-</tr>
-</table>
