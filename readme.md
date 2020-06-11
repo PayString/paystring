@@ -15,11 +15,6 @@
   - [5.3. Example payment setup details schema](#53-example-payment-setup-details-schema)
   - [5.4. Example compliance message schema](#54-example-compliance-message-schema)
   - [5.5. Request headers](#55-request-headers)
-- [7. Interfaces](#7-interfaces)
-  - [7.1. PaymentInformation](#71-paymentinformation)
-  - [7.2. CryptoAddressDetails](#72-cryptoaddressdetails)
-  - [7.3. AchAddressDetails](#73-achaddressdetails)
-  - [7.4. Error](#74-error)
 - [8. Use Xpring SDK with PayID](#8-use-xpring-sdk-with-payid)
   - [8.1. Demo](#81-demo)
 
@@ -258,48 +253,6 @@ The different header options are shown here, with example values.
 | XRP      | application/xrpl-mainnet+json | { <br>address: 'XV5sbjUmgPpvXv4ixFWZ5ptAYZ6PD28Sq49uo34VyjnmK5H'<br> } |
 | ACH      | application/ach+json          | { <br> account: '363023456079',<br>routing: '011302838'<br>}           |
 | All      | application/payid+json        | Variable depending on the contents of each address                     |
-
-## 7. Interfaces
-
-### 7.1. PaymentInformation
-
-```ts
-interface PaymentInformation {
-  addressDetailsType: AddressDetailsType
-  addressDetails: CryptoAddressDetails | AchAddressDetails
-  proofOfControlSignature?: string
-  payId?: string
-  memo?: string
-}
-```
-
-### 7.2. CryptoAddressDetails
-
-```ts
-interface CryptoAddressDetails {
-  address: string
-  tag?: string
-}
-```
-
-### 7.3. AchAddressDetails
-
-```ts
-interface AchAddressDetails {
-  accountNumber: string
-  routingNumber: string
-}
-```
-
-### 7.4. Error
-
-```ts
-interface Error {
-  statusCode: integer
-  error: string
-  message: string
-}
-```
 
 ## 8. Use Xpring SDK with PayID
 
