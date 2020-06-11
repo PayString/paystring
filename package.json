@@ -26,7 +26,10 @@
     "start": "node build/src/index.js",
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
-    "testWatch": "nyc mocha --watch 'test/**/*.test.ts'"
+    "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
+    "devEnvUp": "docker-compose up -d",
+    "devDbUp": "docker-compose up -d db",
+    "devDown": "docker-compose down"
   },
   "dependencies": {
     "boom": "^7.3.0",

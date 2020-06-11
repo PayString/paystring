@@ -1,0 +1,49 @@
+version: '3'
+services:
+  payid:
+    # Defines the container name when using "docker-compose up". Warning: does not work with "docker-compose run" (Docker issue)
+    container_name: 'payid'
+    # Defines the image name and tag.
+    image: payid:1.0.0
+    # As we define the build context, the image is not pulled from Dockerhub. It is built locally based on our Dockerfile.
+    build:
+      context: .
+    # Port mapping, external_port:internal_port
+    ports:
+      - '8080-8081:8080-8081'
+    # The payid container can't run alone. A Postgres container will always be created thanks to "depends_on"
+    depends_on:
+      - 'db'
+    environment:
+      # Used in wait-for-postgres.sh and by payid. The value must be the same as the POSTGRES_PASSWORD value in the db service.
+      - DB_PASSWORD=password
+      # Uncomment DB_NAME if you change POSTGRES_DB in the "db" service below
+      #- DB_NAME=database_development
+      # DB_HOSTNAME is used by wait-for-postgres.sh and payid to point at the right host (default is 127.0.0.1 which would fail)
+      - DB_HOSTNAME=db
+      # uncomment DB_USERNAME if POSTGRES_USER in the db service is uncommented and different than "postgres". DB_USERNAME and POSTGRES_USER must have the same values
+      #- DB_USERNAME=postgres
+    # "command" overrides CMD in the Dockerfile to use wait-for-postgres.sh and make sure Postgres is ready to execute SQL scripts
+    # If we don't do this check, we will end up seeing error messages like:
+    # psql: error: could not connect to server: could not connect to server: Connection refused
+    command:
+      [
+        '/opt/payid/scripts/wait-for-postgres.sh',
+        'db',
+        'node',
+        '/opt/payid/build/src/index.js',
+      ]
+  db:
+    container_name: payid-database
+    # Image pulled from Dockerhub
+    image: postgres:12-alpine
+    # external_port:internal_port
+    ports:
+      - '5432:5432'
+    environment:
+      # POSTGRES_PASSWORD is mandatory. If POSTGRES_PASSWORD != password, update DB_PASSWORD in the payid service
+      - POSTGRES_PASSWORD=password
+      # If POSTGRES_DB != database_development, change DB_NAME in the payid service above
+      - POSTGRES_DB=database_development
+      # Uncomment if you want to change the Postgres user (in that case, change DB_NAME in the payid service). Default value: postgres
+      #- POSTGRES_USER=postgres

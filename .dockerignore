@@ -1,0 +1,14 @@
+# In .dockerignore
+# Exclude everything, the image build will be faster.
+#
+*
+
+# Now un-exclude the required files/directory to run PayID
+#
+!@types
+!package.json
+!scripts
+!src
+!test
+!tsconfig.eslint.json
+!tsconfig.json

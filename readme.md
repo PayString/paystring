@@ -15,15 +15,15 @@ The PayID protocol is designed to be simple, general, open, and universal. This 
 # Table of Contents <!-- omit in toc -->
 
 - [1. Web standards](#1-web-standards)
-  - [1.1. Decentralized and trust-minimized](#12-decentralized-and-trust-minimized)
+  - [1.1. Decentralized and trust-minimized](#11-decentralized-and-trust-minimized)
   - [1.2. Protocol abstraction](#12-protocol-abstraction)
 - [2. Extensions and Travel Rule compliance](#2-extensions-and-travel-rule-compliance)
 - [3. Future features and integrations](#3-future-features-and-integrations)
 - [4. PayID integration and the PayID APIs](#4-payid-integration-and-the-payid-apis)
-  - [4.1. Set up a PayID server for demonstration purposes](#41-set-up-a-payid-server-for-demonstration-purposes)
+  - [4.1. Set up a PayID environment for development purposes](#41-set-up-a-payid-environment-for-development-purposes)
   - [4.2. Integrate PayID with existing user bases](#42-integrate-payid-with-existing-user-bases)
     - [4.2.1. Extend tables with new columns](#421-extend-tables-with-new-columns)
-    - [4.2.2. Matching columns names in data access functions](#422-matching-column-names-in-data-access-functions)
+    - [4.2.2. Matching column names in data access functions](#422-matching-column-names-in-data-access-functions)
     - [4.2.3. Change the type of database](#423-change-the-type-of-database)
     - [4.2.4. Set environment variables](#424-set-environment-variables)
     - [4.2.5. Update database migrations](#425-update-database-migrations)
@@ -104,26 +104,50 @@ You can deploy your own PayID server and then create PayIDs for your users using
 
 Once you have set up a PayID server, anyone can use the PayID Public API to query address information. This API is publicly accessible so that anyone can send payments to your users' PayID addresses.
 
-### 4.1. Set up a PayID server for demonstration purposes
+### 4.1. Set up a PayID environment for development purposes
 
-Participating institutions can use Xpring’s open source reference implementation of the PayID server. You might be able to ease the deployment process by connecting your PayID server to your existing user database so that it can respond to incoming GET requests.
+To ease the deployment of a development environment, the PayID application includes scripts to quickly and easily deploy a Postgres database and a PayID server.
 
-To set up your own demo server, first ensure you have Docker installed, and then run these commands. You will create a local docker image.
+Please make sure Docker (including docker-compose) is installed on your machine and run the following commands:
 
 ```sh
 git clone git@github.com:xpring-eng/payid.git
-cd payid
-./demo/run_payid_demo.sh
+npm run devEnvUp
 ```
 
-You can then use the Private PayID API to:
-
-- Create a user
-- Get user information
-- Modify a user
-- Delete a user
+You can then use the Private and Public PayID APIs as defined further in this document.  
+So `npm run devEnvUp` is useful if you just want a PayID server to develop some other service against (a good example would be the Xpring Wallet).
 
 ![Open Source](img/open_source.png)
+
+---
+
+If you only wish to create a Postgres container without the PayID server, simply run:
+
+```sh
+npm run devDbUp
+```
+
+You would run `npm run devDbUp` if you wanted to actually work on the PayID server source code itself.
+
+The Postgres container listens on port 5432.
+
+You will need to start PayID separately, using `npm run start`.
+
+---
+
+Finally, you can remove the full development environment (Postgres and PayID) or only Postgres by running:
+
+```sh
+npm run devDown
+```
+
+**IMPORTANT**: running `npm run devDown` will remove the Postgres container and all your data will be lost.
+
+**Docker information**
+
+The Postgres Docker image used is the version 12 alpine.  
+https://hub.docker.com/_/postgres
 
 ### 4.2. Integrate PayID with existing user bases
 
@@ -140,7 +164,6 @@ Regarding constraints, there are three constraints in our account schema that co
 The PayID [address schema](./src/db/schema/02_address.sql) is used to define a table of addresses associated with users.
 
 Whenever a PayID is queried the payment network and environment are sent via an accept header. Therefore, it is important that each address stored has an associated payment network and environment. For example, upon receipt of the accept header `application/xrpl-testnet+json` you should query your address table for the address associated with the `xrpl` payment network and `testnet` environment.
-
 
 #### 4.2.2. Matching column names in data access functions
 
@@ -477,19 +500,6 @@ Request (Success)
 
 ```HTTP
 DELETE http://127.0.0.1:8081/users/bob$127.0.0.1 HTTP/1.1
-
-{
-	"payId": "bob$127.0.0.1",
-	"addresses": [
-		{
-			"paymentNetwork": "XRPL",
-			"environment": "TESTNET",
-			"details": {
-			  "address": "TVnGpXXZZ3xAZfhT42ntuCR4Uh3Rv9LE4BcZJeH1zds2CQ2"
-			}
-		}
-	]
-}
 ```
 
 Response (Success)
