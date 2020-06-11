@@ -5,15 +5,18 @@ import { Counter, Gauge, Pushgateway, Registry } from 'prom-client'
 import config from '../config'
 import logger from '../utils/logger'
 
-const payIdCounterRegistry = new Registry()
-const payIdGaugeRegistry = new Registry()
+/**
+ * Custom Prometheus registry.
+ * The default registry gets used for other metrics that we don't want to collect from partners, like memory usage.
+ */
+const payIdRegistry = new Registry()
 
 /** Prometheus Counter reporting the number of PayID lookups by [network, environment, org, result]. */
-const requestCounter = new Counter({
+const payIdLookupCounter = new Counter({
   name: 'payid_lookup_request',
   help: 'count of requests to lookup a PayID',
   labelNames: ['paymentNetwork', 'environment', 'org', 'result'],
-  registers: [payIdCounterRegistry],
+  registers: [payIdRegistry],
 })
 
 /** Prometheus Gauge for reporting the current count of PayIDs by [network, environment, org]. */
@@ -21,7 +24,7 @@ const payIdCountGauge = new Gauge({
   name: 'payid_count',
   help: 'count of total PayIDs',
   labelNames: ['paymentNetwork', 'environment', 'org'],
-  registers: [payIdGaugeRegistry],
+  registers: [payIdRegistry],
 })
 
 /**
@@ -64,22 +67,18 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
     return undefined
   }
 
-  const counterGateway = new Pushgateway(
+  const payIdPushGateway = new Pushgateway(
     config.metrics.gatewayUrl,
     [],
-    payIdCounterRegistry,
-  )
-
-  const gaugeGateway = new Pushgateway(
-    config.metrics.gatewayUrl,
-    [],
-    payIdGaugeRegistry,
+    payIdRegistry,
   )
 
   return setInterval(() => {
-    counterGateway.pushAdd(
+    // Use 'pushAdd' because counts are additive. You want all values over time from multiple servers.
+    // You don’t want the lookup count on one server to overwrite the running totals.
+    payIdPushGateway.pushAdd(
       {
-        jobName: 'payid_counter_metrics',
+        jobName: 'payid_lookup_counter_metrics',
         groupings: {
           instance: `${config.metrics.organization as string}_${hostname()}_${
             process.pid
@@ -92,10 +91,14 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
         }
       },
     )
-    gaugeGateway.push(
+
+    // Use push because we want the value to overwrite (only care about the current PayID count)
+    payIdPushGateway.push(
       {
-        jobName: 'payid_gauge_metrics',
-        groupings: { instance: config.metrics.organization as string },
+        jobName: 'payid_count_gauge_metrics',
+        groupings: {
+          instance: config.metrics.organization as string,
+        },
       },
       (err, _resp, _body): void => {
         if (err) {
@@ -106,16 +109,8 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
   }, config.metrics.pushIntervalInSeconds * 1000)
 }
 
-/**
- * Resets PayID count gauge. This should normally be called just before
- * refreshing PayID count metrics from the database.
- */
-export function resetPayIdCounts(): void {
-  payIdGaugeRegistry.resetMetrics()
-}
-
 export function recordPayIdLookupBadAcceptHeader(): void {
-  requestCounter.inc(
+  payIdLookupCounter.inc(
     {
       paymentNetwork: 'unknown',
       environment: 'unknown',
@@ -126,7 +121,7 @@ export function recordPayIdLookupBadAcceptHeader(): void {
   )
 }
 
-export function recordPayIdCount(
+export function setPayIdCount(
   paymentNetwork: string,
   environment: string,
   count: number,
@@ -146,7 +141,7 @@ export function recordPayIdLookupResult(
   environment: string,
   found: boolean,
 ): void {
-  requestCounter.inc(
+  payIdLookupCounter.inc(
     {
       paymentNetwork,
       environment,
@@ -158,5 +153,5 @@ export function recordPayIdLookupResult(
 }
 
 export function getMetrics(): string {
-  return payIdCounterRegistry.metrics() + payIdGaugeRegistry.metrics()
+  return payIdRegistry.metrics()
 }

@@ -121,14 +121,13 @@ docker run -d --rm --name payid-postgres --network payid-network -e POSTGRES_PAS
 To start the PayID server, run the PayID server in docker using the image you created. You must also use the docker network `payid-network` so that it can connect to the `payid-postgres` container.
 
 ```
-docker run -it -p 8080:8080 -p 8081:8081 --name payid-server --network payid-network -e DB_PASSWORD=password -e
-    DB_NAME=postgres -e DB_HOSTNAME=payid-postgres payid-server
+docker run -it -p 8080:8080 -p 8081:8081 --name payid-server --network payid-network -e DB_PASSWORD=password -e DB_NAME=postgres -e DB_HOSTNAME=payid-postgres payid-server
 ```
 
 Test whether the PayID server is running by creating a PayID with this cURL command.
 
 ```
- curl --location --request POST 'http://127.0.0.1:8081/users' --header 'Content-Type: application/json' --header 'Content-Type: text/plain' --data-raw '{
+ curl --location --request POST 'http://127.0.0.1:8081/users' --header 'PayID-API-Version: 2020-06-10' --header 'Content-Type: application/json' --header 'Content-Type: text/plain' --data-raw '{
      "payId": "alice$127.0.0.1",
      "addresses": [
          {

@@ -13,8 +13,7 @@ export default async function getPayIdCounts(): Promise<PayIdCount[]> {
     .count('* as count')
     .from<PayIdCount>('address')
     .groupBy('address.paymentNetwork', 'address.environment')
-    .orderBy('address.paymentNetwork')
-    .orderBy('address.environment')
+    .orderBy(['address.paymentNetwork', 'address.environment'])
 
   return payIdCounts.map((record) => {
     return {

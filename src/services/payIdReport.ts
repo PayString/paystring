@@ -2,15 +2,14 @@ import config from '../config'
 import getPayIdCounts from '../data-access/reports'
 import logger from '../utils/logger'
 
-import { recordPayIdCount, resetPayIdCounts } from './metrics'
+import { setPayIdCount } from './metrics'
 
+/** Generates the number of PayIDs grouped by [paymentNetwork, environment]. */
 export async function generatePayIdCountMetrics(): Promise<void> {
   const payIdCounts = await getPayIdCounts()
 
-  resetPayIdCounts()
-
   payIdCounts.forEach((payIdCount) => {
-    recordPayIdCount(
+    setPayIdCount(
       payIdCount.paymentNetwork,
       payIdCount.environment,
       payIdCount.count,
@@ -36,11 +35,11 @@ export default function scheduleRecurringPayIdCountMetrics():
     return undefined
   }
 
-  setTimeout(() => {
-    generatePayIdCountMetrics().catch((err) =>
-      logger.warn('Failed to generate initial PayID count metrics', err),
-    )
-  }, 1)
+  // Generate the metrics immediately so we don't wait for the interval
+  generatePayIdCountMetrics().catch((err) =>
+    logger.warn('Failed to generate initial PayID count metrics', err),
+  )
+
   return setInterval(() => {
     generatePayIdCountMetrics().catch((err) =>
       logger.warn('Failed to generate scheduled PayID count metrics', err),
