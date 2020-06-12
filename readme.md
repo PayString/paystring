@@ -34,51 +34,6 @@ You can deploy your own PayID server and then create PayIDs for your users using
 
 Once you have set up a PayID server, anyone can use the PayID Public API to query address information. This API is publicly accessible so that anyone can send payments to your users' PayID addresses.
 
-### 4.1. Set up a PayID environment for development purposes
-
-To ease the deployment of a development environment, the PayID application includes scripts to quickly and easily deploy a Postgres database and a PayID server.
-
-Please make sure Docker (including docker-compose) is installed on your machine and run the following commands:
-
-```sh
-git clone git@github.com:xpring-eng/payid.git
-npm run devEnvUp
-```
-
-You can then use the Private and Public PayID APIs as defined further in this document.
-So `npm run devEnvUp` is useful if you just want a PayID server to develop some other service against (a good example would be the Xpring Wallet).
-
-![Open Source](img/open_source.png)
-
----
-
-If you only wish to create a Postgres container without the PayID server, simply run:
-
-```sh
-npm run devDbUp
-```
-
-You would run `npm run devDbUp` if you wanted to actually work on the PayID server source code itself.
-
-The Postgres container listens on port 5432.
-
-You will need to start PayID separately, using `npm run start`.
-
----
-
-Finally, you can remove the full development environment (Postgres and PayID) or only Postgres by running:
-
-```sh
-npm run devDown
-```
-
-**IMPORTANT**: running `npm run devDown` will remove the Postgres container and all your data will be lost.
-
-**Docker information**
-
-The Postgres Docker image used is the version 12 alpine.
-https://hub.docker.com/_/postgres
-
 ### 4.2. Integrate PayID with existing user bases
 
 If you have an existing user database, you will need to take the following steps to integrate PayID functionality into your product.
