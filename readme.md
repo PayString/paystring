@@ -14,15 +14,19 @@
 
 ## Required Server Security
 
-There are a few critical security measures that **MUST** be taken when running this PayID server implementation.
+Here are several critical security measures you MUST implement when running this PayID server implementation:
 
-### TLS
+### TLS (Transport Layer Security)
 
 TLS is a **requirement** for PayID. This PayID server implementation does not include TLS out-of-the-box, so it must be configured.
 
 For instructions on configuring TLS with an NGINX reverse proxy for PayID, go [here](https://dev.docs.payid.org/docs/remote-deployment#nginx-reverse-proxy--ssl-setup).
 
 For PayID security best practices, go [here](https://dev.docs.payid.org/docs/payid-best-practices).
+
+### Private API
+
+The Private API does not currently include authentication. Therefore, this API MUST only be exposed to trusted IP ranges, and MUST NOT be exposed publicly.
 
 ## 4. PayID integration and the PayID APIs
 
