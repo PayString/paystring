@@ -1,4 +1,4 @@
-import * as Boom from 'boom'
+import * as Boom from '@hapi/boom'
 import { Response } from 'express'
 
 import HttpStatus from '../../types/httpStatus'

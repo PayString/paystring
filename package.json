@@ -32,7 +32,7 @@
     "devDown": "docker-compose down"
   },
   "dependencies": {
-    "boom": "^7.3.0",
+    "@hapi/boom": "^9.1.0",
     "express": "^4.17.1",
     "knex": "^0.21.1",
     "knex-stringcase": "^1.4.1",
@@ -44,7 +44,6 @@
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.2",
-    "@types/boom": "^7.3.0",
     "@types/chai": "^4.2.11",
     "@types/chai-as-promised": "^7.1.2",
     "@types/express": "^4.17.6",
