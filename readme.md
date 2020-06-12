@@ -12,6 +12,18 @@
 - [8. Use Xpring SDK with PayID](#8-use-xpring-sdk-with-payid)
   - [8.1. Demo](#81-demo)
 
+## Required Server Security
+
+There are a few critical security measures that **MUST** be taken when running this PayID server implementation.
+
+### TLS
+
+TLS is a **requirement** for PayID. This PayID server implementation does not include TLS out-of-the-box, so it must be configured.
+
+For instructions on configuring TLS with an NGINX reverse proxy for PayID, go [here](https://dev.docs.payid.org/docs/remote-deployment#nginx-reverse-proxy--ssl-setup).
+
+For PayID security best practices, go [here](https://dev.docs.payid.org/docs/payid-best-practices).
+
 ## 4. PayID integration and the PayID APIs
 
 You can deploy your own PayID server and then create PayIDs for your users using the PayID Private API. You can also query and modify this list of users. This API should be exposed internally only, so that only your company's systems can update PayID mappings.
