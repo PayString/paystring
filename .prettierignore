@@ -1,0 +1,9 @@
+# Do not lint generated files.
+src/generated
+build
+dist
+.nyc_output
+
+# Don't ever lint node_modules and NPM stuff
+.npm
+node_modules

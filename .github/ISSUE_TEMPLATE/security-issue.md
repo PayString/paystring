@@ -4,7 +4,6 @@ about: Open a security issue.
 title: ''
 labels: ''
 assignees: ''
-
 ---
 
 STOP! Please do not use GitHub for filing security issues. Doing so is insecure and may put other users at risk.
