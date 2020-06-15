@@ -12,7 +12,7 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  * @param res - An Express Response object.
  * @param next - An Express next() function.
  */
-export default function checkPublicApiVersionHeaders(
+export default function checkPrivateApiVersionHeaders(
   req: Request,
   res: Response,
   next: NextFunction,

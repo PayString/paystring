@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 
 import HttpStatus from '../types/httpStatus'
+import logger from '../utils/logger'
 
 /**
  * Sends an HTTP response with the appropriate HTTP status and JSON-formatted payload (if any).
@@ -22,6 +23,21 @@ export default function sendSuccess(req: Request, res: Response): void {
     const locationHeader = ['', userPath, res.locals.payId].join('/')
 
     res.location(locationHeader)
+  }
+
+  // Debug-level log all successful requests
+  // Do not log health checks
+  if (req.originalUrl !== '/status/health') {
+    logger.debug(
+      status,
+      ((): string => {
+        if (res.get('PayID-API-Server-Version')) {
+          return '- Private API:'
+        }
+        return '- Public API:'
+      })(),
+      `${req.method} ${req.originalUrl}`,
+    )
   }
 
   if (res.locals.response) {
