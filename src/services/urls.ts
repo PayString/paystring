@@ -1,13 +1,7 @@
-import config from '../config'
-
-// CONSTANTS
-const HTTPS = 'https://'
-const HTTP = 'http://'
-
 /**
  * Gets the full URL from request components. To be used to create the PayID.
  *
- * @param protocol - HTTP or HTTPS.
+ * @param protocol - The URL protocol (http(s)).
  * @param hostname - Used to create the host in the PayID (user$host).
  * @param path - Used to create the "user" in the PayID (user$host).
  * @param port - Used in the PayID if included (optional).
@@ -27,19 +21,15 @@ export function constructUrl(
 }
 
 /**
- * Converts a PayID from `https://...` representation to `user$...` representation.
+ * Converts a PayID from `https://...` URL representation to `user$...` representation.
  *
  * @param url - The url string to convert to a PayId.
- * @param httpsRequired - Indicates if we only support URLs with HTTPS.
  *
  * @returns A PayID in the $ format.
  */
-export function urlToPayId(
-  url: string,
-  httpsRequired = config.app.httpsRequired,
-): string {
+export function urlToPayId(url: string): string {
   // Parse the URL and get back a valid PayID URL
-  const payIdUrl = parsePayIdUrl(url, httpsRequired)
+  const payIdUrl = parsePayIdUrl(url)
 
   // Get the user from the pathname
   const user = payIdUrl.pathname.slice(1)
@@ -67,16 +57,12 @@ function isASCII(input: string): boolean {
  * Parse the URL to see if it can be converted to a PayID.
  *
  * @param url - The URL string to be converted to a PayID URL.
- * @param httpsRequired - Indicates if we only support URLs with HTTPS.
  *
  * @returns A URL object.
  */
-function parsePayIdUrl(url: string, httpsRequired: boolean): URL {
-  if (!url.startsWith(HTTPS) && httpsRequired) {
-    throw new Error('Bad input. PayID URLs must be HTTPS.')
-  }
-
-  if (!url.startsWith(HTTPS) && !url.startsWith(HTTP)) {
+function parsePayIdUrl(url: string): URL {
+  // Make sure it's not something wild like an FTP request
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
     throw new Error('Bad input. PayID URLs must be HTTP/HTTPS.')
   }
 

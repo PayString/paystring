@@ -26,7 +26,6 @@ const config = {
     payIdVersion: payIdServerVersions[payIdServerVersions.length - 1],
     privateApiVersion: privateApiVersions[privateApiVersions.length - 1],
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
-    httpsRequired: process.env.HTTPS_REQUIRED === 'true',
   },
   metrics: {
     /**

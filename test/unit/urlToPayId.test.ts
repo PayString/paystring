@@ -17,25 +17,25 @@ describe('Parsing - URLs - urlToPayId()', function (): void {
     assert.throws(badConversion, expectedErrorMessage)
   })
 
-  it('throws an error on inputs that are HTTP if httpsRequired is true', function (): void {
+  it('Handles an HTTPS PayID URL', function (): void {
     // GIVEN an http URL
-    const url = 'http://example.com/alice'
-    const expectedErrorMessage = 'Bad input. PayID URLs must be HTTPS.'
+    const url = 'https://example.com/alice'
+    const expectedPayId = 'alice$example.com'
 
-    // WHEN we attempt converting it to a PayID w/ httpsRequired set to true
-    const badConversion = (): string => urlToPayId(url, true)
+    // WHEN we attempt converting it to a PayID
+    const actualPayId = urlToPayId(url)
 
     // THEN we get our expected error
-    assert.throws(badConversion, expectedErrorMessage)
+    assert.strictEqual(actualPayId, expectedPayId)
   })
 
-  it('handles HTTP if httpsRequired is false', function (): void {
+  it('Handles an HTTP PayID URL', function (): void {
     // GIVEN an http URL
     const url = 'http://example.com/alice'
     const expectedPayId = 'alice$example.com'
 
-    // WHEN we attempt converting it to a PayID w/ httpsRequired set to false
-    const actualPayId = urlToPayId(url, false)
+    // WHEN we attempt converting it to a PayID
+    const actualPayId = urlToPayId(url)
 
     // THEN we get our expected PayId
     assert.strictEqual(actualPayId, expectedPayId)
