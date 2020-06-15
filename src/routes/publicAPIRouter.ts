@@ -15,7 +15,7 @@ import sendSuccess from '../middlewares/sendSuccess'
 const publicAPIRouter = express.Router()
 
 /**
- * Routes for resolving PayIDs to addresses (and health check).
+ * Routes for the PayID Public API.
  */
 publicAPIRouter
   // Allow the PayID Protocol to basically ignore CORS
@@ -30,20 +30,20 @@ publicAPIRouter
     next()
   })
 
-  // Route to resolve the welcome page HTML
+  // Welcome page route
   .get('/', (_req: express.Request, res: express.Response) => {
     res.sendFile(path.join(__dirname, '../html/index.html'))
   })
 
-  // Route for the favicon
+  // Favicon route
   .get('/favicon.ico', (_req: express.Request, res: express.Response) => {
     res.sendFile(path.join(__dirname, '../html/favicon.ico'))
   })
 
-  // Health routes
+  // Health route
   .get('/status/health', sendSuccess)
 
-  // PaymentSetupDetails routes
+  // PaymentSetupDetails route
   .get(
     '/*/payment-setup-details',
     checkPublicApiVersionHeaders,
@@ -61,7 +61,7 @@ publicAPIRouter
     sendSuccess,
   )
 
-  // Payment proof routes
+  // PaymentProof route
   .post(
     '/*/payment-proofs',
     express.json(),
@@ -70,7 +70,7 @@ publicAPIRouter
     sendSuccess,
   )
 
-  // Base PayID routes
+  // Base PayID route
   .get(
     '/*',
     checkPublicApiVersionHeaders,
@@ -78,7 +78,7 @@ publicAPIRouter
     sendSuccess,
   )
 
-  // Error handling middleware needs to be defined last
+  // Error handling middleware (needs to be defined last)
   .use(errorHandler)
 
 export default publicAPIRouter

@@ -8,10 +8,13 @@ import { getUser, postUser, putUser, deleteUser } from '../middlewares/users'
 const privateAPIRouter = express.Router()
 
 /**
- * Routes for the private API so that authorized parties can post PayID mappings to the PayID database.
+ * Routes for the PayID Private API.
  */
 privateAPIRouter
+  // Get user route
   .get('/*', checkPrivateApiVersionHeaders, wrapAsync(getUser), sendSuccess)
+
+  // Create user route
   .post(
     '/',
     express.json(),
@@ -19,6 +22,8 @@ privateAPIRouter
     wrapAsync(postUser),
     sendSuccess,
   )
+
+  // Replace user route
   .put(
     '/*',
     express.json(),
@@ -26,6 +31,8 @@ privateAPIRouter
     wrapAsync(putUser),
     sendSuccess,
   )
+
+  // Delete user route
   .delete(
     '/*',
     checkPrivateApiVersionHeaders,
@@ -33,7 +40,7 @@ privateAPIRouter
     sendSuccess,
   )
 
-  // Error handling middleware needs to be defined last
+  // Error handling middleware (needs to be defined last)
   .use(errorHandler)
 
 export default privateAPIRouter
