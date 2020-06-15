@@ -21,5 +21,5 @@ pre-commit:
   parallel: true
   commands:
     eslint:
-      glob: '*.{js,ts}'
+      glob: '*.ts'
       run: npx eslint {staged_files}
