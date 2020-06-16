@@ -74,6 +74,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
     return undefined
   }
 
+  /** Prometheus Push Gateway for pushing PayID metrics. */
   const payIdPushGateway = new Pushgateway(
     config.metrics.gatewayUrl,
     [],
@@ -120,6 +121,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
  * Record a PayID lookup that failed due to a bad accept header.
  */
 export function recordPayIdLookupBadAcceptHeader(): void {
+  // TODO:(hbergren) Would we ever want to record the bad accept header here?
   payIdLookupCounter.inc(
     {
       paymentNetwork: 'unknown',
@@ -132,7 +134,8 @@ export function recordPayIdLookupBadAcceptHeader(): void {
 }
 
 /**
- * Record a PayID count for a given [paymentNetwork, environment] tuple.
+ * Set the PayID count for a given [paymentNetwork, environment] tuple.
+ *
  * Used when calculating the total count of PayIDs for this server.
  *
  * @param paymentNetwork - The payment network of the address.
@@ -155,16 +158,18 @@ export function setPayIdCount(
 }
 
 /**
- * Increments the PayID Lookup Counter with the [paymentNetwork, environment, found] tuple].
+ * Increment a Prometheus Counter for every PayID lookup (public API).
  *
+ * Segregated by whether the lookup was successful or not, and [paymentNetwork, environment].
+ *
+ * @param found - Whether the PayID lookup was successful or not.
  * @param paymentNetwork - The payment network of the lookup.
  * @param environment - The environment of the lookup.
- * @param found - Whether the PayID lookup was successful or not.
  */
 export function recordPayIdLookupResult(
-  paymentNetwork: string,
-  environment: string,
   found: boolean,
+  paymentNetwork: string,
+  environment = 'null',
 ): void {
   payIdLookupCounter.inc(
     {

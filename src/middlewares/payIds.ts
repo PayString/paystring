@@ -70,9 +70,9 @@ export default async function getPaymentInfo(
     }
     parsedAcceptHeaders.forEach((acceptType) =>
       recordPayIdLookupResult(
-        acceptType.paymentNetwork,
-        acceptType.environment ?? 'unknown',
         false,
+        acceptType.paymentNetwork,
+        acceptType.environment,
       ),
     )
 
@@ -101,9 +101,9 @@ export default async function getPaymentInfo(
   res.locals.paymentInformation = formattedPaymentInfo
   res.locals.response = formattedPaymentInfo
   recordPayIdLookupResult(
-    preferredParsedAcceptHeader.paymentNetwork,
-    preferredParsedAcceptHeader.environment ?? 'unknown',
     true,
+    preferredParsedAcceptHeader.paymentNetwork,
+    preferredParsedAcceptHeader.environment,
   )
   return next()
 }
