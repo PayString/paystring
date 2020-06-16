@@ -55,7 +55,7 @@ describe('Parsing - Headers - parseAcceptHeaders()', function (): void {
     // GIVEN a string with an invalid Accept type
     const invalidAcceptMediaType = 'invalid-type'
     const validAcceptMediaType = 'application/xrpl-testnet+json'
-    const expectedError = `Invalid Accept Header: invalid-type. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
+    const expectedError = `Invalid Accept Header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
       Examples:
       - 'Accept: application/xrpl-mainnet+json'
       - 'Accept: application/btc-testnet+json'

@@ -1,12 +1,16 @@
 import { ParseError, ParseErrorType } from '../utils/errors'
 
-import { recordPayIdLookupBadAcceptHeader } from './metrics'
+const badAcceptHeaderErrorMessage = `Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
+      Examples:
+      - 'Accept: application/xrpl-mainnet+json'
+      - 'Accept: application/btc-testnet+json'
+      - 'Accept: application/ach+json'
+      - 'Accept: application/payid+json'
+      `
 
-/**
- * A parsed accept header.
- */
+/** A parsed accept header object. */
 export interface ParsedAcceptHeader {
-  // A raw media type
+  // A raw media type string
   mediaType: string
   // An environment requested in the media type
   // Optional as some headers (e.g. application/ach+json) don't have an environment
@@ -27,39 +31,19 @@ export interface ParsedAcceptHeader {
 export function parseAcceptHeaders(
   acceptHeaders: string[],
 ): readonly ParsedAcceptHeader[] {
-  const defaultErrorPayload = `Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
-      Examples:
-      - 'Accept: application/xrpl-mainnet+json'
-      - 'Accept: application/btc-testnet+json'
-      - 'Accept: application/ach+json'
-      - 'Accept: application/payid+json'
-      `
   // MUST include at least 1 accept header
   if (!acceptHeaders.length) {
-    // Collect metrics on bad request
-    recordPayIdLookupBadAcceptHeader()
-
     throw new ParseError(
-      `Missing Accept Header. ${defaultErrorPayload}`,
+      `Missing Accept Header. ${badAcceptHeaderErrorMessage}`,
       ParseErrorType.InvalidMediaType,
     )
   }
 
   // Accept types MUST be the proper format
-  try {
-    const parsedAcceptHeaders = acceptHeaders.map((type) =>
-      parseAcceptHeader(type),
-    )
-    return parsedAcceptHeaders
-  } catch (err) {
-    // Collect metrics on bad request
-    recordPayIdLookupBadAcceptHeader()
-
-    throw new ParseError(
-      `${err.message as string}. ${defaultErrorPayload}`,
-      ParseErrorType.InvalidMediaType,
-    )
-  }
+  const parsedAcceptHeaders = acceptHeaders.map((type) =>
+    parseAcceptHeader(type),
+  )
+  return parsedAcceptHeaders
 }
 
 // HELPERS
@@ -77,7 +61,7 @@ export function parseAcceptHeader(acceptHeader: string): ParsedAcceptHeader {
   const regexResult = ACCEPT_HEADER_REGEX.exec(lowerCaseMediaType)
   if (!regexResult || !regexResult.groups) {
     throw new ParseError(
-      `Invalid Accept Header: ${acceptHeader}`,
+      `Invalid Accept Header. ${badAcceptHeaderErrorMessage}`,
       ParseErrorType.InvalidMediaType,
     )
   }

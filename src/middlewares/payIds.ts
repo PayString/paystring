@@ -9,8 +9,7 @@ import {
 import { parseAcceptHeaders } from '../services/headers'
 import { recordPayIdLookupResult } from '../services/metrics'
 import { urlToPayId, constructUrl } from '../services/urls'
-import HttpStatus from '../types/httpStatus'
-import { handleHttpError, LookupError, LookupErrorType } from '../utils/errors'
+import { LookupError, LookupErrorType } from '../utils/errors'
 
 /**
  * Resolves inbound requests to a PayID to their respective ledger addresses or other payment information.
@@ -26,17 +25,12 @@ export default async function getPaymentInfo(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  let payId: string
-  try {
-    // * NOTE: If you plan to expose your PayID with a port number, you
-    // * should include req.port as a fourth parameter.
-    const payIdUrl = constructUrl(req.protocol, req.hostname, req.url)
+  // NOTE: If you plan to expose your PayID with a port number, you
+  // should include req.port as a fourth parameter.
+  const payIdUrl = constructUrl(req.protocol, req.hostname, req.url)
 
-    // Parses the constructed URL to confirm it can be converted into a valid PayID
-    payId = urlToPayId(payIdUrl)
-  } catch (err) {
-    return handleHttpError(HttpStatus.BadRequest, err.message, res, err)
-  }
+  // Parses the constructed URL to confirm it can be converted into a valid PayID
+  const payId = urlToPayId(payIdUrl)
 
   // Parses any accept headers to make sure they use valid PayID syntax
   //  - This overload (req.accepts()) isn't mentioned in the express documentation,

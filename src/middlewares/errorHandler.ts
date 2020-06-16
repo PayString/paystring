@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
+import { recordPayIdLookupBadAcceptHeader } from '../services/metrics'
 import HttpStatus from '../types/httpStatus'
-import { PayIDError, handleHttpError } from '../utils/errors'
+import { PayIDError, handleHttpError, ParseErrorType } from '../utils/errors'
 
 /**
  * An error handling middleware responsible for catching unhandled errors,
@@ -24,6 +25,7 @@ export default function errorHandler(
   // If you call next() with an error after you have started writing the response,
   // (for example, if you encounter an error while streaming the response to the client),
   // the Express default error handler closes the connection and fails the request.
+  //
   // So, when you add a custom error handler,
   // you must delegate to the default Express error handler when the headers have already been sent to the client.
   if (res.headersSent) {
@@ -33,6 +35,11 @@ export default function errorHandler(
   let status = HttpStatus.InternalServerError
   if (err instanceof PayIDError) {
     status = err.httpStatusCode
+
+    // Collect metrics on public API requests with bad Accept headers
+    if (err.kind === ParseErrorType.InvalidMediaType) {
+      recordPayIdLookupBadAcceptHeader()
+    }
   }
 
   return handleHttpError(status, err.message, res, err)

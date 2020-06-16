@@ -51,7 +51,13 @@ describe('Parsing - Headers - parseAcceptHeader()', function (): void {
     assert.throws(
       invalidMediaTypeParse,
       ParseError,
-      'Invalid Accept Header: invalid-type',
+      `Invalid Accept Header. Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
+      Examples:
+      - 'Accept: application/xrpl-mainnet+json'
+      - 'Accept: application/btc-testnet+json'
+      - 'Accept: application/ach+json'
+      - 'Accept: application/payid+json'
+      `,
     )
   })
 })

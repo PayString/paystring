@@ -1,3 +1,5 @@
+import { ParseError, ParseErrorType } from '../utils/errors'
+
 /**
  * Gets the full URL from request components. To be used to create the PayID.
  *
@@ -63,11 +65,17 @@ function isASCII(input: string): boolean {
 function parsePayIdUrl(url: string): URL {
   // Make sure it's not something wild like an FTP request
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
-    throw new Error('Bad input. PayID URLs must be HTTP/HTTPS.')
+    throw new ParseError(
+      'Invalid PayID URL protocol. PayID URLs must be HTTP/HTTPS.',
+      ParseErrorType.InvalidPayId,
+    )
   }
 
   if (!isASCII(url)) {
-    throw new Error('Bad input. PayIDs must be ASCII.')
+    throw new ParseError(
+      'Invalid PayID characters. PayIDs must be ASCII.',
+      ParseErrorType.InvalidPayId,
+    )
   }
 
   // Verify it's a valid URL
@@ -77,8 +85,9 @@ function parsePayIdUrl(url: string): URL {
   // Valid:   domain.com/user
   // Invalid: domain.com/payid/user
   if ((parsedUrl.pathname.match(/\//gu) || []).length > 1) {
-    throw new Error(
-      'Bad input. The only paths allowed in a PayID are to specify the user.',
+    throw new ParseError(
+      'Too many paths. The only paths allowed in a PayID are to specify the user.',
+      ParseErrorType.InvalidPayId,
     )
   }
 

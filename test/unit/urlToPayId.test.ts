@@ -8,7 +8,8 @@ describe('Parsing - URLs - urlToPayId()', function (): void {
   it('throws an error on inputs that are not HTTP/HTTPS', function (): void {
     // GIVEN a badly formed input
     const url = 'ftp://example.com/alice'
-    const expectedErrorMessage = 'Bad input. PayID URLs must be HTTP/HTTPS.'
+    const expectedErrorMessage =
+      'Invalid PayID URL protocol. PayID URLs must be HTTP/HTTPS.'
 
     // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
@@ -45,7 +46,8 @@ describe('Parsing - URLs - urlToPayId()', function (): void {
     // GIVEN a badly formed PayID URL (non-ASCII)
     // Note that this is a real TLD that exists
     const url = 'https://hansbergren.example.संगठन'
-    const expectedErrorMessage = 'Bad input. PayIDs must be ASCII.'
+    const expectedErrorMessage =
+      'Invalid PayID characters. PayIDs must be ASCII.'
 
     // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
@@ -58,7 +60,7 @@ describe('Parsing - URLs - urlToPayId()', function (): void {
     // GIVEN an invalid PayID URL (multi-step path)
     const url = 'https://example.com/badPath/alice'
     const expectedErrorMessage =
-      'Bad input. The only paths allowed in a PayID are to specify the user.'
+      'Too many paths. The only paths allowed in a PayID are to specify the user.'
 
     // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)

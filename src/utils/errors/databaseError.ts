@@ -84,7 +84,7 @@ export function handleDatabaseError(error: Error): never {
     throw new DatabaseError(
       DatabaseErrorMessage.InvalidPayId,
       DatabaseErrorType.InvalidPayId,
-      HttpStatus.InternalServerError,
+      HttpStatus.BadRequest,
     )
   }
 
@@ -93,7 +93,7 @@ export function handleDatabaseError(error: Error): never {
     throw new DatabaseError(
       DatabaseErrorMessage.EmptyStringPayId,
       DatabaseErrorType.EmptyStringViolation,
-      HttpStatus.InternalServerError,
+      HttpStatus.BadRequest,
     )
   }
 
@@ -101,7 +101,7 @@ export function handleDatabaseError(error: Error): never {
     throw new DatabaseError(
       DatabaseErrorMessage.EmptyStringPaymentNetwork,
       DatabaseErrorType.EmptyStringViolation,
-      HttpStatus.InternalServerError,
+      HttpStatus.BadRequest,
     )
   }
 
@@ -109,7 +109,7 @@ export function handleDatabaseError(error: Error): never {
     throw new DatabaseError(
       DatabaseErrorMessage.EmptyStringEnvironment,
       DatabaseErrorType.EmptyStringViolation,
-      HttpStatus.InternalServerError,
+      HttpStatus.BadRequest,
     )
   }
 
