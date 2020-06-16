@@ -20,7 +20,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'BTC',
         environment: 'TESTNET',
-        count: 2,
+        count: 1,
       },
       {
         paymentNetwork: 'INTERLEDGER',
@@ -29,18 +29,13 @@ describe('Data Access - getPayIdCounts()', function (): void {
       },
       {
         paymentNetwork: 'XRPL',
-        environment: 'DEVNET',
+        environment: 'MAINNET',
         count: 1,
       },
       {
         paymentNetwork: 'XRPL',
-        environment: 'MAINNET',
-        count: 2,
-      },
-      {
-        paymentNetwork: 'XRPL',
         environment: 'TESTNET',
-        count: 6,
+        count: 4,
       },
     ]
     assert.deepEqual(results, expected)
