@@ -100,6 +100,7 @@ export function isExpectedPaymentSetupDetails(
   expectedResponse: SignatureWrapper,
 ) {
   return (res: request.Response): void => {
+    console.log(res)
     const {
       expirationTime: expectedExpirationTime,
       ...expectedResponseWithoutExpirationTime
@@ -112,7 +113,7 @@ export function isExpectedPaymentSetupDetails(
       expirationTime > expectedExpirationTime,
       'Expiration time is a valid time',
     )
-    assert(expirationTimeDelta < 1000, 'Expiration is within expected delta')
+    assert(expirationTimeDelta < 5000, 'Expiration is within expected delta')
     assert.deepEqual(
       expectedResponseWithoutExpirationTime,
       responseWithoutExpirationTime,

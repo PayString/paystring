@@ -1,4 +1,5 @@
-import { mockPaymentSetupDetailsWithComplianceHashes } from '../data/travelRuleData'
+import { createHash } from 'crypto'
+
 import {
   PaymentSetupDetails,
   PaymentInformation,
@@ -48,7 +49,14 @@ export default function generatePaymentSetupDetails(
   }
 
   if (complianceData) {
-    return mockPaymentSetupDetailsWithComplianceHashes
+    const complianceHash = createHash('sha512')
+      .update(JSON.stringify(complianceData))
+      .digest('hex')
+
+    paymentSetupDetails.complianceHashes.push({
+      type: ComplianceType.TravelRule,
+      hash: complianceHash,
+    })
   }
   return paymentSetupDetails
 }
