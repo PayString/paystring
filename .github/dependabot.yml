@@ -1,0 +1,16 @@
+# Dependabot configuration
+# https://help.github.com/en/github/administering-a-repository/configuration-options-for-dependency-updates
+version: 2
+updates:
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
+  # NPM Dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    versioning-strategy: increase
