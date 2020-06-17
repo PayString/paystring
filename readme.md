@@ -15,3 +15,7 @@ To clean up the associated Docker containers, you can run `npm run devDown`.
 - [PayID Developer Documentation](https://docs.payid.org/docs/payid-overview)
 - [PayID API Documentation](https://api.payid.org/?version=latest)
 - [Core PayID Protocol RFCs](https://github.com/payid-org/rfcs)
+
+## Legal
+
+By using, reproducing, or distributing this code, you agree to the terms and conditions for use (including the Limitation of Liability) in the [Apache License 2.0](https://github.com/payid-org/payid/blob/master/LICENSE). If you do not agree, you may not use, reproduce, or distribute the code.
