@@ -24,7 +24,7 @@ This project and all participants are governed by the [PayID Code of Conduct](ht
 
 <!-- TODO:(hbergren) Update these links when we migrate to `payid-org`. -->
 
-If you've found a bug or want to request a new feature, please [create a new issue](https://github.com/xpring-eng/payid/issues/new) or a [pull request](https://github.com/xpring-eng/payid/compare) on GitHub.
+If you've found a bug or want to request a new feature, please [create a new issue](https://github.com/payid-org/payid/issues/new) or a [pull request](https://github.com/payid-org/payid/compare) on GitHub.
 
 Please include as much detail as possible to help us properly address your issue. If we need to triage issues and constantly ask people for more detail, that's time taken away from actually fixing issues. Help us be as efficient as possible by including a lot of detail in your issues.
 
@@ -56,7 +56,7 @@ If you have found a vulnerability, please read our [Vulnerability Disclosure Pol
 <!-- TODO:(hbergren) Update the Github Releases link to `payid-org` when it exists -->
 <!-- TODO:(hbergren) Add a link to the CHANGELOG when it exists. -->
 
-The PayID reference implementation itself follows [Semantic Versioning](https://semver.org/), and this is the version that is referenced by [Github Releases](https://github.com/xpring-eng/payid/releases) and in the [package.json](./package.json) file.
+The PayID reference implementation itself follows [Semantic Versioning](https://semver.org/), and this is the version that is referenced by [Github Releases](https://github.com/payid-org/payid/releases) and in the [package.json](./package.json) file.
 
 The PayID Protocol itself is versioned in a `{major}.{minor}` version, and this will be referenced in the CHANGELOG and Github Releases where appropriate. In the codebase, the supported protocol versions live in [config.ts](./src/config.ts).
 
