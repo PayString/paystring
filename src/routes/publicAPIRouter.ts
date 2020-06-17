@@ -3,13 +3,8 @@ import * as path from 'path'
 import * as express from 'express'
 
 import checkPublicApiVersionHeaders from '../middlewares/checkPublicApiVersionHeaders'
-import receiveComplianceData from '../middlewares/compliance'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import getPaymentInfo from '../middlewares/payIds'
-import receivePaymentProof from '../middlewares/paymentProofs'
-import getPaymentSetupDetails, {
-  parsePaymentSetupDetailsPath,
-} from '../middlewares/paymentSetupDetails'
 import sendSuccess from '../middlewares/sendSuccess'
 
 const publicAPIRouter = express.Router()
@@ -42,33 +37,6 @@ publicAPIRouter
 
   // Health route
   .get('/status/health', sendSuccess)
-
-  // PaymentSetupDetails route
-  .get(
-    '/*/payment-setup-details',
-    checkPublicApiVersionHeaders,
-    wrapAsync(parsePaymentSetupDetailsPath),
-    wrapAsync(getPaymentInfo),
-    wrapAsync(getPaymentSetupDetails),
-    sendSuccess,
-  )
-  .post(
-    '/*/payment-setup-details',
-    express.json(),
-    checkPublicApiVersionHeaders,
-    wrapAsync(receiveComplianceData),
-    wrapAsync(getPaymentSetupDetails),
-    sendSuccess,
-  )
-
-  // PaymentProof route
-  .post(
-    '/*/payment-proofs',
-    express.json(),
-    checkPublicApiVersionHeaders,
-    wrapAsync(receivePaymentProof),
-    sendSuccess,
-  )
 
   // Base PayID route
   .get(

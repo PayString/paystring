@@ -1,17 +1,9 @@
-/* eslint-disable import/no-unused-modules -- Temorary until travel rule is back. */
 import * as v8 from 'v8'
-
-import { assert } from 'chai'
-import * as request from 'supertest'
 
 import App from '../../src/app'
 import config from '../../src/config'
 import knex from '../../src/db/knex'
 import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
-import {
-  SignatureWrapper,
-  PaymentSetupDetails,
-} from '../../src/types/publicAPI'
 
 /**
  * Deep clones an object *properly*.
@@ -86,38 +78,4 @@ export async function getDatabaseConstraintDefinition(
       [constraintName, tableName],
     )
     .then(async (result) => result.rows[0].constraint_def)
-}
-
-/**
- * A custom helper to check if a PaymentSetupDetails is equivalent to our
- * expected response (and thus has a valid expiration time).
- *
- * @param expectedResponse - The expected PaymentSetupDetails output (which contains an older expiration time).
- *
- * @returns A function that takes a supertest Response, and checks that the
- * PaymentSetupDetails we receive is what we expected to receive.
- */
-export function isExpectedPaymentSetupDetails(
-  expectedResponse: SignatureWrapper,
-) {
-  return (res: request.Response): void => {
-    const {
-      expirationTime: expectedExpirationTime,
-      ...expectedResponseWithoutExpirationTime
-    } = expectedResponse.message as PaymentSetupDetails
-    const { expirationTime, ...responseWithoutExpirationTime } = res.body
-      .message as PaymentSetupDetails
-    const expirationTimeDelta = expirationTime - expectedExpirationTime
-
-    assert(
-      expirationTime > expectedExpirationTime,
-      'Expiration time is a valid time',
-    )
-    // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- Temporary until travel rule is back.
-    assert(expirationTimeDelta < 5000, 'Expiration is within expected delta')
-    assert.deepEqual(
-      expectedResponseWithoutExpirationTime,
-      responseWithoutExpirationTime,
-    )
-  }
 }
