@@ -1,5 +1,9 @@
 # PayID
 
+[![license](https://img.shields.io/badge/license-Apache%202-brightgreen)](https://github.com/payid-org/payid/blob/master/LICENSE)
+![Public API Version](https://img.shields.io/badge/Public%20API%20Version-1.0-blue)
+![Private API Version](https://img.shields.io/badge/Private%20API%20Version-2020--05--28-blue)
+
 Welcome to PayID, the universal payment identifier.
 
 This is the reference implementation server for [PayID](https://docs.payid.org/docs/payid-overview), serving the [PayID API](https://api.payid.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a Postgres database.
