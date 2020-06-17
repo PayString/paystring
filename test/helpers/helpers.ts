@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unused-modules -- Temorary until travel rule is back. */
 import * as v8 from 'v8'
 
 import { assert } from 'chai'
@@ -100,7 +101,6 @@ export function isExpectedPaymentSetupDetails(
   expectedResponse: SignatureWrapper,
 ) {
   return (res: request.Response): void => {
-    console.log(res)
     const {
       expirationTime: expectedExpirationTime,
       ...expectedResponseWithoutExpirationTime
@@ -113,6 +113,7 @@ export function isExpectedPaymentSetupDetails(
       expirationTime > expectedExpirationTime,
       'Expiration time is a valid time',
     )
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers -- Temporary until travel rule is back.
     assert(expirationTimeDelta < 5000, 'Expiration is within expected delta')
     assert.deepEqual(
       expectedResponseWithoutExpirationTime,

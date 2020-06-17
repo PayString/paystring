@@ -1,3 +1,4 @@
+/* eslint-disable import/no-unused-modules -- Temporary until travel rule is back. */
 import {
   PaymentSetupDetails,
   AddressDetailsType,
@@ -36,7 +37,6 @@ export const mockComplianceData: ComplianceData = {
   memo: 'Example travel rule transaction',
 }
 
-// eslint-disable-next-line import/no-unused-modules -- TODO:(@dino-rodriguez) Should this be exported?
 export const mockPaymentSetupDetails: PaymentSetupDetails = {
   txId: 581203,
   expirationTime: 1584723369,

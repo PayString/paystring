@@ -1,0 +1,35 @@
+stages:
+  - test
+
+variables:
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: password
+  POSTGRES_DB: database_development
+  POSTGRES_HOST_AUTH_METHOD: trust
+  DB_HOSTNAME: postgres
+
+services:
+  - postgres:12
+
+lint:
+  stage: test
+  image:
+    name: node:12
+  before_script:
+    - npm i --cache .npm --prefer-offline --no-audit --progress=false
+  script:
+    - npm run lintNoFix
+
+code coverage:
+  stage: test
+  image:
+    name: node:12
+  before_script:
+    - npm i --cache .npm --no-audit --progress=false --prefer-offline -g nyc codecov
+    - npm i --cache .npm --no-audit --progress=false --prefer-offline
+  script:
+    - npm run build
+    - nyc npm test
+    - mkdir coverage
+    - nyc report --reporter=text-lcov > coverage/coverage.json
+    - codecov
