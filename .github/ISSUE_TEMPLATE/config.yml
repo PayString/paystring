@@ -1,7 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: PayID Protocol Change
-    url: https://github.com/xpring-eng/rfcs/tree/master/payid
+    url: https://github.com/payid-org/rfcs/tree/master
     about: Please submit an RFC here.
-# TODO:(hbergren) Update this to point to payid-org/rfcs when that exists.
-# Also, make sure that `rfcs` repo has instructions for how to open/write a PayID RFC.

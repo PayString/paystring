@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "The PayID Server reference implementation",
   "keywords": [],
-  "homepage": "https://github.com/xpring-eng/payid#readme",
+  "homepage": "https://github.com/payid-org/payid#readme",
   "bugs": {
-    "url": "https://github.com/xpring-eng/payid/issues"
+    "url": "https://github.com/payid-org/payid/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/xpring-eng/payid.git"
+    "url": "git+https://github.com/payid-org/payid.git"
   },
   "license": "Apache-2.0",
   "author": "",

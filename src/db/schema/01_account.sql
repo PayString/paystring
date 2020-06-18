@@ -13,6 +13,6 @@ CREATE TABLE IF NOT EXISTS account (
 	CONSTRAINT pay_id_length_nonzero CHECK(length(pay_id) > 0),
 	CONSTRAINT pay_id_lowercase CHECK(lower(pay_id) = pay_id),
 
-	-- Regex discussion: https://github.com/xpring-eng/payid/issues/345
+	-- Regex discussion: https://github.com/payid-org/payid/issues/345
     CONSTRAINT valid_pay_id CHECK(pay_id ~ '^[a-z0-9!#@%&*+/=?^_`{|}~-]+(?:\.[a-z0-9!#@%&*+/=?^_`{|}~-]+)*\$(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z-]*[a-z0-9])?|(?:[0-9]{1,3}\.){3}[0-9]{1,3})$')
 );
