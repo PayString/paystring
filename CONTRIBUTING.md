@@ -16,7 +16,7 @@ The following is a set of guidelines for contributing to PayID and associated pa
 
 ## Code of Conduct
 
-This project and all participants are governed by the [PayID Code of Conduct](https://github.com/payid-org/guidelines/blob/master/CODE_OF_CONDUCT.md).
+This project and all participants are governed by the [PayID Code of Conduct](https://github.com/payid-org/.github/blob/master/CODE_OF_CONDUCT.md).
 
 ## Issue Reporting Guidelines
 
@@ -26,7 +26,7 @@ Please include as much detail as possible to help us properly address your issue
 
 ### Reporting Vulnerabilities
 
-If you have found a vulnerability, please read our [Vulnerability Disclosure Policy](https://github.com/payid-org/guidelines/blob/master/SECURITY.md) to learn how to responsibly report the vulnerability.
+If you have found a vulnerability, please read our [Vulnerability Disclosure Policy](https://github.com/payid-org/.github/blob/master/SECURITY.md) to learn how to responsibly report the vulnerability.
 
 ## Pull Request Guidelines
 
