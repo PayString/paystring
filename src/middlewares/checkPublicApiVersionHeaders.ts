@@ -74,5 +74,14 @@ export default function checkPublicApiVersionHeaders(
   // Eventually, we'll need to be able to upgrade/downgrade responses.
   res.header('PayID-Version', payIdVersionHeader)
 
+  // TODO:(hbergren) This probably should not live here.
+  // We probably want a separate setHeaders() function that does the setting,
+  // and this and the PayID-Version header can live there.
+  //
+  // The response may not be stored in any cache.
+  // Although other directives may be set,
+  // this alone is the only directive you need in preventing cached responses on modern browsers
+  res.header('Cache-Control', 'no-store')
+
   next()
 }
