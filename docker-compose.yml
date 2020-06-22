@@ -16,6 +16,8 @@ services:
     depends_on:
       - 'db'
     environment:
+      # Force the default PostgreSql port and ignore the value of the host environment variable.
+      - DB_PORT=5432
       # Used in wait-for-postgres.sh and by payid. The value must be the same as the POSTGRES_PASSWORD value in the db service.
       - DB_PASSWORD=password
       # Uncomment DB_NAME if you change POSTGRES_DB in the "db" service below
