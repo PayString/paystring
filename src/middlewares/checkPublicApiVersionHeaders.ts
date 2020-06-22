@@ -12,6 +12,8 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  * @param req - An Express Request object.
  * @param res - An Express Response object.
  * @param next - An Express next() function.
+ *
+ * @throws A ParseError if the PayID-Version header is missing, malformed, or unsupported.
  */
 export default function checkPublicApiVersionHeaders(
   req: Request,

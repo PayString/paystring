@@ -75,6 +75,8 @@ export default class DatabaseError extends PayIDError {
  * Map a raw error raised by Postgres/Knex into a custom DatabaseError.
  *
  * @param error - A raw SQL error raised by Postgres/Knex.
+ *
+ * @throws A custom DatabaseError which wraps the raw error from the database.
  */
 export function handleDatabaseError(error: Error): never {
   logger.debug(error)
