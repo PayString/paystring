@@ -61,6 +61,8 @@ function isASCII(input: string): boolean {
  * @param url - The URL string to be converted to a PayID URL.
  *
  * @returns A URL object.
+ *
+ * @throws A custom ParseError when the PayID URL is invalid.
  */
 function parsePayIdUrl(url: string): URL {
   // Make sure it's not something wild like an FTP request

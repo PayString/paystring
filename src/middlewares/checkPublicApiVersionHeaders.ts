@@ -12,6 +12,8 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  * @param req - An Express Request object.
  * @param res - An Express Response object.
  * @param next - An Express next() function.
+ *
+ * @throws A ParseError if the PayID-Version header is missing, malformed, or unsupported.
  */
 export default function checkPublicApiVersionHeaders(
   req: Request,
@@ -71,6 +73,15 @@ export default function checkPublicApiVersionHeaders(
   // Add our PayID-Version header to all responses.
   // Eventually, we'll need to be able to upgrade/downgrade responses.
   res.header('PayID-Version', payIdVersionHeader)
+
+  // TODO:(hbergren) This probably should not live here.
+  // We probably want a separate setHeaders() function that does the setting,
+  // and this and the PayID-Version header can live there.
+  //
+  // The response may not be stored in any cache.
+  // Although other directives may be set,
+  // this alone is the only directive you need in preventing cached responses on modern browsers
+  res.header('Cache-Control', 'no-store')
 
   next()
 }

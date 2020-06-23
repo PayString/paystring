@@ -25,6 +25,8 @@ export interface ParsedAcceptHeader {
  * @param acceptHeaders - A list of accept headers.
  *
  * @returns A parsed list of accept headers.
+ *
+ * @throws A custom ParseError when the Accept Header is missing.
  */
 // TODO(dino): Generate this error code from a list of supported media types
 // TODO(dino): Move the metrics capturing to the error handling middleware
@@ -54,6 +56,8 @@ export function parseAcceptHeaders(
  * @param acceptHeader - A string representation of an accept header to validate.
  *
  * @returns A parsed accept header.
+ *
+ * @throws A custom ParseError when the Accept Header is invalid.
  */
 export function parseAcceptHeader(acceptHeader: string): ParsedAcceptHeader {
   const ACCEPT_HEADER_REGEX = /^(?:application\/)(?<paymentNetwork>\w+)-?(?<environment>\w+)?(?:\+json)$/u

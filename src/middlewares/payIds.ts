@@ -19,6 +19,8 @@ import { LookupError, LookupErrorType } from '../utils/errors'
  * @param next - Passes req/res to next middleware.
  *
  * @returns A Promise resolving to nothing.
+ *
+ * @throws A LookupError if we could not find payment information for the given PayID.
  */
 export default async function getPaymentInfo(
   req: Request,
