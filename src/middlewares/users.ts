@@ -1,8 +1,8 @@
+import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
 import getAllAddressInfoFromDatabase from '../data-access/payIds'
 import { insertUser, replaceUser, removeUser } from '../data-access/users'
-import HttpStatus from '../types/httpStatus'
 import {
   LookupError,
   LookupErrorType,
