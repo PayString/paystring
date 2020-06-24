@@ -1,7 +1,7 @@
 import * as Boom from '@hapi/boom'
+import HttpStatus from '@xpring-eng/http-status'
 import { Response } from 'express'
 
-import HttpStatus from '../../types/httpStatus'
 import logger from '../logger'
 
 /**

@@ -1,7 +1,7 @@
+import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 import { recordPayIdLookupBadAcceptHeader } from '../services/metrics'
-import HttpStatus from '../types/httpStatus'
 import { PayIDError, handleHttpError, ParseErrorType } from '../utils/errors'
 
 /**

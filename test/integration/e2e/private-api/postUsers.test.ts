@@ -1,8 +1,8 @@
+import HttpStatus from '@xpring-eng/http-status'
 import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
-import HttpStatus from '../../../../src/types/httpStatus'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App

@@ -33,6 +33,7 @@
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
+    "@xpring-eng/http-status": "^1.0.0",
     "express": "^4.17.1",
     "knex": "^0.21.1",
     "knex-stringcase": "^1.4.1",
@@ -60,10 +61,10 @@
     "chokidar": "^3.4.0",
     "chokidar-cli": "^2.1.0",
     "copyfiles": "^2.3.0",
-    "eslint": "^7.3.0",
+    "eslint": "^7.3.1",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.21.2",
-    "eslint-plugin-jsdoc": "^28.5.0",
+    "eslint-plugin-jsdoc": "^28.5.1",
     "eslint-plugin-mocha": "^7.0.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
@@ -73,7 +74,7 @@
     "prettier": "^2.0.5",
     "supertest": "^4.0.2",
     "ts-node": "^8.10.2",
-    "tsc-watch": "^4.2.8"
+    "tsc-watch": "^4.2.9"
   },
   "engines": {
     "node": ">=12.0.0",
