@@ -1,4 +1,4 @@
-# [<img src="img/PayID_Logo_Color.png" alt="PayID" width="256" height="82" />](https://www.payid.org/)
+# [<img src="img/payid-logo-color.png" alt="PayID" width="256" height="82" />](https://www.payid.org/)
 
 [![License: Apache 2](https://img.shields.io/badge/license-Apache%202-brightgreen)](https://github.com/payid-org/payid/blob/master/LICENSE)
 [![Public API Version: 1.0](https://img.shields.io/badge/Public%20API%20Version-1.0-blue)](https://github.com/payid-org/payid/blob/master/src/config.ts#L1)
