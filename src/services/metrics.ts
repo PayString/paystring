@@ -35,31 +35,43 @@ const payIdGauge = new Gauge({
  * Used to determine whether we should schedule pushing events for metrics.
  *
  * @returns A boolean for whether push metrics are enabled.
+ *
+ * @throws An error if pushing metrics is enabled, but the required configuration
+ *         to push metrics is missing or malformed.
  */
 function isPushMetricsEnabled(): boolean {
-  // TODO:(hbergren) Maybe check that this is actually a valid url as well using Node.URL
-  if (!config.metrics.gatewayUrl) {
-    logger.warn(
-      'PUSH_GATEWAY_URL must be set for metrics to be pushed. Metrics will not be pushed.',
-    )
+  if (!config.metrics.reportMetrics) {
     return false
   }
 
-  if (!config.metrics.organization) {
-    logger.warn(
-      'PAYID_ORG must be set for metrics to be pushed. Metrics will not be pushed.',
+  if (!config.metrics.gatewayUrl) {
+    throw new Error(
+      'Pushing metrics is enabled, but the environment variable PUSH_GATEWAY_URL is not set.',
     )
-    return false
+  }
+
+  try {
+    // eslint-disable-next-line no-new -- We are using Node's URL library to see if the URL is valid.
+    new URL(config.metrics.gatewayUrl)
+  } catch {
+    throw new Error(
+      `Pushing metrics is enabled, but the environment variable PUSH_GATEWAY_URL is not a valid url: ${config.metrics.gatewayUrl}.`,
+    )
+  }
+
+  if (!config.metrics.organization) {
+    throw new Error(
+      'Pushing metrics is enabled, but the environment variable PAYID_ORG is not set.',
+    )
   }
 
   if (
     config.metrics.pushIntervalInSeconds <= 0 ||
     Number.isNaN(config.metrics.pushIntervalInSeconds)
   ) {
-    logger.warn(
-      `Invalid PUSH_METRICS_INTERVAL value: ${config.metrics.pushIntervalInSeconds}. Metrics will not be pushed.`,
+    throw new Error(
+      `Push metrics are enabled, but the environment variable PUSH_METRICS_INTERVAL has an invalid value: ${config.metrics.pushIntervalInSeconds}.`,
     )
-    return false
   }
 
   return true
