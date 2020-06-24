@@ -1,4 +1,5 @@
-import HttpStatus from '../../types/httpStatus'
+import HttpStatus from '@xpring-eng/http-status'
+
 import logger from '../logger'
 
 import PayIDError from './payIdError'

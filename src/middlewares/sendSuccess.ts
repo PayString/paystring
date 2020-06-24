@@ -1,6 +1,6 @@
+import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response } from 'express'
 
-import HttpStatus from '../types/httpStatus'
 import logger from '../utils/logger'
 
 /**
