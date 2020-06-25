@@ -1,4 +1,4 @@
-import HttpStatus from '../../types/httpStatus'
+import HttpStatus from '@xpring-eng/http-status'
 
 /**
  * Custom Errors for PayID.

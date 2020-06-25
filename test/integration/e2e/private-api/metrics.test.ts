@@ -1,10 +1,10 @@
+import HttpStatus from '@xpring-eng/http-status'
 import { assert } from 'chai'
 import * as request from 'supertest'
 
 import 'mocha'
 import App from '../../../../src/app'
 import { generatePayIdCountMetrics } from '../../../../src/services/payIdReport'
-import HttpStatus from '../../../../src/types/httpStatus'
 import { appCleanup, appSetup } from '../../../helpers/helpers'
 
 let app: App
