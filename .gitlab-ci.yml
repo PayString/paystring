@@ -35,3 +35,14 @@ code coverage:
     - mkdir coverage
     - nyc report --reporter=text-lcov > coverage/coverage.json
     - codecov
+
+link checker:
+  stage: test
+  image:
+    name: golang:1.14-alpine
+  before_script:
+    - apk add git
+    - export GO111MODULE=on
+    - go get -u github.com/raviqqe/liche
+  script:
+    - liche -r ${CI_PROJECT_DIR}
