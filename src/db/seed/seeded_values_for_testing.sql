@@ -10,7 +10,7 @@ INSERT INTO account(id, pay_id) VALUES
 ('b253bed2-79ce-45d0-bbdd-96867aa85fd5', 'zebra$xpring.money');
 
 INSERT INTO address(account_id, payment_network, environment, details) VALUES
-('232370e9-045e-4269-96ec-5a79091d65ff', 'XRPL', 'MAINNET', '{"address": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", tag": "67298042",}'),
+('232370e9-045e-4269-96ec-5a79091d65ff', 'XRPL', 'MAINNET', '{"address": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", "tag": "67298042"}'),
 ('232370e9-045e-4269-96ec-5a79091d65ff', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}'),
 ('232370e9-045e-4269-96ec-5a79091d65ff', 'BTC',  'TESTNET', '{"address": "mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB"}'),
 ('232370e9-045e-4269-96ec-5a79091d65ff', 'ACH',   NULL,     '{"accountNumber": "000123456789", "routingNumber": "123456789"}'),
