@@ -24,7 +24,7 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
           paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
@@ -49,7 +49,7 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
           paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
