@@ -4,7 +4,7 @@
 # Adapted from: https://gist.github.com/pkuczynski/8665367
 #
 # $1 - The YAML file path string.
-# $2 - The prefix string for the outputed keys.
+# $2 - The prefix string for the outputted keys.
 parse_yaml() {
    declare -r prefix=$2
    declare -r s='[[:space:]]*'
