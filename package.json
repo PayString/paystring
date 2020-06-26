@@ -1,6 +1,6 @@
 {
   "name": "payid",
-  "version": "1.1.0",
+  "version": "1.0.1",
   "description": "The PayID Server reference implementation",
   "keywords": [],
   "homepage": "https://github.com/payid-org/payid#readme",
@@ -30,7 +30,7 @@
     "devEnvUp": "docker-compose up -d",
     "devDbUp": "docker-compose up -d db",
     "devDown": "docker-compose down",
-    "compareVersions": "./version.sh $npm_package_version"
+    "compareVersions": ". ./scripts/version.sh && compare_versions $npm_package_version"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",

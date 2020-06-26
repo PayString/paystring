@@ -1,11 +1,36 @@
 #!/bin/sh
 
+# Compares the Docker image version, NPM version, and Git tag version
+# in the repo. Throws an error if any do not match.
+#
+# $1 - The NPM version string.
+function compare_versions() {
+   eval $(parse_yaml docker-compose.yml "config_")
+   declare -r docker_image_version=$(echo $config_services_payid_image | cut -f 2 -d ':')
+   declare -r npm_version=$1
+   declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-')
+
+   if [[ $docker_image_version != $npm_version || \
+         $docker_image_version != $git_tag_version || \
+         $npm_version != $git_tag_version
+   ]]; then
+      error "Version Mismatch:
+
+      Docker Image Version: "$docker_image_version"
+      NPM Version: "$npm_version"
+      Git Tag Version: "$git_tag_version"
+      "
+   else
+      echo "Docker, NPM, Git Tag Version: "$npm_version
+   fi
+}
+
 # Parses a YAML file and prints the key value pairs.
 # Adapted from: https://gist.github.com/pkuczynski/8665367
 #
 # $1 - The YAML file path string.
 # $2 - The prefix string for the outputted keys.
-parse_yaml() {
+function parse_yaml() {
    declare -r prefix=$2
    declare -r s='[[:space:]]*'
    declare -r w='[a-zA-Z0-9_]*'
@@ -32,36 +57,7 @@ parse_yaml() {
 # Prints an error string to stderr, and exits the program with a 1 code.
 #
 # $1 - The error string to print.
-error()
-{
+function error() {
 	echo "ERROR - $1" 1>&2
 	exit 1
 }
-
-# Compares the Docker image version, NPM version, and Git tag version
-# in the repo. Throws an error if any do not match.
-#
-# $1 - The NPM version string.
-compare_versions() {
-   eval $(parse_yaml docker-compose.yml "config_")
-   declare -r docker_image_version=$(echo $config_services_payid_image | cut -f 2 -d ':')
-   declare -r npm_version=$1
-   declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-')
-
-   if [[ $docker_image_version != $npm_version || \
-         $docker_image_version != $git_tag_version || \
-         $npm_version != $git_tag_version
-   ]]; then
-      error "Version Mismatch:
-
-      Docker Image Version: "$docker_image_version"
-      NPM Version: "$npm_version"
-      Git Tag Version: "$git_tag_version"
-      "
-   else
-      echo "Docker, NPM, Git Tag Version: "$npm_version
-   fi
-}
-
-# Run the script
-compare_versions $1
