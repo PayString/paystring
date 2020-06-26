@@ -45,7 +45,7 @@ export default class App {
     this.publicAPIServer = this.launchPublicAPI(initConfig.app)
     this.privateAPIServer = this.launchPrivateAPI(initConfig.app)
 
-    // Attempt to schedule recurring metrics.
+    // Check if our metrics configuration is valid.
     checkMetricsConfiguration(initConfig.metrics)
 
     // Explicitly log that we are pushing metrics if we're pushing metrics.
