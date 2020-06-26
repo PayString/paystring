@@ -31,60 +31,29 @@ const payIdGauge = new Gauge({
 })
 
 /**
- * Determines whether push metrics are enabled by looking at config / environment variables.
- * Used to determine whether we should schedule pushing events for metrics.
- *
- * @returns A boolean for whether push metrics are enabled.
- */
-function isPushMetricsEnabled(): boolean {
-  // TODO:(hbergren) Maybe check that this is actually a valid url as well using Node.URL
-  if (!config.metrics.gatewayUrl) {
-    logger.warn(
-      'PUSH_GATEWAY_URL must be set for metrics to be pushed. Metrics will not be pushed.',
-    )
-    return false
-  }
-
-  if (!config.metrics.organization) {
-    logger.warn(
-      'PAYID_ORG must be set for metrics to be pushed. Metrics will not be pushed.',
-    )
-    return false
-  }
-
-  if (
-    config.metrics.pushIntervalInSeconds <= 0 ||
-    Number.isNaN(config.metrics.pushIntervalInSeconds)
-  ) {
-    logger.warn(
-      `Invalid PUSH_METRICS_INTERVAL value: ${config.metrics.pushIntervalInSeconds}. Metrics will not be pushed.`,
-    )
-    return false
-  }
-
-  return true
-}
-
-/**
  * Attempt to schedule a recurring metrics push to the metrics gateway URL.
  * Configured through the environment/defaults set in the PayID
  * app config.
  *
+ * @param metricsConfig - A configuration object controlling how to push and generate metrics.
+ *
  * @returns A timer object if push metrics are enabled, undefined otherwise.
  */
-export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
-  if (!isPushMetricsEnabled()) {
+export function scheduleRecurringMetricsPush(
+  metricsConfig = config.metrics,
+): NodeJS.Timeout | undefined {
+  if (!arePushMetricsEnabled(metricsConfig)) {
     return undefined
   }
 
   const payIdLookupCounterGateway = new Pushgateway(
-    config.metrics.gatewayUrl,
+    metricsConfig.gatewayUrl,
     [],
     payIdLookupCounterRegistry,
   )
 
   const payIdGaugeGateway = new Pushgateway(
-    config.metrics.gatewayUrl,
+    metricsConfig.gatewayUrl,
     [],
     payIdGaugeRegistry,
   )
@@ -96,7 +65,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
       {
         jobName: 'payid_counter_metrics',
         groupings: {
-          instance: `${config.metrics.organization as string}_${hostname()}_${
+          instance: `${metricsConfig.domain as string}_${hostname()}_${
             process.pid
           }`,
         },
@@ -113,7 +82,7 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
       {
         jobName: 'payid_gauge_metrics',
         groupings: {
-          instance: config.metrics.organization as string,
+          instance: metricsConfig.domain as string,
         },
       },
       (err, _resp, _body): void => {
@@ -122,7 +91,67 @@ export function scheduleRecurringMetricsPush(): NodeJS.Timeout | undefined {
         }
       },
     )
-  }, config.metrics.pushIntervalInSeconds * 1000)
+  }, metricsConfig.pushIntervalInSeconds * 1000)
+}
+
+/**
+ * Determines whether push metrics are enabled by looking at config / environment variables.
+ * Used to determine whether we should schedule pushing events for metrics.
+ *
+ * Exported only for testing purposes.
+ *
+ * @param metricsConfig - A configuration object controlling how metrics are pushed and generated.
+ *
+ * @returns A boolean for whether push metrics are enabled.
+ *
+ * @throws An error if pushing metrics is enabled, but the required configuration to push metrics is missing or malformed.
+ */
+function arePushMetricsEnabled(metricsConfig: typeof config.metrics): boolean {
+  if (!metricsConfig.reportMetrics) {
+    return false
+  }
+
+  try {
+    // eslint-disable-next-line no-new -- We are using Node's URL library to see if the URL is valid.
+    new URL(metricsConfig.gatewayUrl)
+  } catch {
+    throw new Error(
+      `Push metrics are enabled, but the environment variable PUSH_GATEWAY_URL is not a valid url: "${metricsConfig.gatewayUrl}".`,
+    )
+  }
+
+  // If the organization is undefined, just return false.
+  // Because we can wait for the first request that hits the Public API,
+  // and grab the organization off of that.
+  if (metricsConfig.domain === undefined) {
+    return false
+  }
+
+  if (metricsConfig.domain === '') {
+    throw new Error(
+      `
+      Push metrics are enabled, but the environment variable PAYID_DOMAIN is an invalid value (empty string).
+      Please set PAYID_DOMAIN to the domain your PayID server is running on, like "example.com",
+      or you can disable pushing metrics by setting PUSH_PAYID_METRICS to false.
+
+      Metrics only capture the total number of PayIDs by (paymentNetwork, environment),
+      and the (paymentNetwork, environment) of requests to the PayID server.
+      No identifying information is captured.
+      `,
+    )
+  }
+
+  const oneDayInSeconds = 86400
+  if (
+    metricsConfig.pushIntervalInSeconds <= 0 ||
+    metricsConfig.pushIntervalInSeconds > oneDayInSeconds
+  ) {
+    throw new Error(
+      `Push metrics are enabled, but the environment variable PUSH_METRICS_INTERVAL has an invalid value: "${metricsConfig.pushIntervalInSeconds}". Must be positive and less than one day in seconds.`,
+    )
+  }
+
+  return true
 }
 
 /**
@@ -134,7 +163,7 @@ export function recordPayIdLookupBadAcceptHeader(): void {
     {
       paymentNetwork: 'unknown',
       environment: 'unknown',
-      org: config.metrics.organization,
+      org: config.metrics.domain,
       result: 'error: bad_accept_header',
     },
     1,
@@ -159,7 +188,7 @@ export function setPayIdCount(
     {
       paymentNetwork,
       environment,
-      org: config.metrics.organization,
+      org: config.metrics.domain,
     },
     count,
   )
@@ -183,7 +212,7 @@ export function recordPayIdLookupResult(
     {
       paymentNetwork,
       environment,
-      org: config.metrics.organization,
+      org: config.metrics.domain,
       result: found ? 'found' : 'not_found',
     },
     1,

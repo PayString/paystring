@@ -20,19 +20,26 @@ export async function generatePayIdCountMetrics(): Promise<void> {
 /**
  * Set a recurring timer that will generate PayID count metrics every PAYID_COUNT_REFRESH_INTERVAL seconds.
  *
+ * @param metricsConfig - A configuration object that controls how often metrics will be generated.
+ *
  * @returns A timer that will generate PayID count metrics every X seconds.
+ *
+ * @throws An error if PAYID_COUNT_REFRESH_INTERVAL is invalid (negative number, or interval greater than 24 hours).
  */
-export default function scheduleRecurringPayIdCountMetrics():
-  | NodeJS.Timeout
-  | undefined {
+export default function scheduleRecurringPayIdCountMetrics(
+  metricsConfig = config.metrics,
+): NodeJS.Timeout | undefined {
   const refreshIntervalInSeconds =
-    config.metrics.payIdCountRefreshIntervalInSeconds
+    metricsConfig.payIdCountRefreshIntervalInSeconds
 
-  if (refreshIntervalInSeconds <= 0 || Number.isNaN(refreshIntervalInSeconds)) {
-    logger.warn(
-      `Invalid PAYID_COUNT_REFRESH_INTERVAL value: ${refreshIntervalInSeconds}. PayID count metrics will not be scheduled.`,
+  const oneDayInSeconds = 86400
+  if (
+    refreshIntervalInSeconds <= 0 ||
+    refreshIntervalInSeconds >= oneDayInSeconds
+  ) {
+    throw new Error(
+      `Invalid PAYID_COUNT_REFRESH_INTERVAL value: "${refreshIntervalInSeconds}". Must be a positive number less than 86400 seconds. PayID count metrics will not be generated.`,
     )
-    return undefined
   }
 
   // Generate the metrics immediately so we don't wait for the interval
