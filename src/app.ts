@@ -47,6 +47,13 @@ export default class App {
 
     // Attempt to schedule recurring metrics.
     checkMetricsConfiguration(initConfig.metrics)
+
+    // Explicitly log that we are pushing metrics if we're pushing metrics.
+    if (initConfig.metrics.pushMetrics) {
+      logger.info(
+        'Pushing metrics is enabled. If you would like to opt out of pushing metrics, set the environment variable PUSH_PAYID_METRICS to "false".',
+      )
+    }
   }
 
   /**
