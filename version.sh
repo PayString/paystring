@@ -10,6 +10,12 @@ parse_yaml() {
    declare -r s='[[:space:]]*'
    declare -r w='[a-zA-Z0-9_]*'
    declare -r fs=$(echo @|tr @ '\034')
+
+   # Uses `sed` to insert field separators & awk to iterate through
+   # yaml using field separators to print key value pairs as "key=value".
+   #
+   # When you call this through `eval`, the key value pairs get assigned
+   # as variables in the environment.
    sed -ne "s|^\($s\)\($w\)$s:$s\"\(.*\)\"$s\$|\1$fs\2$fs\3|p" \
         -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
    awk -F$fs '{
@@ -23,6 +29,9 @@ parse_yaml() {
    }'
 }
 
+# Prints an error string to stderr, and exits the program with a 1 code.
+#
+# $1 - The error string to print.
 error()
 {
 	echo "ERROR - $1" 1>&2
@@ -54,4 +63,5 @@ compare_versions() {
    fi
 }
 
+# Run the script
 compare_versions $1
