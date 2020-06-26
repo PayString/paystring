@@ -37,7 +37,7 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     // AND that gatewayURL is an invalid URL
     metricsConfig.gatewayUrl = 'abc'
 
-    // WHEN we check if push metrics are enabled
+    // WHEN we attempt to schedule recurring push metrics
     const badMetricsEnabledCheck = (): void => {
       recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
     }
@@ -49,32 +49,21 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     )
   })
 
-  it('Throws an error if organization is undefined', async function () {
+  it('Returns undefined if the PayID domain is undefined', async function () {
     // GIVEN that reportMetrics is set to true
     const metricsConfig = structuredClone(config.metrics)
     metricsConfig.reportMetrics = true
     metricsConfig.gatewayUrl = 'https://example.com/'
-    // AND that organization is undefined
+    // AND that domain is undefined
     metricsConfig.domain = undefined
 
-    // WHEN we check if push metrics are enabled
-    const badMetricsEnabledCheck = (): void => {
-      recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
-    }
-
-    // THEN we get our expected error message
-    assert.throws(
-      badMetricsEnabledCheck,
-      `
-      Push metrics are enabled, but the environment variable PAYID_DOMAIN is not set.
-      Please set PAYID_DOMAIN to the domain your PayID server is running on, like "example.com",
-      or you can disable pushing metrics by setting PUSH_PAYID_METRICS to false.
-
-      Metrics only capture the total number of PayIDs by (paymentNetwork, environment),
-      and the (paymentNetwork, environment) of requests to the PayID server.
-      No identifying information is captured.
-      `,
+    // WHEN we attempt to schedule recurring push metrics
+    const recurringMetricsPushTimeout = scheduleRecurringMetricsPush(
+      metricsConfig,
     )
+
+    // THEN we get "undefined" as our return value
+    assert.strictEqual(recurringMetricsPushTimeout, undefined)
   })
 
   it('Throws an error if organization is an empty string', async function () {
@@ -85,7 +74,7 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     // AND that organization is an empty string
     metricsConfig.domain = ''
 
-    // WHEN we check if push metrics are enabled
+    // WHEN we attempt to schedule recurring push metrics
     const badMetricsEnabledCheck = (): void => {
       recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
     }
@@ -93,13 +82,15 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     // THEN we get our expected error message
     assert.throws(
       badMetricsEnabledCheck,
-      `Push metrics are enabled, but the environment variable PAYID_DOMAIN is not set.
+      `
+      Push metrics are enabled, but the environment variable PAYID_DOMAIN is an invalid value (empty string).
       Please set PAYID_DOMAIN to the domain your PayID server is running on, like "example.com",
       or you can disable pushing metrics by setting PUSH_PAYID_METRICS to false.
 
       Metrics only capture the total number of PayIDs by (paymentNetwork, environment),
       and the (paymentNetwork, environment) of requests to the PayID server.
-      No identifying information is captured.`,
+      No identifying information is captured.
+      `,
     )
   })
 
@@ -108,10 +99,11 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     const metricsConfig = structuredClone(config.metrics)
     metricsConfig.reportMetrics = true
     metricsConfig.gatewayUrl = 'https://example.com/'
+    metricsConfig.domain = 'example.com'
     // AND that pushIntervalInSeconds is set to 0
     metricsConfig.pushIntervalInSeconds = 0
 
-    // WHEN we check if push metrics are enabled
+    // WHEN we attempt to schedule recurring push metrics
     const badMetricsEnabledCheck = (): void => {
       recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
     }
@@ -119,7 +111,7 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     // THEN we get our expected error message
     assert.throws(
       badMetricsEnabledCheck,
-      'Push metrics are enabled, but the environment variable PAYID_DOMAIN is not set.',
+      'Push metrics are enabled, but the environment variable PUSH_METRICS_INTERVAL has an invalid value: "0". Must be positive and less than one day in seconds.',
     )
   })
 
@@ -132,7 +124,7 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     // AND that pushIntervalInSeconds is set to -1
     metricsConfig.pushIntervalInSeconds = -1
 
-    // WHEN we check if push metrics are enabled
+    // WHEN we attempt to schedule recurring push metrics
     const badMetricsEnabledCheck = (): void => {
       recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
     }
@@ -154,7 +146,7 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     const oneDayInSeconds = 86400
     metricsConfig.pushIntervalInSeconds = oneDayInSeconds + 1
 
-    // WHEN we check if push metrics are enabled
+    // WHEN we attempt to schedule recurring push metrics
     const badMetricsEnabledCheck = (): void => {
       recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
     }
