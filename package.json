@@ -1,6 +1,6 @@
 {
   "name": "payid",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "The PayID Server reference implementation",
   "keywords": [],
   "homepage": "https://github.com/payid-org/payid#readme",
@@ -19,8 +19,8 @@
     "buildWatch": "tsc --watch --project .",
     "copyHTML": "copyfiles -u 1 src/html/* build/src",
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
-    "lint": "eslint . --ext .ts --fix --max-warnings 0 && prettier --write '**/*.{md,json}'",
-    "lintNoFix": "eslint . --ext .ts --max-warnings 0 && prettier --check '**/*.{md,json}'",
+    "lint": "eslint . --ext .ts --fix --max-warnings 0 && prettier --write '**/*.{md,json}' && npm run compareVersions",
+    "lintNoFix": "eslint . --ext .ts --max-warnings 0 && prettier --check '**/*.{md,json}' && npm run compareVersions",
     "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
     "prestart": "npm run build",
     "start": "node build/src/index.js",
