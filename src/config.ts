@@ -29,11 +29,11 @@ const config = {
   },
   metrics: {
     /**
-     * Name of the individual or organization that operates this PayID server.
+     * Domain name that operates this PayID server.
      * Used to identify who is pushing the metrics in cases where multiple PayID servers are pushing to a shared metrics server.
      * Required for pushing metrics.
      */
-    organization: process.env.PAYID_ORG,
+    domain: process.env.PAYID_DOMAIN,
 
     /** URL to a Prometheus push gateway, defaulting to the Xpring Prometheus server. */
     gatewayUrl:
