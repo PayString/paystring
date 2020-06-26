@@ -1,7 +1,7 @@
 import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
-import { recordPayIdLookupBadAcceptHeader } from '../services/metrics'
+import metrics from '../services/metrics'
 import { PayIDError, handleHttpError, ParseErrorType } from '../utils/errors'
 
 /**
@@ -38,7 +38,7 @@ export default function errorHandler(
 
     // Collect metrics on public API requests with bad Accept headers
     if (err.kind === ParseErrorType.InvalidMediaType) {
-      recordPayIdLookupBadAcceptHeader()
+      metrics.recordPayIdLookupBadAcceptHeader()
     }
   }
 

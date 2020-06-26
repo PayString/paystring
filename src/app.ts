@@ -6,8 +6,7 @@ import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
 import sendSuccess from './middlewares/sendSuccess'
 import { metricsRouter, privateAPIRouter, publicAPIRouter } from './routes'
-import { scheduleRecurringMetricsPush } from './services/metrics'
-import scheduleRecurringPayIdCountMetrics from './services/payIdReport'
+import metrics, { checkMetricsConfiguration } from './services/metrics'
 import logger from './utils/logger'
 
 /**
@@ -23,8 +22,6 @@ export default class App {
 
   private publicAPIServer?: Server
   private privateAPIServer?: Server
-  private recurringMetricsPushTimeout?: NodeJS.Timeout
-  private recurringMetricsTimeout?: NodeJS.Timeout
 
   public constructor() {
     this.publicAPIExpress = express()
@@ -49,8 +46,7 @@ export default class App {
     this.privateAPIServer = this.launchPrivateAPI(initConfig.app)
 
     // Attempt to schedule recurring metrics.
-    this.recurringMetricsPushTimeout = scheduleRecurringMetricsPush()
-    this.recurringMetricsTimeout = scheduleRecurringPayIdCountMetrics()
+    checkMetricsConfiguration(initConfig.metrics)
   }
 
   /**
@@ -60,13 +56,7 @@ export default class App {
     this.publicAPIServer?.close()
     this.privateAPIServer?.close()
 
-    if (this.recurringMetricsTimeout?.hasRef()) {
-      clearInterval(this.recurringMetricsTimeout.ref())
-    }
-
-    if (this.recurringMetricsPushTimeout?.hasRef()) {
-      clearInterval(this.recurringMetricsPushTimeout.ref())
-    }
+    metrics.stopMetricsGeneration()
   }
 
   /**

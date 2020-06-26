@@ -2,44 +2,88 @@ import 'mocha'
 import { assert } from 'chai'
 
 import config from '../../src/config'
-import { scheduleRecurringMetricsPush } from '../../src/services/metrics'
+import { checkMetricsConfiguration } from '../../src/services/metrics'
 import { structuredClone } from '../helpers/helpers'
 
-let recurringPushMetricsTimeout: NodeJS.Timeout | undefined
+describe('Push Metrics Configuration - checkMetricsConfiguration()', function (): void {
+  it('Does not throw if pushMetrics is disabled', async function () {
+    // GIVEN that pushMetrics is set to false
+    const metricsConfig = structuredClone(config.metrics)
+    metricsConfig.payIdCountRefreshIntervalInSeconds = 60
+    metricsConfig.pushMetrics = false
 
-describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function (): void {
-  afterEach(function () {
-    // If we successfully scheduled metrics,
-    // clear the timeout after each test.
-    if (recurringPushMetricsTimeout?.hasRef()) {
-      clearInterval(recurringPushMetricsTimeout.ref())
+    // WHEN we see if metrics configuration is valid
+    const goodMetricsEnabledCheck = (): void => {
+      checkMetricsConfiguration(metricsConfig)
     }
+
+    // THEN we do not expect the check to throw
+    assert.doesNotThrow(goodMetricsEnabledCheck)
   })
 
-  it('Returns undefined if reportMetrics is false', async function () {
-    // GIVEN that reportMetrics is set to false
+  it('Throws an error if payIdCountRefreshIntervalInSeconds is 0', async function () {
+    // GIVEN that payIdCountRefreshIntervalInSeconds is set to 0
     const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = false
+    metricsConfig.payIdCountRefreshIntervalInSeconds = 0
 
-    // WHEN we attempt to schedule recurring push metrics
-    const recurringMetricsPushTimeout = scheduleRecurringMetricsPush(
-      metricsConfig,
+    // WHEN we see if metrics configuration is valid
+    const goodMetricsEnabledCheck = (): void => {
+      checkMetricsConfiguration(metricsConfig)
+    }
+
+    // THEN we do expect the check to throw
+    assert.throws(
+      goodMetricsEnabledCheck,
+      'Invalid PAYID_COUNT_REFRESH_INTERVAL value: "0". Must be a positive number less than 86400 seconds. PayID count metrics will not be generated.',
     )
+  })
 
-    // THEN we get "undefined" as our return value
-    assert.strictEqual(recurringMetricsPushTimeout, undefined)
+  it('Throws an error if payIdCountRefreshIntervalInSeconds is negative', async function () {
+    // GIVEN that payIdCountRefreshIntervalInSeconds is set to -1
+    const metricsConfig = structuredClone(config.metrics)
+    metricsConfig.payIdCountRefreshIntervalInSeconds = -1
+
+    // WHEN we see if metrics configuration is valid
+    const goodMetricsEnabledCheck = (): void => {
+      checkMetricsConfiguration(metricsConfig)
+    }
+
+    // THEN we do expect the check to throw
+    assert.throws(
+      goodMetricsEnabledCheck,
+      'Invalid PAYID_COUNT_REFRESH_INTERVAL value: "-1". Must be a positive number less than 86400 seconds. PayID count metrics will not be generated.',
+    )
+  })
+
+  it('Throws an error if payIdCountRefreshIntervalInSeconds is greater than one day', async function () {
+    // GIVEN that payIdCountRefreshIntervalInSeconds is set to 90000
+    const metricsConfig = structuredClone(config.metrics)
+    const oneDayInSeconds = 86_400
+    metricsConfig.payIdCountRefreshIntervalInSeconds = oneDayInSeconds + 1
+
+    // WHEN we see if metrics configuration is valid
+    const goodMetricsEnabledCheck = (): void => {
+      checkMetricsConfiguration(metricsConfig)
+    }
+
+    // THEN we do expect the check to throw
+    assert.throws(
+      goodMetricsEnabledCheck,
+      'Invalid PAYID_COUNT_REFRESH_INTERVAL value: "86401". Must be a positive number less than 86400 seconds. PayID count metrics will not be generated.',
+    )
   })
 
   it('Throws an error if gatewayUrl is an invalid URL', async function () {
-    // GIVEN that reportMetrics is set to true
+    // GIVEN that pushMetrics is set to true
     const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = true
+    metricsConfig.pushMetrics = true
+
     // AND that gatewayURL is an invalid URL
     metricsConfig.gatewayUrl = 'abc'
 
-    // WHEN we attempt to schedule recurring push metrics
+    // WHEN we check if metrics configuration is valid
     const badMetricsEnabledCheck = (): void => {
-      recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
+      checkMetricsConfiguration(metricsConfig)
     }
 
     // THEN we get our expected error message
@@ -49,34 +93,17 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
     )
   })
 
-  it('Returns undefined if the PayID domain is undefined', async function () {
-    // GIVEN that reportMetrics is set to true
-    const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = true
-    metricsConfig.gatewayUrl = 'https://example.com/'
-    // AND that domain is undefined
-    metricsConfig.domain = undefined
-
-    // WHEN we attempt to schedule recurring push metrics
-    const recurringMetricsPushTimeout = scheduleRecurringMetricsPush(
-      metricsConfig,
-    )
-
-    // THEN we get "undefined" as our return value
-    assert.strictEqual(recurringMetricsPushTimeout, undefined)
-  })
-
   it('Throws an error if organization is an empty string', async function () {
-    // GIVEN that reportMetrics is set to true
+    // GIVEN that pushMetrics is set to true
     const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = true
+    metricsConfig.pushMetrics = true
     metricsConfig.gatewayUrl = 'https://example.com/'
     // AND that organization is an empty string
     metricsConfig.domain = ''
 
-    // WHEN we attempt to schedule recurring push metrics
+    // WHEN we check if metrics configuration is valid
     const badMetricsEnabledCheck = (): void => {
-      recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
+      checkMetricsConfiguration(metricsConfig)
     }
 
     // THEN we get our expected error message
@@ -95,17 +122,17 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
   })
 
   it('Throws an error if pushIntervalInSeconds is set to 0', async function () {
-    // GIVEN that reportMetrics is set to true
+    // GIVEN that pushMetrics is set to true
     const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = true
+    metricsConfig.pushMetrics = true
     metricsConfig.gatewayUrl = 'https://example.com/'
     metricsConfig.domain = 'example.com'
     // AND that pushIntervalInSeconds is set to 0
     metricsConfig.pushIntervalInSeconds = 0
 
-    // WHEN we attempt to schedule recurring push metrics
+    // WHEN we check if metrics configuration is valid
     const badMetricsEnabledCheck = (): void => {
-      recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
+      checkMetricsConfiguration(metricsConfig)
     }
 
     // THEN we get our expected error message
@@ -116,17 +143,17 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
   })
 
   it('Throws an error if pushIntervalInSeconds is set to a negative number', async function () {
-    // GIVEN that reportMetrics is set to true
+    // GIVEN that pushMetrics is set to true
     const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = true
+    metricsConfig.pushMetrics = true
     metricsConfig.gatewayUrl = 'https://example.com/'
     metricsConfig.domain = 'example.com'
     // AND that pushIntervalInSeconds is set to -1
     metricsConfig.pushIntervalInSeconds = -1
 
-    // WHEN we attempt to schedule recurring push metrics
+    // WHEN we check if metrics configuration is valid
     const badMetricsEnabledCheck = (): void => {
-      recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
+      checkMetricsConfiguration(metricsConfig)
     }
 
     // THEN we get our expected error message
@@ -137,18 +164,18 @@ describe('Push Metrics Configuration - scheduleRecurringMetricsPush()', function
   })
 
   it('Throws an error if pushIntervalInSeconds is set longer than one day', async function () {
-    // GIVEN that reportMetrics is set to true
+    // GIVEN that pushMetrics is set to true
     const metricsConfig = structuredClone(config.metrics)
-    metricsConfig.reportMetrics = true
+    metricsConfig.pushMetrics = true
     metricsConfig.gatewayUrl = 'https://example.com/'
     metricsConfig.domain = 'example.com'
     // AND that pushIntervalInSeconds is set to longer than one day
     const oneDayInSeconds = 86400
     metricsConfig.pushIntervalInSeconds = oneDayInSeconds + 1
 
-    // WHEN we attempt to schedule recurring push metrics
+    // WHEN we check if metrics configuration is valid
     const badMetricsEnabledCheck = (): void => {
-      recurringPushMetricsTimeout = scheduleRecurringMetricsPush(metricsConfig)
+      checkMetricsConfiguration(metricsConfig)
     }
 
     // THEN we get our expected error message

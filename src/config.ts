@@ -32,13 +32,16 @@ const config = {
      * Whether or not to report PayID server metrics. Defaults to true.
      * To opt out,  you can set the PUSH_PAYID_METRICS to any value that isn't "true".
      */
-    reportMetrics: process.env.PUSH_PAYID_METRICS
+    pushMetrics: process.env.PUSH_PAYID_METRICS
       ? process.env.PUSH_PAYID_METRICS === 'true'
       : true,
     /**
      * Domain name that operates this PayID server.
+     *
      * Used to identify who is pushing the metrics in cases where multiple PayID servers are pushing to a shared metrics server.
      * Required for pushing metrics.
+     *
+     * This will be dynamically set by incoming requests if the ENV var is unset.
      */
     domain: process.env.PAYID_DOMAIN,
 
