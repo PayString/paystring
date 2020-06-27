@@ -1,7 +1,6 @@
 #!/bin/sh
 
 # Bumps the NPM version, create a git tag, & bump the Docker version.
-# ! Expects all versions to be equal.
 #
 # $1 - The current NPM version.
 # $2 - The type of version bump (major, minor, patch).
@@ -15,6 +14,9 @@ function bump() {
    ]]; then
       error "Invalid bump increment. Please specify 'major', 'minor', or 'patch'."
    else
+      # Make sure versions are equal
+      compare_versions $current_version
+
       # Bump NPM version and git tag
       declare -r new_version=$(npm version $bump_increment)
 
