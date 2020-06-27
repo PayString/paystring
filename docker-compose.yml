@@ -4,7 +4,7 @@ services:
     # Defines the container name when using "docker-compose up". Warning: does not work with "docker-compose run" (Docker issue)
     container_name: 'payid'
     # Defines the image name and tag.
-    image: payid:1.0.1
+    image: payid:
     # As we define the build context, the image is not pulled from Dockerhub. It is built locally based on our Dockerfile.
     build:
       context: .

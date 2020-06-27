@@ -8,7 +8,6 @@
 function bump() {
    declare -r current_version=$1
    declare -r bump_increment=$2
-   echo $bump_increment
 
    if [[ $bump_increment != "major" && \
          $bump_increment != "minor" && \
@@ -18,11 +17,10 @@ function bump() {
    else
       # Bump NPM version and git tag
       declare -r new_version=$(npm version $bump_increment)
-      echo new_version
 
-      # "Bump" the Docker image version
-      # (Find and replace the old version for the new)
-      sed -e "s|payid:$current_version|payid:$new_version|g" < docker-compose.yml
+      # Bump the Docker image version by finding and replacing the old
+      # version for the new. Drop the 'v' from the Git tag.
+      sed -i -e "s|payid:$current_version|payid:${new_version:1}|g" docker-compose.yml
    fi
 }
 
@@ -36,15 +34,16 @@ function compare_versions() {
    declare -r npm_version=$1
    declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-')
 
+   # Drop the 'v' from the Git tag for the comparison.
    if [[ $docker_image_version != $npm_version || \
-         $docker_image_version != $git_tag_version || \
-         $npm_version != $git_tag_version
+         $docker_image_version != ${git_tag_version:1} || \
+         $npm_version != ${git_tag_version:1}
    ]]; then
       error "Version Mismatch:
 
       Docker Image Version: "$docker_image_version"
       NPM Version: "$npm_version"
-      Git Tag Version: "$git_tag_version"
+      Git Tag Version: "${git_tag_version:1}"
       "
    else
       echo "Docker, NPM, Git Tag Version: "$npm_version
