@@ -20,7 +20,7 @@ function bump() {
 
       # Bump the Docker image version by finding and replacing the old
       # version for the new. Drop the 'v' from the Git tag.
-      sed -i -e "s|payid:$current_version|payid:${new_version:1}|g" docker-compose.yml
+      sed -i "" "s|payid:$current_version|payid:${new_version:1}|g" docker-compose.yml
    fi
 }
 
