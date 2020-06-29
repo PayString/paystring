@@ -1,20 +1,20 @@
-version: '3'
+version: "3"
 services:
   payid:
     # Defines the container name when using "docker-compose up". Warning: does not work with "docker-compose run" (Docker issue)
-    container_name: 'payid'
+    container_name: "payid-server"
     # Defines the image name and tag.
-    image: payid:1.0.0
+    image: payid-server:1.0.0
     # As we define the build context, the image is not pulled from Dockerhub. It is built locally based on our Dockerfile.
     build:
       context: .
     # Port mapping, external_port:internal_port
     ports:
-      - '8080:8080'
-      - '8081:8081'
+      - "8080:8080"
+      - "8081:8081"
     # The payid container can't run alone. A Postgres container will always be created thanks to "depends_on"
     depends_on:
-      - 'db'
+      - "db"
     environment:
       # Used in wait-for-postgres.sh and by payid. The value must be the same as the POSTGRES_PASSWORD value in the db service.
       - DB_PASSWORD=password
@@ -29,10 +29,10 @@ services:
     # psql: error: could not connect to server: could not connect to server: Connection refused
     command:
       [
-        '/opt/payid/scripts/wait-for-postgres.sh',
-        'db',
-        'node',
-        '/opt/payid/build/src/index.js',
+        "/opt/payid/scripts/wait-for-postgres.sh",
+        "db",
+        "node",
+        "/opt/payid/build/src/index.js",
       ]
   db:
     container_name: payid-database
@@ -40,7 +40,7 @@ services:
     image: postgres:12-alpine
     # external_port:internal_port
     ports:
-      - '5432:5432'
+      - "5432:5432"
     environment:
       # POSTGRES_PASSWORD is mandatory. If POSTGRES_PASSWORD != password, update DB_PASSWORD in the payid service
       - POSTGRES_PASSWORD=password
