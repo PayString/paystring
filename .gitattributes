@@ -1,1 +1,2 @@
-text eol=lf
+# Always convert line endings to LF on checkout, even on Windows.
+* text eol=lf
