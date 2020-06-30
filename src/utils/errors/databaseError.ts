@@ -7,7 +7,7 @@ import PayIDError from './payIdError'
 /**
  * An enum containing the different kinds of DatabaseErrors.
  */
-export enum DatabaseErrorType {
+enum DatabaseErrorType {
   InvalidPayId = 'InvalidPayId',
   EmptyStringViolation = 'EmptyStringViolation',
   StringCaseViolation = 'StringCaseViolation',

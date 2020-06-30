@@ -40,7 +40,7 @@ services:
     image: postgres:12-alpine
     # external_port:internal_port
     ports:
-      - '5432:5432'
+      - '${DB_PORT:-5432}:5432'
     environment:
       # POSTGRES_PASSWORD is mandatory. If POSTGRES_PASSWORD != password, update DB_PASSWORD in the payid service
       - POSTGRES_PASSWORD=password
