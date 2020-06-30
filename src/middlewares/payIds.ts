@@ -7,7 +7,7 @@ import {
   getPreferredAddressHeaderPair,
 } from '../services/basePayId'
 import { parseAcceptHeaders } from '../services/headers'
-import { recordPayIdLookupResult } from '../services/metrics'
+import metrics from '../services/metrics'
 import { urlToPayId, constructUrl } from '../services/urls'
 import { LookupError, LookupErrorType } from '../utils/errors'
 
@@ -65,7 +65,7 @@ export default async function getPaymentInfo(
       message += 'could not be found.'
     }
     parsedAcceptHeaders.forEach((acceptType) =>
-      recordPayIdLookupResult(
+      metrics.recordPayIdLookupResult(
         false,
         acceptType.paymentNetwork,
         acceptType.environment,
@@ -96,7 +96,8 @@ export default async function getPaymentInfo(
   res.locals.payId = payId
   res.locals.paymentInformation = formattedPaymentInfo
   res.locals.response = formattedPaymentInfo
-  recordPayIdLookupResult(
+
+  metrics.recordPayIdLookupResult(
     true,
     preferredParsedAcceptHeader.paymentNetwork,
     preferredParsedAcceptHeader.environment,
