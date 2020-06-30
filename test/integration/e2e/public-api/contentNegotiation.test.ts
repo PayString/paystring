@@ -38,7 +38,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
     // both testnet and mainnet, with no q for either
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -73,7 +73,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying testnet
     // and mainnet, with testnet having a higher q-value
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -109,7 +109,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
     // xrpl-testnet and xrpl-mainnet, with a higher q for xrpl-mainnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -146,7 +146,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
     // a non-existent network+environment most preferred, followed by xrpl-mainnet and xrpl-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)

@@ -1,12 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 
-import config, { privateApiVersions } from '../config'
+import config, { adminApiVersions } from '../config'
 import { ParseError, ParseErrorType } from '../utils/errors'
 
 /**
- * A middleware asserting that all private API HTTP requests have an appropriate PayID-API-Version header.
+ * A middleware asserting that all Admin API HTTP requests have an appropriate PayID-API-Version header.
  *
- * It also sets version headers on all private API HTTP responses for informational purposes.
+ * It also sets version headers on all Admin API HTTP responses for informational purposes.
  *
  * @param req - An Express Request object.
  * @param res - An Express Response object.
@@ -14,16 +14,16 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  *
  * @throws A ParseError if the PayID-API-Version header is missing, malformed, or unsupported.
  */
-export default function checkPrivateApiVersionHeaders(
+export default function checkAdminApiVersionHeaders(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
   // Add our Server-Version headers to all successful responses.
-  // This should be the most recent version of the PayID protocol / PayID private API this server knows how to handle.
+  // This should be the most recent version of the PayID protocol / PayID Admin API this server knows how to handle.
   // We add it early so even errors will respond with Server-Version headers.
   res.header('PayID-Server-Version', config.app.payIdVersion)
-  res.header('PayID-API-Server-Version', config.app.privateApiVersion)
+  res.header('PayID-API-Server-Version', config.app.adminApiVersion)
 
   const payIdApiVersionHeader = req.header('PayID-API-Version')
 
@@ -45,9 +45,9 @@ export default function checkPrivateApiVersionHeaders(
   }
 
   // Because they are ISO8601 date strings, we can just do a string comparison
-  if (payIdApiVersionHeader < privateApiVersions[0]) {
+  if (payIdApiVersionHeader < adminApiVersions[0]) {
     throw new ParseError(
-      `The PayID-API-Version ${payIdApiVersionHeader} is not supported, please try upgrading your request to at least 'PayID-API-Version: ${privateApiVersions[0]}'`,
+      `The PayID-API-Version ${payIdApiVersionHeader} is not supported, please try upgrading your request to at least 'PayID-API-Version: ${adminApiVersions[0]}'`,
       ParseErrorType.UnsupportedPayIdApiVersionHeader,
     )
   }

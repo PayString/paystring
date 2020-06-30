@@ -29,7 +29,7 @@ describe('E2E - publicAPIRouter - Version Headers', function (): void {
     }
 
     // WHEN we make a GET request without specifying a PayID-Version header
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('Accept', acceptHeader)
       // THEN we expect to get back the latest PayID version as the server version
@@ -50,7 +50,7 @@ describe('E2E - publicAPIRouter - Version Headers', function (): void {
     }
 
     // WHEN we make a GET request specifying a malformed PayID-Version header
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', 'abc')
       .set('Accept', acceptHeader)
@@ -72,7 +72,7 @@ describe('E2E - publicAPIRouter - Version Headers', function (): void {
     }
 
     // WHEN we make a GET request specifying an unsupported PayID-Version header
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', payIdVersion)
       .set('Accept', acceptHeader)
@@ -94,7 +94,7 @@ describe('E2E - publicAPIRouter - Version Headers', function (): void {
     }
 
     // WHEN we make a GET request specifying an unsupported PayID-Version header
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', payIdVersion)
       .set('Accept', acceptHeader)
@@ -111,7 +111,7 @@ describe('E2E - publicAPIRouter - Version Headers', function (): void {
     const payIdVersion = payIdServerVersion
 
     // WHEN we make a GET request specifying a supported PayID-Version header
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', payIdVersion)
       .set('Accept', acceptHeader)

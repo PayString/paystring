@@ -8,12 +8,12 @@ import initializeMetrics from '../middlewares/initializeMetrics'
 import getPaymentInfo from '../middlewares/payIds'
 import sendSuccess from '../middlewares/sendSuccess'
 
-const publicAPIRouter = express.Router()
+const publicApiRouter = express.Router()
 
 /**
  * Routes for the PayID Public API.
  */
-publicAPIRouter
+publicApiRouter
   // Allow the PayID Protocol to basically ignore CORS
   .use((_req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
@@ -51,4 +51,4 @@ publicAPIRouter
   // Error handling middleware (needs to be defined last)
   .use(errorHandler)
 
-export default publicAPIRouter
+export default publicApiRouter
