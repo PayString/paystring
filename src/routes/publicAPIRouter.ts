@@ -4,6 +4,7 @@ import * as express from 'express'
 
 import checkPublicApiVersionHeaders from '../middlewares/checkPublicApiVersionHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
+import initializeMetrics from '../middlewares/initializeMetrics'
 import getPaymentInfo from '../middlewares/payIds'
 import sendSuccess from '../middlewares/sendSuccess'
 
@@ -42,6 +43,7 @@ publicAPIRouter
   .get(
     '/*',
     checkPublicApiVersionHeaders,
+    initializeMetrics,
     wrapAsync(getPaymentInfo),
     sendSuccess,
   )
