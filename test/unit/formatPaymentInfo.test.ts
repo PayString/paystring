@@ -12,7 +12,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         paymentNetwork: 'XRP',
         environment: 'TESTNET',
         details: {
-          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
         },
       },
       {
@@ -31,7 +31,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           environment: 'TESTNET',
           addressDetailsType: AddressDetailsType.CryptoAddress,
           addressDetails: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
         {
@@ -60,7 +60,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         paymentNetwork: 'XRP',
         environment: 'TESTNET',
         details: {
-          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
         },
       },
     ]
@@ -71,7 +71,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           environment: 'TESTNET',
           addressDetailsType: AddressDetailsType.CryptoAddress,
           addressDetails: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
@@ -125,7 +125,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         paymentNetwork: 'XRP',
         environment: 'TESTNET',
         details: {
-          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
         },
       },
     ]
@@ -137,7 +137,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           environment: 'TESTNET',
           addressDetailsType: AddressDetailsType.CryptoAddress,
           addressDetails: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
