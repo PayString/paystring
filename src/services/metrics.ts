@@ -270,17 +270,16 @@ export function checkMetricsConfiguration(
     )
   }
 
-  if (metricsConfig.domain === '') {
+  try {
+    // eslint-disable-next-line no-new -- We are using Node's URL library to see if the URL is valid.
+    new URL(`https://${metricsConfig.domain ?? 'example.com'}`)
+    // We use example.com as a default because this check should always pass if PAYID_DOMAIN is unset,
+    // because we can infer the domain from the first Public API request.
+  } catch {
     throw new Error(
-      `
-      Push metrics are enabled, but the environment variable PAYID_DOMAIN is an invalid value (empty string).
-      Please set PAYID_DOMAIN to the domain your PayID server is running on, like "example.com",
-      or you can disable pushing metrics by setting PUSH_PAYID_METRICS to false.
-
-      Metrics only capture the total number of PayIDs by (paymentNetwork, environment),
-      and the (paymentNetwork, environment) of requests to the PayID server.
-      No identifying information is captured.
-      `,
+      `Push metrics are enabled, but the environment variable PAYID_DOMAIN is not a valid url: "${
+        metricsConfig.domain ?? 'example.com'
+      }".`,
     )
   }
 

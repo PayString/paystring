@@ -109,15 +109,7 @@ describe('Push Metrics Configuration - checkMetricsConfiguration()', function ()
     // THEN we get our expected error message
     assert.throws(
       badMetricsEnabledCheck,
-      `
-      Push metrics are enabled, but the environment variable PAYID_DOMAIN is an invalid value (empty string).
-      Please set PAYID_DOMAIN to the domain your PayID server is running on, like "example.com",
-      or you can disable pushing metrics by setting PUSH_PAYID_METRICS to false.
-
-      Metrics only capture the total number of PayIDs by (paymentNetwork, environment),
-      and the (paymentNetwork, environment) of requests to the PayID server.
-      No identifying information is captured.
-      `,
+      `Push metrics are enabled, but the environment variable PAYID_DOMAIN is not a valid url: ""`,
     )
   })
 
