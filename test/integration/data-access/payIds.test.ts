@@ -22,7 +22,7 @@ describe('Data Access - getAllAddressInfoFromDatabase()', function (): void {
         paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         details: {
-          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
         },
       },
     ]
@@ -40,14 +40,15 @@ describe('Data Access - getAllAddressInfoFromDatabase()', function (): void {
         paymentNetwork: 'XRPL',
         environment: 'MAINNET',
         details: {
-          address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+          address: 'rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg',
+          tag: '67298042',
         },
       },
       {
         paymentNetwork: 'XRPL',
         environment: 'TESTNET',
         details: {
-          address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+          address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
         },
       },
       {

@@ -26,7 +26,8 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           environment: 'MAINNET',
           addressDetailsType: 'CryptoAddressDetails',
           addressDetails: {
-            address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+            address: 'rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg',
+            tag: '67298042',
           },
         },
       ],
@@ -57,7 +58,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           environment: 'TESTNET',
           addressDetailsType: 'CryptoAddressDetails',
           addressDetails: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
