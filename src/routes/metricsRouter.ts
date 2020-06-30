@@ -2,7 +2,7 @@ import * as express from 'express'
 import { NextFunction, Request, Response } from 'express'
 
 import errorHandler from '../middlewares/errorHandler'
-import { getMetrics } from '../services/metrics'
+import metrics from '../services/metrics'
 
 const metricsRouter = express.Router()
 
@@ -12,7 +12,7 @@ const metricsRouter = express.Router()
 metricsRouter
   .get('/', (_req: Request, res: Response, next: NextFunction): void => {
     res.set('Content-Type', 'text/plain')
-    res.send(getMetrics())
+    res.send(metrics.getMetrics())
     return next()
   })
 
