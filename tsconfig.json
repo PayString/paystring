@@ -9,7 +9,7 @@
     "target": "es2019",
     "module": "commonjs",
     "moduleResolution": "node",
-    "incremental": false,
+    "incremental": true,
 
     // Add support for custom typings
     "baseUrl": "./",
