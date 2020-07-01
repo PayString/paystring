@@ -18,6 +18,7 @@ lint:
   image:
     name: node:12
   before_script:
+    - npm cache clean .npm
     - npm i --cache .npm --prefer-offline --no-audit --progress=false
   script:
     - npm run lintNoFix
@@ -27,6 +28,7 @@ code coverage:
   image:
     name: node:12
   before_script:
+    - npm cache clean .npm
     - npm i --cache .npm --no-audit --progress=false --prefer-offline -g nyc codecov
     - npm i --cache .npm --no-audit --progress=false --prefer-offline
   script:
