@@ -23,8 +23,10 @@ export default function checkAdminApiVersionHeaders(
   // This should be the most recent version of the PayID protocol / PayID Admin API this server knows how to handle.
   // We add it early so even errors will respond with Server-Version headers.
   res.header('PayID-Server-Version', config.app.payIdVersion)
+  // TODO:(hbergren) Rename this to PayID-Admin-Server-Version
   res.header('PayID-API-Server-Version', config.app.adminApiVersion)
 
+  // TODO:(hbergren) Rename this to PayID-Admin-API-Version
   const payIdApiVersionHeader = req.header('PayID-API-Version')
 
   // Checks if the PayID-API-Version header exists
