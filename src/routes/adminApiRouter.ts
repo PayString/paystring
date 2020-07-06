@@ -1,24 +1,24 @@
 import * as express from 'express'
 
-import checkPrivateApiVersionHeaders from '../middlewares/checkPrivateApiVersionHeaders'
+import checkAdminApiVersionHeaders from '../middlewares/checkAdminApiVersionHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
 import { getUser, postUser, putUser, deleteUser } from '../middlewares/users'
 
-const privateAPIRouter = express.Router()
+const adminApiRouter = express.Router()
 
 /**
- * Routes for the PayID Private API.
+ * Routes for the PayID Admin API.
  */
-privateAPIRouter
+adminApiRouter
   // Get user route
-  .get('/*', checkPrivateApiVersionHeaders, wrapAsync(getUser), sendSuccess)
+  .get('/*', checkAdminApiVersionHeaders, wrapAsync(getUser), sendSuccess)
 
   // Create user route
   .post(
     '/',
     express.json(),
-    checkPrivateApiVersionHeaders,
+    checkAdminApiVersionHeaders,
     wrapAsync(postUser),
     sendSuccess,
   )
@@ -27,20 +27,15 @@ privateAPIRouter
   .put(
     '/*',
     express.json(),
-    checkPrivateApiVersionHeaders,
+    checkAdminApiVersionHeaders,
     wrapAsync(putUser),
     sendSuccess,
   )
 
   // Delete user route
-  .delete(
-    '/*',
-    checkPrivateApiVersionHeaders,
-    wrapAsync(deleteUser),
-    sendSuccess,
-  )
+  .delete('/*', checkAdminApiVersionHeaders, wrapAsync(deleteUser), sendSuccess)
 
   // Error handling middleware (needs to be defined last)
   .use(errorHandler)
 
-export default privateAPIRouter
+export default adminApiRouter

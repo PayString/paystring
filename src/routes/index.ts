@@ -1,5 +1,5 @@
+import adminApiRouter from './adminApiRouter'
 import metricsRouter from './metricsRouter'
-import privateAPIRouter from './privateAPIRouter'
-import publicAPIRouter from './publicAPIRouter'
+import publicApiRouter from './publicApiRouter'
 
-export { metricsRouter, privateAPIRouter, publicAPIRouter }
+export { metricsRouter, adminApiRouter, publicApiRouter }
