@@ -36,7 +36,7 @@ export interface PaymentInformation {
 /**
  * Address information included inside of a PaymentInformation object.
  */
-export interface Address {
+interface Address {
   paymentNetwork: string
   environment?: string
   addressDetailsType: AddressDetailsType

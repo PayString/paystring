@@ -12,6 +12,7 @@ const config = {
   database: {
     connection: {
       host: process.env.DB_HOSTNAME ?? '127.0.0.1',
+      port: Number(process.env.DB_PORT ?? 5432),
       user: process.env.DB_USERNAME ?? 'postgres',
       password: process.env.DB_PASSWORD ?? 'password',
       database: process.env.DB_NAME ?? 'database_development',
@@ -29,11 +30,21 @@ const config = {
   },
   metrics: {
     /**
-     * Name of the individual or organization that operates this PayID server.
+     * Whether or not to report PayID server metrics. Defaults to true.
+     * To opt out,  you can set the PUSH_PAYID_METRICS to any value that isn't "true".
+     */
+    pushMetrics: process.env.PUSH_PAYID_METRICS
+      ? process.env.PUSH_PAYID_METRICS === 'true'
+      : true,
+    /**
+     * Domain name that operates this PayID server.
+     *
      * Used to identify who is pushing the metrics in cases where multiple PayID servers are pushing to a shared metrics server.
      * Required for pushing metrics.
+     *
+     * This will be dynamically set by incoming requests if the ENV var is unset.
      */
-    organization: process.env.PAYID_ORG,
+    domain: process.env.PAYID_DOMAIN,
 
     /** URL to a Prometheus push gateway, defaulting to the Xpring Prometheus server. */
     gatewayUrl:
