@@ -23,7 +23,7 @@ describe('E2E - publicAPIRouter - Cache Control', function (): void {
     const payIdVersion = payIdServerVersion
 
     // WHEN we make a GET request specifying a supported PayID-Version header
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', payIdVersion)
       .set('Accept', acceptHeader)
