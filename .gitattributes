@@ -1,2 +1,16 @@
-# Always convert line endings to LF on checkout, even on Windows.
-* text eol=lf
+# Set default behavior to automatically normalize line endings.
+# This will treat all files as text files,
+# and convert to OS's line ending on checkout and back to LF on commit automatically.
+* text=auto
+
+# Behavior for images and documents, which are treated as binary and shouldn't be normalized.
+*.jpg   binary
+*.jpeg  binary
+*.png   binary
+*.gif   binary
+*.ico   binary
+*.pdf   binary
+
+# Force shell scripts to always use LF line endings.
+# Necessary because we run our shell scripts in Docker UNIX containers.
+*.sh text eol=lf
