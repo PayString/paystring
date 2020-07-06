@@ -1,5 +1,5 @@
 export const payIdServerVersions: readonly string[] = ['1.0']
-export const privateApiVersions: readonly string[] = ['2020-05-28']
+export const adminApiVersions: readonly string[] = ['2020-05-28']
 
 /**
  * Application configuration.
@@ -22,10 +22,13 @@ const config = {
     },
   },
   app: {
-    publicAPIPort: Number(process.env.PUBLIC_API_PORT) || 8080,
-    privateAPIPort: Number(process.env.PRIVATE_API_PORT) || 8081,
+    publicApiPort: Number(process.env.PUBLIC_API_PORT) || 8080,
+    // TODO: (When we make a breaking Admin API change, cut PRIVATE_API_PORT)
+    adminApiPort:
+      Number(process.env.PRIVATE_API_PORT ?? process.env.ADMIN_API_PORT) ||
+      8081,
     payIdVersion: payIdServerVersions[payIdServerVersions.length - 1],
-    privateApiVersion: privateApiVersions[privateApiVersions.length - 1],
+    adminApiVersion: adminApiVersions[adminApiVersions.length - 1],
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
   },
   metrics: {

@@ -10,7 +10,7 @@ import { appCleanup, appSetup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - GET /metrics', function (): void {
+describe('E2E - adminApiRouter - GET /metrics', function (): void {
   const mainnet = 'MAINNET'
   const testnet = 'TESTNET'
   const asPayId = (account: string): string => `${account}$127.0.0.1`
@@ -99,10 +99,10 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
    * expected metrics.
    *
    * @param expectedMetric - The expected metric to match on.
-   * @returns The HTTP response from a GET to the /metrics endpoint on the Private API.
+   * @returns The HTTP response from a GET to the /metrics endpoint on the Admin API.
    */
   async function assertMetrics(expectedMetric: RegExp): Promise<request.Test> {
-    return request(app.privateAPIExpress)
+    return request(app.adminApiExpress)
       .get('/metrics')
       .set('PayID-API-Version', payIdApiVersion)
       .expect((res) => {
@@ -125,7 +125,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     acceptHeader: string,
     status: HttpStatus,
   ): Promise<request.Test> {
-    return request(app.publicAPIExpress)
+    return request(app.publicApiExpress)
       .get(`/${account}`)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -142,7 +142,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
    * @param paymentNetwork - The payment network for the address entry (e.g. XRPL).
    * @param environment - The environment for the address entry (e.g. TESTNET).
    *
-   * @returns The HTTP response from a POST to the /users endpoint on the Private API.
+   * @returns The HTTP response from a POST to the /users endpoint on the Admin API.
    */
   async function createPayId(
     payId: string,
@@ -161,7 +161,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
         },
       ],
     }
-    return request(app.privateAPIExpress)
+    return request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(payIdRequest)

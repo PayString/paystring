@@ -8,7 +8,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - DELETE /users', function (): void {
+describe('E2E - adminApiRouter - DELETE /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -23,14 +23,14 @@ describe('E2E - privateAPIRouter - DELETE /users', function (): void {
     }
 
     // WHEN we make a DELETE request to /users/ with the PayID to delete
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .delete(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       // THEN we expect back a 204-No Content, indicating successful deletion
       .expect(HttpStatus.NoContent)
       .then((_res) => {
         // AND subsequent GET requests to that PayID now return a 404
-        request(app.privateAPIExpress)
+        request(app.adminApiExpress)
           .get(`/users/${payId}`)
           .set('PayID-API-Version', payIdApiVersion)
           .expect(HttpStatus.NotFound, missingPayIdError, done)
@@ -50,14 +50,14 @@ describe('E2E - privateAPIRouter - DELETE /users', function (): void {
     }
 
     // WHEN we make a DELETE request to /users/ with the PayID to delete
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .delete(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       // THEN we expect back a 204-No Content, indicating successful deletion
       .expect(HttpStatus.NoContent)
       .then((_res) => {
         // AND subsequent GET requests to that PayID now return a 404
-        request(app.privateAPIExpress)
+        request(app.adminApiExpress)
           .get(`/users/${payId.toLowerCase()}`)
           .set('PayID-API-Version', payIdApiVersion)
           .expect(HttpStatus.NotFound, missingPayIdError, done)
@@ -72,7 +72,7 @@ describe('E2E - privateAPIRouter - DELETE /users', function (): void {
     const payId = 'johndoe$xpring.money'
 
     // WHEN we make a DELETE request to /users/ with the PayID to delete
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .delete(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       // THEN we expect back a 204 - No Content
