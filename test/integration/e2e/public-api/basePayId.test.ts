@@ -35,7 +35,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -66,7 +66,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -97,7 +97,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -128,7 +128,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -152,7 +152,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -173,7 +173,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-devnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
