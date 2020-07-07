@@ -6,18 +6,15 @@
 # $1 - The NPM version string.
 function compare_versions() {
    eval $(parse_yaml docker-compose.yml "config_")
-   declare -r docker_image_version=$(echo $config_services_payid_image | cut -f 2 -d ':')
    declare -r npm_version=$1
+   declare -r docker_image_version=$(echo $config_services_payid_server_image | cut -f 2 -d ':')
    declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-')
 
-   if [[ $docker_image_version != $npm_version || \
-         $docker_image_version != $git_tag_version || \
-         $npm_version != $git_tag_version
-   ]]; then
+   if [[ $docker_image_version != $npm_version || $npm_version != $git_tag_version ]]; then
       error "Version Mismatch:
 
-      Docker Image Version: "$docker_image_version"
       NPM Version: "$npm_version"
+      Docker Image Version: "$docker_image_version"
       Git Tag Version: "$git_tag_version"
       "
    else
@@ -31,9 +28,16 @@ function compare_versions() {
 # $1 - The YAML file path string.
 # $2 - The prefix string for the outputted keys.
 function parse_yaml() {
+   # The second argument to the function is the prefix we use to access the fields
    declare -r prefix=$2
+
+   # Regex to match against 0 or more whitespace chars
    declare -r s='[[:space:]]*'
+
+   # Regex to match against 0 or more letters / numbers
    declare -r w='[a-zA-Z0-9_]*'
+
+   # Regex to match against field separator
    declare -r fs=$(echo @|tr @ '\034')
 
    # Uses `sed` to insert field separators & awk to iterate through

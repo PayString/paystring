@@ -1,10 +1,10 @@
 version: '3'
 services:
-  payid:
+  payid_server:
     # Defines the container name when using "docker-compose up". Warning: does not work with "docker-compose run" (Docker issue)
-    container_name: 'payid'
+    container_name: 'payid-server'
     # Defines the image name and tag.
-    image: payid:1.0.1
+    image: payid-server:1.0.1
     # As we define the build context, the image is not pulled from Dockerhub. It is built locally based on our Dockerfile.
     build:
       context: .
@@ -40,7 +40,7 @@ services:
     image: postgres:12-alpine
     # external_port:internal_port
     ports:
-      - '5432:5432'
+      - '${DB_PORT:-5432}:5432'
     environment:
       # POSTGRES_PASSWORD is mandatory. If POSTGRES_PASSWORD != password, update DB_PASSWORD in the payid service
       - POSTGRES_PASSWORD=password
