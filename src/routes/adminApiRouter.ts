@@ -3,7 +3,13 @@ import * as express from 'express'
 import checkAdminApiVersionHeaders from '../middlewares/checkAdminApiVersionHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
-import { getUser, postUser, putUser, deleteUser } from '../middlewares/users'
+import {
+  getUser,
+  postUser,
+  putUser,
+  deleteUser,
+  patchPayId,
+} from '../middlewares/users'
 
 const adminApiRouter = express.Router()
 
@@ -34,6 +40,16 @@ adminApiRouter
 
   // Delete user route
   .delete('/*', checkAdminApiVersionHeaders, wrapAsync(deleteUser), sendSuccess)
+
+  // Patch user PayID route
+  .patch(
+    '/:payId',
+    // express.json({ type: 'application/*+json' }),
+    express.json(),
+    checkPrivateApiVersionHeaders,
+    wrapAsync(patchPayId),
+    sendSuccess,
+  )
 
   // Error handling middleware (needs to be defined last)
   .use(errorHandler)

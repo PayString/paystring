@@ -2,7 +2,12 @@ import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
 import getAllAddressInfoFromDatabase from '../data-access/payIds'
-import { insertUser, replaceUser, removeUser } from '../data-access/users'
+import {
+  insertUser,
+  replaceUser,
+  removeUser,
+  replacePayId,
+} from '../data-access/users'
 import {
   LookupError,
   LookupErrorType,
@@ -212,5 +217,92 @@ export async function deleteUser(
   await removeUser(payId)
 
   res.locals.status = HttpStatus.NoContent
+  next()
+}
+
+/**
+ * Updates a PayID only, not the addresses.
+ *
+ * @param req - An Express Request object, holding the PayID.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.-.
+ *
+ * @throws A ParseError if the PayID is missing from the request.
+ * @throws A LookupError if the PayID doesn't already exist in the database.
+ */
+export async function patchPayId(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const rawOldPayId = req.params.payId
+  if (!rawOldPayId) {
+    throw new ParseError(
+      'A `payId` must be provided in the path. A well-formed API call would look like `PATCH /users/alice$xpring.money`.',
+      ParseErrorType.MissingPayId,
+    )
+  }
+
+  // "Potential" because we don't know yet if there will be an error or not
+  const rawNewPotentialPayId = req.body.payId
+
+  if (!rawNewPotentialPayId || typeof rawNewPotentialPayId !== 'string') {
+    throw new ParseError(
+      'A `payId` must be provided in the request body.',
+      ParseErrorType.MissingPayId,
+    )
+  }
+
+  // TODO: move this to validation
+  if (!rawOldPayId.includes('$') || !rawNewPotentialPayId.includes('$')) {
+    throw new ParseError(
+      'Bad input. PayIDs must contain a "$"',
+      ParseErrorType.InvalidPayId,
+    )
+  }
+
+  // TODO: We should rip this out since PayIDs now officially support multiple '$'.
+  if (
+    (rawOldPayId.match(/\$/gu) || []).length !== 1 ||
+    (rawNewPotentialPayId.match(/\$/gu) || []).length !== 1
+  ) {
+    throw new ParseError(
+      'Bad input. PayIDs must contain only one "$"',
+      ParseErrorType.InvalidPayId,
+    )
+  }
+  const newPotentialPayId = rawNewPotentialPayId.toLowerCase()
+  const oldPayId = rawOldPayId.toLowerCase()
+
+  // Check if the old and new PayID aren't the same
+  if (oldPayId === newPotentialPayId) {
+    throw new ParseError(
+      'The new PayID is the same as the one you are trying to update.',
+      ParseErrorType.InvalidPayId,
+    )
+  }
+  // if (req.method === 'PATCH') {
+  //   const patchRequestHeader = req.header('Content-Type')
+  //   const patchRequestHeaderValue = 'application/merge-patch+json'
+
+  //   if (!patchRequestHeader || patchRequestHeader !== patchRequestHeaderValue) {
+  //     throw new ParseError(
+  //       `A 'Content-Type' header is required in the request, of the form 'Content-Type: ${patchRequestHeaderValue}'.`,
+  //       ParseErrorType.MissingPayIdApiVersionHeader,
+  //     )
+  //   }
+  // }
+
+  const newPayId = await replacePayId(oldPayId, newPotentialPayId)
+
+  if (newPayId?.length === 1) {
+    res.locals.status = HttpStatus.Created
+    res.locals.payId = newPayId
+  } else {
+    throw new LookupError(
+      `The PayID ${oldPayId} doesn't exist.`,
+      LookupErrorType.Unknown,
+    )
+  }
   next()
 }
