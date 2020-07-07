@@ -56,3 +56,34 @@ export default function checkAdminApiVersionHeaders(
 
   next()
 }
+
+/**
+ * A middleware asserting that all Admin PATCH API HTTP requests have an appropriate Content-Type header.
+ *
+ * @param req - An Express Request object.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ *
+ * @throws A ParseError if the PayID-API-Version header is missing, malformed, or unsupported.
+ */
+export function checkAdminPatchApiHeaders(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  const patchRequestHeader = req.header('Content-Type')
+  const patchRequestHeaderValue = 'application/merge-patch+json'
+
+  if (!patchRequestHeader || patchRequestHeader !== patchRequestHeaderValue) {
+    throw new ParseError(
+      `A 'Content-Type' header is required in the request, of the form 'Content-Type: ${patchRequestHeaderValue}'.`,
+      ParseErrorType.MissingPayIdApiVersionHeader,
+    )
+  }
+
+  // Add this header to all successful responses.
+  // We add it early so even errors will respond with Server-Version headers.
+  res.header('Accept-Patch', 'application/merge-patch+json')
+
+  next()
+}

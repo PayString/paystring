@@ -8,7 +8,9 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
+const contentType = 'application/merge-patch+json'
+
+describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -21,11 +23,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /text\/plain/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${newPayId.payId}`)
       // THEN we expect back a 201-Created
@@ -40,11 +44,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /text\/plain/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${newPayId.payId.toLowerCase()}`)
       // THEN we expect back a 201-Created
@@ -68,11 +74,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -94,11 +102,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -120,11 +130,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -146,11 +158,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -171,11 +185,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 409 - CONFLICT and our expected error response
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
   })
@@ -196,11 +212,13 @@ describe('E2E - privateAPIRouter - PATCH /users/:payId', function (): void {
     }
 
     // WHEN we make a PATCH request to /users/ with the new PayID to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
       .send(newPayId)
       .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 409 - CONFLICT and our expected error response
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })

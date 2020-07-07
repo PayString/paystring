@@ -281,17 +281,6 @@ export async function patchPayId(
       ParseErrorType.InvalidPayId,
     )
   }
-  // if (req.method === 'PATCH') {
-  //   const patchRequestHeader = req.header('Content-Type')
-  //   const patchRequestHeaderValue = 'application/merge-patch+json'
-
-  //   if (!patchRequestHeader || patchRequestHeader !== patchRequestHeaderValue) {
-  //     throw new ParseError(
-  //       `A 'Content-Type' header is required in the request, of the form 'Content-Type: ${patchRequestHeaderValue}'.`,
-  //       ParseErrorType.MissingPayIdApiVersionHeader,
-  //     )
-  //   }
-  // }
 
   const newPayId = await replacePayId(oldPayId, newPotentialPayId)
 
