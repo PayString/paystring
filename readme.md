@@ -2,7 +2,7 @@
 
 [![License: Apache 2](https://img.shields.io/badge/license-Apache%202-brightgreen)](https://github.com/payid-org/payid/blob/master/LICENSE)
 [![Public API Version: 1.0](https://img.shields.io/badge/Public%20API%20Version-1.0-blue)](https://github.com/payid-org/payid/blob/master/src/config.ts#L1)
-[![Private API Version: 2020-05-28](https://img.shields.io/badge/Private%20API%20Version-2020--05--28-blue)](https://github.com/payid-org/payid/blob/master/src/config.ts#L2)
+[![Admin API Version: 2020-05-28](https://img.shields.io/badge/Admin%20API%20Version-2020--05--28-blue)](https://github.com/payid-org/payid/blob/master/src/config.ts#L2)
 
 Welcome to PayID, the universal payment identifier.
 

@@ -65,7 +65,7 @@ describe('Parsing - URLs - urlToPayId()', function (): void {
     // WHEN we attempt converting it to a PayID
     const badConversion = (): string => urlToPayId(url)
 
-    // THEN we get our expected PayID
+    // THEN we get our expected error & error message
     assert.throws(badConversion, expectedErrorMessage)
   })
 

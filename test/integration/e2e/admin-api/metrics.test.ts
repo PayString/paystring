@@ -4,13 +4,13 @@ import * as request from 'supertest'
 
 import 'mocha'
 import App from '../../../../src/app'
-import { generatePayIdCountMetrics } from '../../../../src/services/payIdReport'
+import metrics from '../../../../src/services/metrics'
 import { appCleanup, appSetup } from '../../../helpers/helpers'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - GET /metrics', function (): void {
+describe('E2E - adminApiRouter - GET /metrics', function (): void {
   const mainnet = 'MAINNET'
   const testnet = 'TESTNET'
   const asPayId = (account: string): string => `${account}$127.0.0.1`
@@ -32,7 +32,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId(payId, network, mainnet)
     await lookupPayId(account, asAccept(network, mainnet), HttpStatus.OK)
     await assertMetrics(
-      /payid_lookup_request\{paymentNetwork="ACH",environment="MAINNET",org="undefined",result="found"\} 1/u,
+      /payid_lookup_request\{paymentNetwork="ACH",environment="MAINNET",org="127.0.0.1",result="found"\} 1/u,
     )
   })
 
@@ -43,7 +43,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId(payId, network, testnet)
     await lookupPayId('bogus', asAccept(network, testnet), HttpStatus.NotFound)
     await assertMetrics(
-      /payid_lookup_request\{paymentNetwork="ETH",environment="TESTNET",org="undefined",result="not_found"\} 1/u,
+      /payid_lookup_request\{paymentNetwork="ETH",environment="TESTNET",org="127.0.0.1",result="not_found"\} 1/u,
     )
   })
 
@@ -53,7 +53,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId(payId, ' ', mainnet)
     await lookupPayId(account, ' ', HttpStatus.BadRequest)
     await assertMetrics(
-      /payid_lookup_request\{paymentNetwork="unknown",environment="unknown",org="undefined",result="error: bad_accept_header"\} 1/u,
+      /payid_lookup_request\{paymentNetwork="unknown",environment="unknown",org="127.0.0.1",result="error: bad_accept_header"\} 1/u,
     )
   })
 
@@ -72,10 +72,10 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await lookupPayId(xrpAccount, asAccept(xrpNetwork, mainnet), HttpStatus.OK)
     await lookupPayId(btcAccount, asAccept(btcNetwork, testnet), HttpStatus.OK)
     await assertMetrics(
-      /payid_lookup_request\{paymentNetwork="XRPL",environment="MAINNET",org="undefined",result="found"\} 2/u,
+      /payid_lookup_request\{paymentNetwork="XRPL",environment="MAINNET",org="127.0.0.1",result="found"\} 2/u,
     )
     await assertMetrics(
-      /payid_lookup_request\{paymentNetwork="BTC",environment="TESTNET",org="undefined",result="found"\} 1/u,
+      /payid_lookup_request\{paymentNetwork="BTC",environment="TESTNET",org="127.0.0.1",result="found"\} 1/u,
     )
   })
 
@@ -85,12 +85,12 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     await createPayId('charlie$fightmilk.com', achNetwork, 'US')
     await createPayId('mac$fightmilk.com', achNetwork, 'US')
     await createPayId('frank$wolfcola.com', litecoinNetwork, 'MAINNET')
-    await generatePayIdCountMetrics()
+    await metrics.generatePayIdCountMetrics()
     await assertMetrics(
-      /payid_count\{paymentNetwork="ACH",environment="US",org="undefined"\} 2/u,
+      /payid_count\{paymentNetwork="ACH",environment="US",org="127.0.0.1"\} 2/u,
     )
     await assertMetrics(
-      /payid_count\{paymentNetwork="LTC",environment="MAINNET",org="undefined"\} 1/u,
+      /payid_count\{paymentNetwork="LTC",environment="MAINNET",org="127.0.0.1"\} 1/u,
     )
   })
 
@@ -99,10 +99,10 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
    * expected metrics.
    *
    * @param expectedMetric - The expected metric to match on.
-   * @returns The HTTP response from a GET to the /metrics endpoint on the Private API.
+   * @returns The HTTP response from a GET to the /metrics endpoint on the Admin API.
    */
   async function assertMetrics(expectedMetric: RegExp): Promise<request.Test> {
-    return request(app.privateAPIExpress)
+    return request(app.adminApiExpress)
       .get('/metrics')
       .set('PayID-API-Version', payIdApiVersion)
       .expect((res) => {
@@ -125,7 +125,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
     acceptHeader: string,
     status: HttpStatus,
   ): Promise<request.Test> {
-    return request(app.publicAPIExpress)
+    return request(app.publicApiExpress)
       .get(`/${account}`)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -142,7 +142,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
    * @param paymentNetwork - The payment network for the address entry (e.g. XRPL).
    * @param environment - The environment for the address entry (e.g. TESTNET).
    *
-   * @returns The HTTP response from a POST to the /users endpoint on the Private API.
+   * @returns The HTTP response from a POST to the /users endpoint on the Admin API.
    */
   async function createPayId(
     payId: string,
@@ -161,7 +161,7 @@ describe('E2E - privateAPIRouter - GET /metrics', function (): void {
         },
       ],
     }
-    return request(app.privateAPIExpress)
+    return request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(payIdRequest)
