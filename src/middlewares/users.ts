@@ -274,7 +274,7 @@ export async function patchPayId(
   const newPotentialPayId = rawNewPotentialPayId.toLowerCase()
   const oldPayId = rawOldPayId.toLowerCase()
 
-  // Check if the old and new PayID aren't the same
+  // Check if the old and new PayID are the same
   if (oldPayId === newPotentialPayId) {
     throw new ParseError(
       'The new PayID is the same as the one you are trying to update.',
@@ -282,15 +282,15 @@ export async function patchPayId(
     )
   }
 
-  const newPayId = await replacePayId(oldPayId, newPotentialPayId)
+  const account = await replacePayId(oldPayId, newPotentialPayId)
 
-  if (newPayId?.length === 1) {
+  if (account && account.length === 1) {
     res.locals.status = HttpStatus.Created
-    res.locals.payId = newPayId
+    res.locals.payId = account[0].payId
   } else {
     throw new LookupError(
       `The PayID ${oldPayId} doesn't exist.`,
-      LookupErrorType.Unknown,
+      LookupErrorType.MissingPayId,
     )
   }
   next()

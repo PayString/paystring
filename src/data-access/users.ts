@@ -47,22 +47,22 @@ export async function insertUser(
  * @param oldPayId - The current PayID which needs to be updated.
  * @param newPayId - The new PayID of the user.
  *
- * @returns The new PayID of the user.
+ * @returns The updated user Account.
  */
 export async function replacePayId(
   oldPayId: string,
   newPayId: string,
 ): Promise<readonly Account[] | null> {
   return knex.transaction(async (transaction: Transaction) => {
-    const payId = await knex<Account>('account')
+    const updatedAccount = await knex<Account>('account')
       .where('payId', oldPayId)
       .update({ payId: newPayId })
       .transacting(transaction)
-      .returning('payId')
+      .returning('*')
       .then(transaction.commit)
       .catch(transaction.rollback)
 
-    return payId
+    return updatedAccount
   })
 }
 
