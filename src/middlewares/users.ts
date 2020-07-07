@@ -271,20 +271,20 @@ export async function patchPayId(
       ParseErrorType.InvalidPayId,
     )
   }
-  const newPotentialPayId = rawNewPotentialPayId.toLowerCase()
+  const newPayId = rawNewPotentialPayId.toLowerCase()
   const oldPayId = rawOldPayId.toLowerCase()
 
   // Check if the old and new PayID are the same
-  if (oldPayId === newPotentialPayId) {
+  if (oldPayId === newPayId) {
     throw new ParseError(
       'The new PayID is the same as the one you are trying to update.',
       ParseErrorType.InvalidPayId,
     )
   }
 
-  const account = await replacePayId(oldPayId, newPotentialPayId)
+  const account = await replacePayId(oldPayId, newPayId)
 
-  if (account && account.length === 1) {
+  if (account.length === 1) {
     res.locals.status = HttpStatus.Created
     res.locals.payId = account[0].payId
   } else {
@@ -293,5 +293,6 @@ export async function patchPayId(
       LookupErrorType.MissingPayId,
     )
   }
+
   next()
 }

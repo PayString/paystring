@@ -52,7 +52,7 @@ export async function insertUser(
 export async function replacePayId(
   oldPayId: string,
   newPayId: string,
-): Promise<readonly Account[] | null> {
+): Promise<readonly Account[]> {
   return knex.transaction(async (transaction: Transaction) => {
     const updatedAccount = await knex<Account>('account')
       .where('payId', oldPayId)
