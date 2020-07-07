@@ -31,6 +31,7 @@
     "devDbUp": "docker-compose up -d db",
     "devDown": "docker-compose down",
     "compareVersions": ". ./scripts/version.sh && compare_versions $npm_package_version"
+
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
@@ -55,7 +56,7 @@
     "@types/pg": "^7.14.3",
     "@types/semver": "^7.3.1",
     "@types/supertest": "^2.0.10",
-    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/eslint-plugin": "^3.5.0",
     "@typescript-eslint/parser": "^3.4.0",
     "@xpring-eng/eslint-config-base": "^0.9.0",
     "chai": "^4.2.0",
