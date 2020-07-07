@@ -32,7 +32,7 @@ export default function sendSuccess(req: Request, res: Response): void {
       status,
       ((): string => {
         if (res.get('PayID-API-Server-Version')) {
-          return '- Private API:'
+          return '- Admin API:'
         }
         return '- Public API:'
       })(),

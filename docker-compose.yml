@@ -1,6 +1,6 @@
 version: '3'
 services:
-  payid-server:
+  payid_server:
     # Defines the container name when using "docker-compose up". Warning: does not work with "docker-compose run" (Docker issue)
     container_name: 'payid-server'
     # Defines the image name and tag.
