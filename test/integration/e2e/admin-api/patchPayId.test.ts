@@ -169,6 +169,33 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
+  it('Returns a 400 - Bad Request with an error payload for a request without the Content-Type: application/merge-patch+json header', function (done): void {
+    // GIVEN a PayID known to be in a bad format (missing $)
+    const payId = 'johnnyxpring.money'
+
+    // AND a request to update that PayID to one known to be new
+    const newPayId = {
+      payId: 'john$xpring.money',
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      error: 'Bad Request',
+      message: `A 'Content-Type' header is required in the request, of the form 'Content-Type: ${contentType}'.`,
+      statusCode: 400,
+    }
+
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
+    request(app.adminApiExpress)
+      .patch(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(newPayId)
+      .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
+      // THEN we expect back a 400 - Bad Request, with the expected error payload response
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
   it('Returns a 404 - The original user PayID does not exist', function (done): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'johndoe$xpring.money'

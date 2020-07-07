@@ -64,15 +64,19 @@ export default function checkAdminApiVersionHeaders(
  * @param res - An Express Response object.
  * @param next - An Express next() function.
  *
- * @throws A ParseError if the PayID-API-Version header is missing, malformed, or unsupported.
+ * @throws A ParseError if the Content-Type header is missing, malformed, or unsupported.
  */
 export function checkAdminPatchApiHeaders(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  const patchRequestHeader = req.header('Content-Type')
+  // Add this header to all successful responses.
+  // We add it early so even errors will respond with Accept-Patch header.
   const patchRequestHeaderValue = 'application/merge-patch+json'
+  res.header('Accept-Patch', patchRequestHeaderValue)
+
+  const patchRequestHeader = req.header('Content-Type')
 
   if (!patchRequestHeader || patchRequestHeader !== patchRequestHeaderValue) {
     throw new ParseError(
@@ -80,10 +84,6 @@ export function checkAdminPatchApiHeaders(
       ParseErrorType.MissingPayIdApiVersionHeader,
     )
   }
-
-  // Add this header to all successful responses.
-  // We add it early so even errors will respond with Server-Version headers.
-  res.header('Accept-Patch', 'application/merge-patch+json')
 
   next()
 }
