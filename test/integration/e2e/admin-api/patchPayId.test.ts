@@ -43,7 +43,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       payId: 'johnny$xpring.money'.toUpperCase(),
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -73,7 +73,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       statusCode: 400,
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -101,7 +101,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       statusCode: 400,
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -129,7 +129,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       statusCode: 400,
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -145,9 +145,9 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'johnny$xpring.money'
 
-    // AND a request to update that PayID to one known to be in a bad format (multiple $)
+    // AND a request to update that PayID with the same PayID
     const newPayId = {
-      payId: 'johnny$xpring.money',
+      payId,
     }
 
     // AND our expected error response
@@ -157,7 +157,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       statusCode: 400,
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -211,7 +211,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       message: 'There already exists a user with the provided PayID',
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
