@@ -3,6 +3,7 @@ import DatabaseError, {
   handleDatabaseError,
 } from './databaseError'
 import handleHttpError from './handleHttpError'
+import HeaderError, { HeaderErrorType } from './headerError'
 import LookupError, { LookupErrorType } from './lookupError'
 import ParseError, { ParseErrorType } from './parseError'
 import PayIDError from './payIdError'
@@ -17,4 +18,6 @@ export {
   ParseErrorType,
   LookupError,
   LookupErrorType,
+  HeaderError,
+  HeaderErrorType,
 }

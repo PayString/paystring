@@ -49,21 +49,19 @@ export async function insertUser(
  *
  * @returns The updated user Account.
  */
-export async function replacePayId(
+export async function replaceUserPayId(
   oldPayId: string,
   newPayId: string,
-): Promise<readonly Account[]> {
-  return knex.transaction(async (transaction: Transaction) => {
-    const updatedAccount = await knex<Account>('account')
-      .where('payId', oldPayId)
-      .update({ payId: newPayId })
-      .transacting(transaction)
-      .returning('*')
-      .then(transaction.commit)
-      .catch(transaction.rollback)
+): Promise<Account | null> {
+  const account = await knex<Account>('account')
+    .where('payId', oldPayId)
+    .update({ payId: newPayId })
+    .returning('*')
 
-    return updatedAccount
-  })
+  if (account.length === 1) {
+    return account[0]
+  }
+  return null
 }
 
 /**

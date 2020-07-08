@@ -1,8 +1,9 @@
 import * as express from 'express'
 
-import checkAdminApiVersionHeaders, {
-  checkAdminPatchApiHeaders,
-} from '../middlewares/checkAdminApiVersionHeaders'
+import {
+  checkAdminApiVersionHeaders,
+  checkAdminApiPatchHeaders,
+} from '../middlewares/checkAdminApiHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
 import {
@@ -46,9 +47,9 @@ adminApiRouter
   // Patch user PayID route
   .patch(
     '/:payId',
-    express.json({ type: 'application/*+json' }),
+    express.json({ type: 'application/merge-patch+json' }),
     checkAdminApiVersionHeaders,
-    checkAdminPatchApiHeaders,
+    checkAdminApiPatchHeaders,
     wrapAsync(patchPayId),
     sendSuccess,
   )

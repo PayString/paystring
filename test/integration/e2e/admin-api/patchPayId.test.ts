@@ -53,7 +53,30 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .expect('Accept-Patch', contentType)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${newPayId.payId.toLowerCase()}`)
-      // THEN we expect back a 201-Created
+      // THEN we expect back a 201 - Created
+      .expect(HttpStatus.Created, done)
+  })
+
+  it('Returns a 201 when updating a user PayID with the same PayID', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'johnny$xpring.money'
+
+    // AND a request to update that PayID with the same PayID
+    const newPayId = {
+      payId,
+    }
+
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
+    request(app.adminApiExpress)
+      .patch(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
+      .send(newPayId)
+      .expect('Content-Type', /text\/plain/u)
+      .expect('Accept-Patch', contentType)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/users/${newPayId.payId}`)
+      // THEN we expect back a 201 - Created
       .expect(HttpStatus.Created, done)
   })
 
@@ -141,61 +164,6 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
-  it('Returns a 400 - Bad Request with an error payload for a request with a PayID equal to the new one', function (done): void {
-    // GIVEN a PayID known to resolve to an account on the PayID service
-    const payId = 'johnny$xpring.money'
-
-    // AND a request to update that PayID with the same PayID
-    const newPayId = {
-      payId,
-    }
-
-    // AND our expected error response
-    const expectedErrorResponse = {
-      error: 'Bad Request',
-      message: 'The new PayID is the same as the one you are trying to update.',
-      statusCode: 400,
-    }
-
-    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
-    request(app.adminApiExpress)
-      .patch(`/users/${payId}`)
-      .set('PayID-API-Version', payIdApiVersion)
-      .set('Content-Type', contentType)
-      .send(newPayId)
-      .expect('Content-Type', /json/u)
-      .expect('Accept-Patch', contentType)
-      // THEN we expect back a 400 - Bad Request, with the expected error payload response
-      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
-  })
-
-  it('Returns a 400 - Bad Request with an error payload for a request without the Content-Type: application/merge-patch+json header', function (done): void {
-    // GIVEN a PayID known to be in a bad format (missing $)
-    const payId = 'johnnyxpring.money'
-
-    // AND a request to update that PayID to one known to be new
-    const newPayId = {
-      payId: 'john$xpring.money',
-    }
-
-    // AND our expected error response
-    const expectedErrorResponse = {
-      error: 'Bad Request',
-      message: `A 'Content-Type' header is required in the request, of the form 'Content-Type: ${contentType}'.`,
-      statusCode: 400,
-    }
-
-    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
-    request(app.adminApiExpress)
-      .patch(`/users/${payId}`)
-      .set('PayID-API-Version', payIdApiVersion)
-      .send(newPayId)
-      .expect('Content-Type', /json/u)
-      .expect('Accept-Patch', contentType)
-      // THEN we expect back a 400 - Bad Request, with the expected error payload response
-      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
-  })
-
   it('Returns a 404 - The original user PayID does not exist', function (done): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'johndoe$xpring.money'
@@ -211,7 +179,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       message: `The PayID ${payId} doesn't exist.`,
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -248,6 +216,63 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .expect('Accept-Patch', contentType)
       // THEN we expect back a 409 - CONFLICT and our expected error response
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
+  })
+
+  it('Returns a 415 - Unsupported Media Type when omitting the Content-Type header', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$127.0.0.1'
+    // AND a request to update that PayID to one known to already exist on the PayID Service
+    const newPayId = {
+      payId: 'chloe$127.0.0.1',
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 415,
+      error: 'Unsupported Media Type',
+      message:
+        "A specific 'Content-Type' header is required for a PATCH request: 'Content-Type: application/merge-patch+json'.",
+    }
+
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
+    request(app.adminApiExpress)
+      .patch(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      // WITHOUT a Content-Type header
+      .send(newPayId)
+      .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
+      // THEN we expect back a 415 - Unsupported Media Type and our expected error response
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
+  })
+
+  it('Returns a 415 - Unsupported Media Type when setting the Content-Type header to a wrong value', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$127.0.0.1'
+    // AND a request to update that PayID to one known to already exist on the PayID Service
+    const newPayId = {
+      payId: 'chloe$127.0.0.1',
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 415,
+      error: 'Unsupported Media Type',
+      message:
+        "A specific 'Content-Type' header is required for a PATCH request: 'Content-Type: application/merge-patch+json'.",
+    }
+
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
+    request(app.adminApiExpress)
+      .patch(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      // WITH a wrong Content-Type header
+      .set('Content-Type', 'application/json')
+      .send(newPayId)
+      .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
+      // THEN we expect back a 415 - Unsupported Media Type and our expected error response
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
   })
 
   after(function () {

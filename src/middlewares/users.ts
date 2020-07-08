@@ -6,7 +6,7 @@ import {
   insertUser,
   replaceUser,
   removeUser,
-  replacePayId,
+  replaceUserPayId,
 } from '../data-access/users'
 import {
   LookupError,
@@ -225,7 +225,7 @@ export async function deleteUser(
  *
  * @param req - An Express Request object, holding the PayID.
  * @param res - An Express Response object.
- * @param next - An Express next() function.-.
+ * @param next - An Express next() function.
  *
  * @throws A ParseError if the PayID is missing from the request.
  * @throws A LookupError if the PayID doesn't already exist in the database.
@@ -274,19 +274,12 @@ export async function patchPayId(
   const newPayId = rawNewPotentialPayId.toLowerCase()
   const oldPayId = rawOldPayId.toLowerCase()
 
-  // Check if the old and new PayID are the same
-  if (oldPayId === newPayId) {
-    throw new ParseError(
-      'The new PayID is the same as the one you are trying to update.',
-      ParseErrorType.InvalidPayId,
-    )
-  }
+  const account = await replaceUserPayId(oldPayId, newPayId)
 
-  const account = await replacePayId(oldPayId, newPayId)
-
-  if (account.length === 1) {
+  // If we try to update a PayID which doesn't exist, the 'account' object will be null.
+  if (account) {
     res.locals.status = HttpStatus.Created
-    res.locals.payId = account[0].payId
+    res.locals.payId = newPayId
   } else {
     throw new LookupError(
       `The PayID ${oldPayId} doesn't exist.`,

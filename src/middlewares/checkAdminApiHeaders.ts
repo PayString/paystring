@@ -1,7 +1,12 @@
 import { Request, Response, NextFunction } from 'express'
 
 import config, { adminApiVersions } from '../config'
-import { ParseError, ParseErrorType } from '../utils/errors'
+import {
+  ParseError,
+  ParseErrorType,
+  HeaderError,
+  HeaderErrorType,
+} from '../utils/errors'
 
 /**
  * A middleware asserting that all Admin API HTTP requests have an appropriate PayID-API-Version header.
@@ -14,7 +19,7 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  *
  * @throws A ParseError if the PayID-API-Version header is missing, malformed, or unsupported.
  */
-export default function checkAdminApiVersionHeaders(
+export function checkAdminApiVersionHeaders(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -66,22 +71,26 @@ export default function checkAdminApiVersionHeaders(
  *
  * @throws A ParseError if the Content-Type header is missing, malformed, or unsupported.
  */
-export function checkAdminPatchApiHeaders(
+export function checkAdminApiPatchHeaders(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  // Add this header to all successful responses.
-  // We add it early so even errors will respond with Accept-Patch header.
-  const patchRequestHeaderValue = 'application/merge-patch+json'
-  res.header('Accept-Patch', patchRequestHeaderValue)
+  // The merge patch format is primarily intended for use with the HTTP PATCH method
+  // as a means of describing a set of modifications to a target resource’s content.
+  // application/merge-patch+json is a Type Specific Variation of the "application/merge-patch" Media Type that uses a
+  // JSON data structure to describe the changes to be made to a target resource.
+  const patchContentType = 'application/merge-patch+json'
 
-  const patchRequestHeader = req.header('Content-Type')
+  // Add this header to all successful responses. We add it early so even errors will respond with Accept-Patch header.
+  // The Accept-Patch response HTTP header advertises which media-type the server
+  // is able to understand while receiving a PATCH request.
+  res.header('Accept-Patch', patchContentType)
 
-  if (!patchRequestHeader || patchRequestHeader !== patchRequestHeaderValue) {
-    throw new ParseError(
-      `A 'Content-Type' header is required in the request, of the form 'Content-Type: ${patchRequestHeaderValue}'.`,
-      ParseErrorType.MissingPayIdApiVersionHeader,
+  if (req.header('Content-Type') !== patchContentType) {
+    throw new HeaderError(
+      `A specific 'Content-Type' header is required for a PATCH request: 'Content-Type: ${patchContentType}'.`,
+      HeaderErrorType.UnsupportedMediaTypeHeader,
     )
   }
 
