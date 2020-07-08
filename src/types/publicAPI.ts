@@ -28,7 +28,6 @@ export interface AchAddressDetails {
  */
 export interface PaymentInformation {
   addresses: Address[]
-  proofOfControlSignature?: string
   payId?: string
   memo?: string
 }
