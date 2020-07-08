@@ -11,7 +11,7 @@ import {
   postUser,
   putUser,
   deleteUser,
-  patchPayId,
+  patchUserPayId,
 } from '../middlewares/users'
 
 const adminApiRouter = express.Router()
@@ -50,7 +50,7 @@ adminApiRouter
     express.json({ type: 'application/merge-patch+json' }),
     checkAdminApiVersionHeaders,
     checkAdminApiPatchHeaders,
-    wrapAsync(patchPayId),
+    wrapAsync(patchUserPayId),
     sendSuccess,
   )
 

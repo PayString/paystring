@@ -230,7 +230,7 @@ export async function deleteUser(
  * @throws A ParseError if the PayID is missing from the request.
  * @throws A LookupError if the PayID doesn't already exist in the database.
  */
-export async function patchPayId(
+export async function patchUserPayId(
   req: Request,
   res: Response,
   next: NextFunction,
