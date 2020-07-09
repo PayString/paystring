@@ -187,7 +187,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .send(newPayId)
       .expect('Content-Type', /json/u)
       .expect('Accept-Patch', contentType)
-      // THEN we expect back a 409 - CONFLICT and our expected error response
+      // THEN we expect back a 404 - NOT FOUND and our expected error response
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
   })
 
