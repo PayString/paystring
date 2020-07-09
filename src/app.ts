@@ -5,37 +5,34 @@ import * as express from 'express'
 import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
 import sendSuccess from './middlewares/sendSuccess'
-import { metricsRouter, privateAPIRouter, publicAPIRouter } from './routes'
-import { scheduleRecurringMetricsPush } from './services/metrics'
-import scheduleRecurringPayIdCountMetrics from './services/payIdReport'
+import { metricsRouter, adminApiRouter, publicApiRouter } from './routes'
+import metrics, { checkMetricsConfiguration } from './services/metrics'
 import logger from './utils/logger'
 
 /**
  * The PayID application. Runs two Express servers on different ports.
  *
  * One server responds to PayID Protocol requests (the public API),
- * while the other server exposes CRUD commands for PayIDs stored in the database (the private API).
+ * while the other server exposes CRUD commands for PayIDs stored in the database (the Admin API).
  */
 export default class App {
   // Exposed for testing purposes
-  public readonly publicAPIExpress: express.Application
-  public readonly privateAPIExpress: express.Application
+  public readonly publicApiExpress: express.Application
+  public readonly adminApiExpress: express.Application
 
-  private publicAPIServer?: Server
-  private privateAPIServer?: Server
-  private recurringMetricsPushTimeout?: NodeJS.Timeout
-  private recurringMetricsTimeout?: NodeJS.Timeout
+  private publicApiServer?: Server
+  private adminApiServer?: Server
 
   public constructor() {
-    this.publicAPIExpress = express()
-    this.privateAPIExpress = express()
+    this.publicApiExpress = express()
+    this.adminApiExpress = express()
   }
 
   /**
    * Initializes the PayID server by:
    *  - Ensuring the database has all tables/columns necessary
    *  - Boot up the Public API server
-   *  - Boot up the Private API server
+   *  - Boot up the Admin API server
    *  - Scheduling various operations around metrics.
    *
    * @param initConfig - The application configuration to initialize the app with.
@@ -45,28 +42,33 @@ export default class App {
     // Execute DDL statements not yet defined on the current database
     await syncDatabaseSchema(initConfig.database)
 
-    this.publicAPIServer = this.launchPublicAPI(initConfig.app)
-    this.privateAPIServer = this.launchPrivateAPI(initConfig.app)
+    this.publicApiServer = this.launchPublicApi(initConfig.app)
+    this.adminApiServer = this.launchAdminApi(initConfig.app)
 
-    // Attempt to schedule recurring metrics.
-    this.recurringMetricsPushTimeout = scheduleRecurringMetricsPush()
-    this.recurringMetricsTimeout = scheduleRecurringPayIdCountMetrics()
+    // Check if our metrics configuration is valid.
+    checkMetricsConfiguration(initConfig.metrics)
+
+    // Explicitly log that we are pushing metrics if we're pushing metrics.
+    if (initConfig.metrics.pushMetrics) {
+      logger.info(`Pushing metrics is enabled.
+
+      Metrics only capture the total number of PayIDs grouped by (paymentNetwork, environment),
+      and the (paymentNetwork, environment) tuple of public requests to the PayID server.
+      No identifying information is captured.
+
+      If you would like to opt out of pushing metrics, set the environment variable PUSH_PAYID_METRICS to "false".
+    `)
+    }
   }
 
   /**
    * Shuts down the PayID server, and cleans up the recurring metric operations.
    */
   public close(): void {
-    this.publicAPIServer?.close()
-    this.privateAPIServer?.close()
+    this.publicApiServer?.close()
+    this.adminApiServer?.close()
 
-    if (this.recurringMetricsTimeout?.hasRef()) {
-      clearInterval(this.recurringMetricsTimeout.ref())
-    }
-
-    if (this.recurringMetricsPushTimeout?.hasRef()) {
-      clearInterval(this.recurringMetricsPushTimeout.ref())
-    }
+    metrics.stopMetricsGeneration()
   }
 
   /**
@@ -76,28 +78,28 @@ export default class App {
    *
    * @returns An HTTP server listening on the public API port.
    */
-  private launchPublicAPI(appConfig: typeof config.app): Server {
-    this.publicAPIExpress.use('/', publicAPIRouter)
+  private launchPublicApi(appConfig: typeof config.app): Server {
+    this.publicApiExpress.use('/', publicApiRouter)
 
-    return this.publicAPIExpress.listen(appConfig.publicAPIPort, () =>
-      logger.info(`Public API listening on ${appConfig.publicAPIPort}`),
+    return this.publicApiExpress.listen(appConfig.publicApiPort, () =>
+      logger.info(`Public API listening on ${appConfig.publicApiPort}`),
     )
   }
 
   /**
-   * Boots up the private API to respond to CRUD commands hitting REST endpoints.
+   * Boots up the Admin API to respond to CRUD commands hitting REST endpoints.
    *
    * @param appConfig - The application configuration to boot up the Express server with.
    *
-   * @returns An HTTP server listening on the private API port.
+   * @returns An HTTP server listening on the Admin API port.
    */
-  private launchPrivateAPI(appConfig: typeof config.app): Server {
-    this.privateAPIExpress.use('/users', privateAPIRouter)
-    this.privateAPIExpress.use('/metrics', metricsRouter)
-    this.privateAPIExpress.use('/status/health', sendSuccess)
+  private launchAdminApi(appConfig: typeof config.app): Server {
+    this.adminApiExpress.use('/users', adminApiRouter)
+    this.adminApiExpress.use('/metrics', metricsRouter)
+    this.adminApiExpress.use('/status/health', sendSuccess)
 
-    return this.privateAPIExpress.listen(appConfig.privateAPIPort, () =>
-      logger.info(`Private API listening on ${appConfig.privateAPIPort}`),
+    return this.adminApiExpress.listen(appConfig.adminApiPort, () =>
+      logger.info(`Admin API listening on ${appConfig.adminApiPort}`),
     )
   }
 }

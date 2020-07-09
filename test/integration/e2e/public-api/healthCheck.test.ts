@@ -14,7 +14,7 @@ describe('E2E - publicAPIRouter - Health Check', function (): void {
   })
 
   it('Returns a 200 - OK for a GET /status/health', function (done): void {
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get('/status/health')
       .expect(HttpStatus.OK, 'OK', done)
   })
