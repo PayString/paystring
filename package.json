@@ -27,11 +27,11 @@
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
     "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
-    "devEnvUp": "docker-compose up -d",
-    "devDbUp": "docker-compose up -d db",
-    "devDown": "docker-compose down",
-    "compareVersions": ". ./scripts/version.sh && compare_versions $npm_package_version"
-
+    "devEnvUp": "PAYID_SERVER_IMAGE_TAG=$npm_package_version docker-compose up -d",
+    "devDbUp": "PAYID_SERVER_IMAGE_TAG=$npm_package_version docker-compose up -d db",
+    "devDown": "PAYID_SERVER_IMAGE_TAG=$npm_package_version docker-compose down",
+    "compareVersions": ". ./scripts/version.sh && compare_versions $npm_package_version",
+    "bump": ". ./scripts/version.sh && bump $npm_package_version"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
