@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Compares the Docker image version, NPM version, and Git tag version
 # in the repo. Throws an error if any do not match.
