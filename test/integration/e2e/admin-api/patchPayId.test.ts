@@ -232,7 +232,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       statusCode: 415,
       error: 'Unsupported Media Type',
       message:
-        "A specific 'Content-Type' header is required for a PATCH request: 'Content-Type: application/merge-patch+json'.",
+        "A 'Content-Type' header is required for this request: 'Content-Type: application/merge-patch+json'.",
     }
 
     // WHEN we make a PATCH request to /users/:payId with the new PayID to update
@@ -260,7 +260,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       statusCode: 415,
       error: 'Unsupported Media Type',
       message:
-        "A specific 'Content-Type' header is required for a PATCH request: 'Content-Type: application/merge-patch+json'.",
+        "A 'Content-Type' header is required for this request: 'Content-Type: application/merge-patch+json'.",
     }
 
     // WHEN we make a PATCH request to /users/:payId with the new PayID to update

@@ -2,7 +2,7 @@ import * as express from 'express'
 
 import {
   checkAdminApiVersionHeaders,
-  checkAdminApiPatchHeaders,
+  checkAdminApiContentTypeHeaders,
 } from '../middlewares/checkAdminApiHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
@@ -13,6 +13,7 @@ import {
   deleteUser,
   patchUserPayId,
 } from '../middlewares/users'
+import { MediaType } from '../utils/errors'
 
 const adminApiRouter = express.Router()
 
@@ -28,6 +29,7 @@ adminApiRouter
     '/',
     express.json(),
     checkAdminApiVersionHeaders,
+    // TODO -> checkAdminApiContentTypeHeaders for application/json
     wrapAsync(postUser),
     sendSuccess,
   )
@@ -37,6 +39,7 @@ adminApiRouter
     '/*',
     express.json(),
     checkAdminApiVersionHeaders,
+    // TODO -> checkAdminApiContentTypeHeaders for application/json
     wrapAsync(putUser),
     sendSuccess,
   )
@@ -47,9 +50,9 @@ adminApiRouter
   // Patch user PayID route
   .patch(
     '/:payId',
-    express.json({ type: 'application/merge-patch+json' }),
+    express.json({ type: MediaType.ApplicationMergePatchJson }),
     checkAdminApiVersionHeaders,
-    checkAdminApiPatchHeaders,
+    checkAdminApiContentTypeHeaders,
     wrapAsync(patchUserPayId),
     sendSuccess,
   )

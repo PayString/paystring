@@ -4,8 +4,8 @@ import config, { adminApiVersions } from '../config'
 import {
   ParseError,
   ParseErrorType,
-  HeaderError,
-  HeaderErrorType,
+  ContentTypeError,
+  MediaType,
 } from '../utils/errors'
 
 /**
@@ -71,27 +71,33 @@ export function checkAdminApiVersionHeaders(
  *
  * @throws A ParseError if the Content-Type header is missing, malformed, or unsupported.
  */
-export function checkAdminApiPatchHeaders(
+export function checkAdminApiContentTypeHeaders(
   req: Request,
   res: Response,
   next: NextFunction,
 ): void {
-  // The merge patch format is primarily intended for use with the HTTP PATCH method
-  // as a means of describing a set of modifications to a target resource’s content.
-  // application/merge-patch+json is a Type Specific Variation of the "application/merge-patch" Media Type that uses a
-  // JSON data structure to describe the changes to be made to a target resource.
-  const patchContentType = 'application/merge-patch+json'
+  // The default media type required is 'application/json'
+  let mediaType = MediaType.ApplicationJson
 
-  // Add this header to all successful responses. We add it early so even errors will respond with Accept-Patch header.
-  // The Accept-Patch response HTTP header advertises which media-type the server
-  // is able to understand while receiving a PATCH request.
-  res.header('Accept-Patch', patchContentType)
+  if (req.method === 'PATCH') {
+    /**
+     * The required Content-Type header for the PATCH endpoints is 'application/merge-patch+json'.
+     *
+     * The merge patch format is primarily intended for use with the HTTP PATCH method
+     * as a means of describing a set of modifications to a target resource’s content.
+     * Application/merge-patch+json is a Type Specific Variation of the "application/merge-patch" Media Type that uses a
+     * JSON data structure to describe the changes to be made to a target resource.
+     */
+    mediaType = MediaType.ApplicationMergePatchJson
 
-  if (req.header('Content-Type') !== patchContentType) {
-    throw new HeaderError(
-      `A specific 'Content-Type' header is required for a PATCH request: 'Content-Type: ${patchContentType}'.`,
-      HeaderErrorType.UnsupportedMediaTypeHeader,
-    )
+    // Add this header to all successful responses. We add it early so even errors will respond with Accept-Patch header.
+    // The Accept-Patch response HTTP header advertises which media-type the server
+    // is able to understand while receiving a PATCH request.
+    res.header('Accept-Patch', MediaType.ApplicationMergePatchJson)
+  }
+
+  if (req.header('Content-Type') !== mediaType) {
+    throw new ContentTypeError(mediaType)
   }
 
   next()
