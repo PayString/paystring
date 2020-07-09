@@ -1,7 +1,10 @@
 import 'mocha'
 import { assert } from 'chai'
 
-import getPayIdCounts from '../../../src/data-access/reports'
+import {
+  getAddressCounts,
+  getPayIdCount,
+} from '../../../src/data-access/reports'
 import { seedDatabase } from '../../helpers/helpers'
 
 describe('Data Access - getPayIdCounts()', function (): void {
@@ -9,8 +12,8 @@ describe('Data Access - getPayIdCounts()', function (): void {
     await seedDatabase()
   })
 
-  it('Returns a result per by unique network and environment', async function () {
-    const results = await getPayIdCounts()
+  it('getAddressCounts - Returns a result per by unique network and environment', async function () {
+    const results = await getAddressCounts()
     const expected = [
       {
         paymentNetwork: 'ACH',
@@ -39,5 +42,12 @@ describe('Data Access - getPayIdCounts()', function (): void {
       },
     ]
     assert.deepEqual(results, expected)
+  })
+
+  it('getPayIdCount - Returns a count of PayIDs', async function () {
+    const payIdCount = await getPayIdCount()
+    const expectedPayIdCount = 5
+
+    assert.strictEqual(payIdCount, expectedPayIdCount)
   })
 })

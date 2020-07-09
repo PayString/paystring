@@ -79,19 +79,28 @@ describe('E2E - adminApiRouter - GET /metrics', function (): void {
     )
   })
 
-  it('Includes count of all PayIDs', async function () {
+  it('Includes count of all addresses', async function () {
     const achNetwork = 'ACH'
     const litecoinNetwork = 'LTC'
     await createPayId('charlie$fightmilk.com', achNetwork, 'US')
     await createPayId('mac$fightmilk.com', achNetwork, 'US')
     await createPayId('frank$wolfcola.com', litecoinNetwork, 'MAINNET')
-    await metrics.generatePayIdCountMetrics()
+    await metrics.generateAddressCountMetrics()
+
     await assertMetrics(
       /payid_count\{paymentNetwork="ACH",environment="US",org="127.0.0.1"\} 2/u,
     )
     await assertMetrics(
       /payid_count\{paymentNetwork="LTC",environment="MAINNET",org="127.0.0.1"\} 1/u,
     )
+  })
+
+  it('Includes count of all PayIDs', async function () {
+    await metrics.generatePayIdCountMetrics()
+
+    // We create 8 PayIDs in the tests before this one,
+    // and start with 5 seeded PayIDs, for a total of 13.
+    await assertMetrics(/actual_payid_count\{org="127.0.0.1"\} 13/u)
   })
 
   /**
