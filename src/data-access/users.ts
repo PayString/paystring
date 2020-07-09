@@ -61,6 +61,7 @@ export async function replaceUserPayId(
   if (account.length === 1) {
     return account[0]
   }
+
   return null
 }
 
