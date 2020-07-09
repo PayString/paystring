@@ -32,7 +32,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .expect('Accept-Patch', contentType)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${newPayId.payId}`)
-      // THEN we expect back a 201-Created
+      // AND we expect back a 201-Created
       .expect(HttpStatus.Created, done)
   })
 
