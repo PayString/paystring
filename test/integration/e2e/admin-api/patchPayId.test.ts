@@ -22,7 +22,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       payId: 'john$xpring.money',
     }
 
-    // WHEN we make a PATCH request to /users/ with the new PayID to update
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
     request(app.adminApiExpress)
       .patch(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
@@ -249,7 +249,7 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
   it('Returns a 415 - Unsupported Media Type when setting the Content-Type header to a wrong value', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$127.0.0.1'
-    // AND a request to update that PayID to one known to already exist on the PayID Service
+    // AND a request to update that PayID with a new one in the correct format
     const newPayId = {
       payId: 'chloe$127.0.0.1',
     }
