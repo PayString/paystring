@@ -22,7 +22,7 @@ export default class HeaderError extends PayIDError {
    * @param kind - The kind of HeaderError for this error instance.
    */
   public constructor(message: string, kind: HeaderErrorType) {
-    // All parsing errors are the result of a 415 Unsupported Media Type error
+    // All content type errors are the result of a 415 Unsupported Media Type error
     super(message, HttpStatus.UnsupportedMediaType)
     this.kind = kind
   }
