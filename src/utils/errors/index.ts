@@ -1,4 +1,4 @@
-import ContentTypeError, { MediaType } from './contentTypeError'
+import ContentTypeError from './contentTypeError'
 import DatabaseError, {
   DatabaseErrorMessage,
   handleDatabaseError,
@@ -19,5 +19,4 @@ export {
   LookupError,
   LookupErrorType,
   ContentTypeError,
-  MediaType,
 }

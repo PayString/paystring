@@ -13,7 +13,6 @@ import {
   deleteUser,
   patchUserPayId,
 } from '../middlewares/users'
-import { MediaType } from '../utils/errors'
 
 const adminApiRouter = express.Router()
 
@@ -50,7 +49,7 @@ adminApiRouter
   // Patch user PayID route
   .patch(
     '/:payId',
-    express.json({ type: MediaType.ApplicationMergePatchJson }),
+    express.json({ type: 'application/merge-patch+json' }),
     checkAdminApiVersionHeaders,
     checkAdminApiContentTypeHeaders,
     wrapAsync(patchUserPayId),

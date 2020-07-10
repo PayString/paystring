@@ -1,12 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 
 import config, { adminApiVersions } from '../config'
-import {
-  ParseError,
-  ParseErrorType,
-  ContentTypeError,
-  MediaType,
-} from '../utils/errors'
+import { ParseError, ParseErrorType, ContentTypeError } from '../utils/errors'
 
 /**
  * A middleware asserting that all Admin API HTTP requests have an appropriate PayID-API-Version header.
@@ -76,8 +71,9 @@ export function checkAdminApiContentTypeHeaders(
   res: Response,
   next: NextFunction,
 ): void {
-  // The default media type required is 'application/json'
-  let mediaType = MediaType.ApplicationJson
+  type Mime = 'application/json' | 'application/merge-patch+json'
+  // The default media type required is 'application/json' for POST and PUT requests
+  let mediaType: Mime = 'application/json'
 
   if (req.method === 'PATCH') {
     /**
@@ -88,12 +84,12 @@ export function checkAdminApiContentTypeHeaders(
      * Application/merge-patch+json is a Type Specific Variation of the "application/merge-patch" Media Type that uses a
      * JSON data structure to describe the changes to be made to a target resource.
      */
-    mediaType = MediaType.ApplicationMergePatchJson
+    mediaType = 'application/merge-patch+json'
 
     // Add this header to all successful responses. We add it early so even errors will respond with Accept-Patch header.
     // The Accept-Patch response HTTP header advertises which media-type the server
     // is able to understand while receiving a PATCH request.
-    res.header('Accept-Patch', MediaType.ApplicationMergePatchJson)
+    res.header('Accept-Patch', mediaType)
   }
 
   if (req.header('Content-Type') !== mediaType) {
