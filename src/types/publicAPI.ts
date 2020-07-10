@@ -10,16 +10,16 @@ export enum AddressDetailsType {
  * Matching schema for AddressDetailsType.CryptoAddress.
  */
 export interface CryptoAddressDetails {
-  address: string
-  tag?: string
+  readonly address: string
+  readonly tag?: string
 }
 
 /**
  * Matching schema for AddressDetailsType.AchAddress.
  */
 export interface AchAddressDetails {
-  accountNumber: string
-  routingNumber: string
+  readonly accountNumber: string
+  readonly routingNumber: string
 }
 
 /**
@@ -27,17 +27,17 @@ export interface AchAddressDetails {
  * case of a GET request to the base path /).
  */
 export interface PaymentInformation {
-  addresses: Address[]
-  payId?: string
-  memo?: string
+  readonly addresses: Address[]
+  readonly payId?: string
+  readonly memo?: string
 }
 
 /**
  * Address information included inside of a PaymentInformation object.
  */
 interface Address {
-  paymentNetwork: string
-  environment?: string
-  addressDetailsType: AddressDetailsType
-  addressDetails: CryptoAddressDetails | AchAddressDetails
+  readonly paymentNetwork: string
+  readonly environment?: string
+  readonly addressDetailsType: AddressDetailsType
+  readonly addressDetails: CryptoAddressDetails | AchAddressDetails
 }
