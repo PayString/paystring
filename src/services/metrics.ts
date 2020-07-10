@@ -3,7 +3,7 @@ import { hostname } from 'os'
 import { Counter, Gauge, Pushgateway, Registry } from 'prom-client'
 
 import config from '../config'
-import getPayIdCounts from '../data-access/reports'
+import { getAddressCounts, getPayIdCount } from '../data-access/reports'
 import logger from '../utils/logger'
 
 /**
@@ -18,7 +18,7 @@ class Metrics {
   // The default registry gets used for other metrics that we don't want to collect from partners, like memory usage.
   //
   // We need separate registries so the gauge metrics need to be reported under a common org grouping,
-  // so that they are treated as an absolute value. Counter metrics need to be reported under a specific instance
+  // so that they are treated as an absolute value. Lookup metrics need to be reported under a specific instance
   // name so multiple counters get added up. (In scenarios where you are running multiple PayID servers).
   private readonly payIdLookupCounterRegistry: Registry
   private readonly payIdGaugeRegistry: Registry
@@ -28,8 +28,11 @@ class Metrics {
     'paymentNetwork' | 'environment' | 'org' | 'result'
   >
 
-  /** Prometheus Gauge for reporting the current count of PayIDs by [network, environment, org]. */
-  private readonly payIdGauge: Gauge<'paymentNetwork' | 'environment' | 'org'>
+  /** Prometheus Gauge for reporting the current count of addresses by [network, environment, org]. */
+  private readonly addressGauge: Gauge<'paymentNetwork' | 'environment' | 'org'>
+
+  /** Prometheus Gauge for reporting the current count of PayIDs by org. */
+  private readonly payIdGauge: Gauge<'org'>
 
   // These are Timeouts for generating metrics on a recurring basis.
   // To shut down the app properly, we need to clean these up as we shut down.
@@ -48,10 +51,19 @@ class Metrics {
       registers: [this.payIdLookupCounterRegistry],
     })
 
-    this.payIdGauge = new Gauge({
+    this.addressGauge = new Gauge({
+      // This should really be address_count, but changing it now would break metrics,
+      // so we're leaving this as is.
       name: 'payid_count',
-      help: 'count of total PayIDs',
+      help: 'count of addresses by (paymentNetwork, environment)',
       labelNames: ['paymentNetwork', 'environment', 'org'],
+      registers: [this.payIdGaugeRegistry],
+    })
+
+    this.payIdGauge = new Gauge({
+      name: 'actual_payid_count',
+      help: 'count of total PayIDs',
+      labelNames: ['org'],
       registers: [this.payIdGaugeRegistry],
     })
   }
@@ -133,11 +145,17 @@ class Metrics {
       config.metrics.payIdCountRefreshIntervalInSeconds
 
     // Generate the metrics immediately so we don't wait for the interval
+    this.generateAddressCountMetrics().catch((err) =>
+      logger.warn('Failed to generate initial address count metrics', err),
+    )
     this.generatePayIdCountMetrics().catch((err) =>
       logger.warn('Failed to generate initial PayID count metrics', err),
     )
 
     this.recurringMetricsTimeout = setInterval(() => {
+      this.generateAddressCountMetrics().catch((err) =>
+        logger.warn('Failed to generate scheduled address count metrics', err),
+      )
       this.generatePayIdCountMetrics().catch((err) =>
         logger.warn('Failed to generate scheduled PayID count metrics', err),
       )
@@ -210,21 +228,34 @@ class Metrics {
     )
   }
 
-  /** Generates the number of PayIDs grouped by [paymentNetwork, environment]. */
-  public async generatePayIdCountMetrics(): Promise<void> {
-    const payIdCounts = await getPayIdCounts()
+  /** Generates the count of addresses grouped by [paymentNetwork, environment]. */
+  public async generateAddressCountMetrics(): Promise<void> {
+    const addressCounts = await getAddressCounts()
 
-    // Set the PayID count for a given [paymentNetwork, environment] tuple.
-    payIdCounts.forEach((payIdCount) => {
-      this.payIdGauge.set(
+    // Set the address count for a given [paymentNetwork, environment] tuple.
+    addressCounts.forEach((addressCount) => {
+      this.addressGauge.set(
         {
-          paymentNetwork: payIdCount.paymentNetwork,
-          environment: payIdCount.environment,
+          paymentNetwork: addressCount.paymentNetwork,
+          environment: addressCount.environment,
           org: config.metrics.domain,
         },
-        payIdCount.count,
+        addressCount.count,
       )
     })
+  }
+
+  /** Generates the count of PayIDs. */
+  public async generatePayIdCountMetrics(): Promise<void> {
+    // TODO: Should this just return a number?
+    const payIdCount = await getPayIdCount()
+
+    this.payIdGauge.set(
+      {
+        org: config.metrics.domain,
+      },
+      payIdCount,
+    )
   }
 }
 

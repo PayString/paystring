@@ -1,25 +1,39 @@
 import knex from '../db/knex'
-import { PayIdCount } from '../types/reports'
+import { AddressCount } from '../types/reports'
 
 /**
- * Retrieve count of PayIDs, grouped by payment network and environment.
+ * Retrieve count of addresses, grouped by payment network and environment.
  *
- * @returns A list with the number of PayIDs that have a given (paymentNetwork, environment) tuple,
+ * @returns A list with the number of addresses that have a given (paymentNetwork, environment) tuple,
  *          ordered by (paymentNetwork, environment).
  */
-export default async function getPayIdCounts(): Promise<PayIdCount[]> {
-  const payIdCounts: PayIdCount[] = await knex
+export async function getAddressCounts(): Promise<AddressCount[]> {
+  const addressCounts: AddressCount[] = await knex
     .select('address.paymentNetwork', 'address.environment')
     .count('* as count')
-    .from<PayIdCount>('address')
+    .from<AddressCount>('address')
     .groupBy('address.paymentNetwork', 'address.environment')
     .orderBy(['address.paymentNetwork', 'address.environment'])
 
-  return payIdCounts.map((record) => {
-    return {
-      paymentNetwork: record.paymentNetwork,
-      environment: record.environment,
-      count: Number(record.count),
-    }
-  })
+  return addressCounts.map((addressCount) => ({
+    paymentNetwork: addressCount.paymentNetwork,
+    environment: addressCount.environment,
+    count: Number(addressCount.count),
+  }))
+}
+
+/**
+ * Retrieve the count of PayIDs in the database.
+ *
+ * @returns The count of PayIDs that exist for this PayID server.
+ */
+export async function getPayIdCount(): Promise<number> {
+  const payIdCount: number = await knex
+    .count('* as count')
+    .from<Account>('account')
+    .then((record) => {
+      return Number(record[0].count)
+    })
+
+  return payIdCount
 }
