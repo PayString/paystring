@@ -8,15 +8,20 @@ const badAcceptHeaderErrorMessage = `Must have an Accept header of the form "app
       - 'Accept: application/payid+json'
       `
 
-/** A parsed accept header object. */
+/** A parsed HTTP Accept header object. */
 export interface ParsedAcceptHeader {
-  // A raw media type string
-  mediaType: string
-  // An environment requested in the media type
-  // Optional as some headers (e.g. application/ach+json) don't have an environment
-  environment?: string
-  // A payment network requested in the media type
-  paymentNetwork: string
+  /** A raw Accept header media type. */
+  readonly mediaType: string
+
+  /** The payment network requested in the media type. */
+  readonly paymentNetwork: string
+
+  /**
+   * The environment requested in the media type.
+   *
+   * Optional, as some headers (like application/ach+json) don't have an environment.
+   */
+  readonly environment?: string
 }
 
 /**
