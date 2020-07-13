@@ -118,8 +118,12 @@ export function checkAdminApiContentTypeHeaders(
     res.header('Accept-Patch', 'application/merge-patch+json')
   }
 
-  // A GET request doesn't need a Content-Type header
-  if (req.header('Content-Type') !== mediaType && req.method !== 'GET') {
+  // A GET and DELETE requests don't need a "Content-Type: application/json" header
+  if (
+    req.header('Content-Type') !== mediaType &&
+    req.method !== 'GET' &&
+    req.method !== 'DELETE'
+  ) {
     throw new ContentTypeError(mediaType)
   }
 
