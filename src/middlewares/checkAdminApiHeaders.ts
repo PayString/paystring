@@ -58,7 +58,7 @@ export function checkAdminApiVersionHeaders(
 }
 
 /**
- * A middleware asserting that all Admin PATCH API HTTP requests have an appropriate Content-Type header.
+ * A middleware asserting that all Admin requests have an appropriate Content-Type header and an Accept-Patch header in response.
  *
  * @param req - An Express Request object.
  * @param res - An Express Response object.
@@ -86,13 +86,40 @@ export function checkAdminApiContentTypeHeaders(
      */
     mediaType = 'application/merge-patch+json'
 
-    // Add this header to all successful responses. We add it early so even errors will respond with Accept-Patch header.
-    // The Accept-Patch response HTTP header advertises which media-type the server
-    // is able to understand while receiving a PATCH request.
-    res.header('Accept-Patch', mediaType)
+    // res.header('Accept-Patch', mediaType)
   }
 
-  if (req.header('Content-Type') !== mediaType) {
+  /**
+   *  This Regex will match the endpoint /users/:payId BUT will not match any sub endpoints.
+   *
+   * /users/alice$xpring.money - Matches
+   * /users/alicexpring.money - Matches (even if malformed PayID)
+   * /users/alice$xpring.money/addresses - Does not match
+   * /users/alice$xpring.money/addresses/example - Does not match.
+   */
+  // const patchEndpointRegex = /\/users\/[^\/]+$/giu
+  const patchEndpointRegex = /\/users\/[^/]+$/giu
+
+  // .test() is ~30% faster than .match() - https://jsperf.com/test-vs-match-regex
+  if (patchEndpointRegex.test(req.originalUrl)) {
+    /**
+     * Add this header to all responses. We add it early so even errors will respond with Accept-Patch header.
+     * Accept-Patch in response to any method means that PATCH is allowed on the resource identified by the Request-URI.
+     * The Accept-Patch response HTTP header advertises which media-type the server is able to understand for a PATCH request.
+     *
+     * Based on the Regex match, this header will be added for the following endpoints:
+     * GET /users/:payId
+     * PUT /users/:payId
+     * PATCH /users/:payId.
+     *
+     * POST /users will not have an Accept-Patch header in the response as the endpoint "/users" doesn't match "/users/:payId".
+     */
+
+    res.header('Accept-Patch', 'application/merge-patch+json')
+  }
+
+  // A GET request doesn't need a Content-Type header
+  if (req.header('Content-Type') !== mediaType && req.method !== 'GET') {
     throw new ContentTypeError(mediaType)
   }
 
