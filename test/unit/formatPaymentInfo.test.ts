@@ -4,8 +4,8 @@ import { formatPaymentInfo } from '../../src/services/basePayId'
 import { AddressDetailsType } from '../../src/types/publicAPI'
 
 describe('Base PayID - formatPaymentInfo()', function (): void {
-  it('Returns CryptoAddressDetails & AchAddressDetails for addressDetailsTypes when formatting array with multiple AddressInformation', function () {
-    // GIVEN an array of AddressInformation with an ACH and entry
+  it('Returns CryptoAddressDetails & FiatAddressDetails for addressDetailsTypes when formatting array with multiple AddressInformation', function () {
+    // GIVEN an array of AddressInformation with an ACH entry
     const payId = 'alice$example.com'
     const addressInfo = [
       {
@@ -36,7 +36,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         },
         {
           paymentNetwork: 'ACH',
-          addressDetailsType: AddressDetailsType.AchAddress,
+          addressDetailsType: AddressDetailsType.FiatAddress,
           addressDetails: {
             accountNumber: '000123456789',
             routingNumber: '123456789',
@@ -101,7 +101,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
       addresses: [
         {
           paymentNetwork: 'ACH',
-          addressDetailsType: AddressDetailsType.AchAddress,
+          addressDetailsType: AddressDetailsType.FiatAddress,
           addressDetails: {
             accountNumber: '000123456789',
             routingNumber: '123456789',

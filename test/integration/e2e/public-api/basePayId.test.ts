@@ -117,7 +117,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
       addresses: [
         {
           paymentNetwork: 'ACH',
-          addressDetailsType: 'AchAddressDetails',
+          addressDetailsType: 'FiatAddressDetails',
           addressDetails: {
             accountNumber: '000123456789',
             routingNumber: '123456789',
