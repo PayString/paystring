@@ -28,7 +28,6 @@ export interface AchAddressDetails {
  */
 export interface PaymentInformation {
   readonly addresses: Address[]
-  readonly proofOfControlSignature?: string
   readonly payId?: string
   readonly memo?: string
 }
