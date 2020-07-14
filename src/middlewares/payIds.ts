@@ -53,17 +53,7 @@ export default async function getPaymentInfo(
   // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Respond with a 404 if we can't find the requested payment information
   if (preferredAddressInfo === undefined) {
-    let message = `Payment information for ${payId} could not be found.`
-    // When we only have a single accept type, we can give a more detailed error message
-    if (parsedAcceptHeaders.length === 1) {
-      const { paymentNetwork, environment } = parsedAcceptHeaders[0]
-      message = `Payment information for ${payId} in ${paymentNetwork} `
-      // eslint-disable-next-line max-depth -- TODO:(@dino-rodriguez) This should be refactored
-      if (environment) {
-        message += `on ${environment} `
-      }
-      message += 'could not be found.'
-    }
+    // Record metrics for 404s
     parsedAcceptHeaders.forEach((acceptType) =>
       metrics.recordPayIdLookupResult(
         false,
@@ -72,7 +62,10 @@ export default async function getPaymentInfo(
       ),
     )
 
-    throw new LookupError(message, LookupErrorType.Unknown)
+    throw new LookupError(
+      `Payment information for ${payId} could not be found.`,
+      LookupErrorType.Unknown,
+    )
   }
 
   const {
