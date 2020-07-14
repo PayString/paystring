@@ -8,7 +8,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - GET /users', function (): void {
+describe('E2E - adminApiRouter - GET /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -24,14 +24,14 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
           paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .get(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /json/u)
@@ -49,14 +49,14 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
           paymentNetwork: 'XRPL',
           environment: 'TESTNET',
           details: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .get(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /json/u)
@@ -75,7 +75,7 @@ describe('E2E - privateAPIRouter - GET /users', function (): void {
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .get(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /json/u)

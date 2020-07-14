@@ -8,7 +8,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - PUT /users', function (): void {
+describe('E2E - adminApiRouter - PUT /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -30,7 +30,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
@@ -56,7 +56,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
@@ -65,7 +65,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       .expect(HttpStatus.OK, updatedInformation, done)
   })
 
-  it('Returns a 201 and inserted user payload for a private API PUT creating a new user', function (done): void {
+  it('Returns a 201 and inserted user payload for a Admin API PUT creating a new user', function (done): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'notjohndoe$xpring.money'
     const insertedInformation = {
@@ -82,7 +82,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
     }
 
     // WHEN we make a PUT request to /users/ with the information to insert
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(insertedInformation)
@@ -94,7 +94,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       .expect(HttpStatus.Created, insertedInformation, done)
   })
 
-  it('Returns a 201 and inserted user payload for a private API PUT creating a new user with an uppercase PayID provided', function (done): void {
+  it('Returns a 201 and inserted user payload for a Admin API PUT creating a new user with an uppercase PayID provided', function (done): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'notjohndoe$xpring.money'
     const newPayId = 'johnsmith$xpring.money'
@@ -113,7 +113,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
     }
 
     // WHEN we make a PUT request to /users/ with the information to insert
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(insertedInformation)
@@ -150,7 +150,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       ],
     }
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${badPayId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
@@ -180,7 +180,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       ],
     }
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${badPayId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
@@ -210,7 +210,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
       ],
     }
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${badPayId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
@@ -243,7 +243,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
@@ -276,7 +276,7 @@ describe('E2E - privateAPIRouter - PUT /users', function (): void {
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .put(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)

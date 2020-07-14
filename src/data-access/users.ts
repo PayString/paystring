@@ -113,7 +113,7 @@ export async function removeUser(payId: string): Promise<void> {
 // HELPER FUNCTIONS
 
 interface DatabaseAddress extends AddressInformation {
-  accountId: string
+  readonly accountId: string
 }
 
 /**

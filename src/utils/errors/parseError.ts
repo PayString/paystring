@@ -17,7 +17,7 @@ export enum ParseErrorType {
   InvalidPayIdVersionHeader = 'InvalidPayIdVersionHeader',
   UnsupportedPayIdVersionHeader = 'UnsupportedPayIdVersionHeader',
 
-  // These are the Private API version header errors, for the CRUD PayID API service.
+  // These are the Admin API version header errors, for the CRUD PayID API service.
   MissingPayIdApiVersionHeader = 'MissingPayIdApiVersionHeader',
   InvalidPayIdApiVersionHeader = 'InvalidPayIdApiVersionHeader',
   UnsupportedPayIdApiVersionHeader = 'UnsupportedPayIdApiVersionHeader',
