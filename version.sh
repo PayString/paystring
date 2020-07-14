@@ -53,7 +53,7 @@ compare_versions() {
    eval $(parse_yaml docker-compose.yml "config_")
    declare -r docker_image_version=$(echo $config_services_payid_server_image | cut -f 2 -d ':')
    declare -r npm_version=$1
-   declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-')
+   declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-' | cut -c 2-)
 
    if [[ $docker_image_version != $npm_version || \
          $docker_image_version != $git_tag_version || \
