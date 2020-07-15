@@ -2,7 +2,7 @@ import { hostname } from 'os'
 
 import { Counter, Gauge, Pushgateway, Registry } from 'prom-client'
 
-import config from '../config'
+import configuration from '../config'
 import { getAddressCounts, getPayIdCount } from '../data-access/reports'
 import logger from '../utils/logger'
 
@@ -14,6 +14,7 @@ import logger from '../utils/logger'
  * and shut down the recurring metrics Timeouts.
  */
 class Metrics {
+  private readonly config: typeof configuration.metrics
   // Custom Prometheus registries.
   // The default registry gets used for other metrics that we don't want to collect from partners, like memory usage.
   //
@@ -39,8 +40,13 @@ class Metrics {
   private recurringMetricsPushTimeout?: NodeJS.Timeout
   private recurringMetricsTimeout?: NodeJS.Timeout
 
-  // TODO:(hbergren) Should config be a parameter here?
-  public constructor() {
+  /**
+   * Create a new Metrics instance.
+   *
+   * @param config - The metrics configuration object.
+   */
+  public constructor(config: typeof configuration.metrics) {
+    this.config = config
     this.payIdLookupCounterRegistry = new Registry()
     this.payIdGaugeRegistry = new Registry()
 
@@ -85,18 +91,18 @@ class Metrics {
    * Configured through the environment/defaults set in the PayID app config.
    */
   public scheduleRecurringMetricsPush(): void {
-    if (!config.metrics.pushMetrics) {
+    if (!this.config.pushMetrics) {
       return
     }
 
     const payIdLookupCounterGateway = new Pushgateway(
-      config.metrics.gatewayUrl,
+      this.config.gatewayUrl,
       [],
       this.payIdLookupCounterRegistry,
     )
 
     const payIdGaugeGateway = new Pushgateway(
-      config.metrics.gatewayUrl,
+      this.config.gatewayUrl,
       [],
       this.payIdGaugeRegistry,
     )
@@ -108,7 +114,7 @@ class Metrics {
         {
           jobName: 'payid_counter_metrics',
           groupings: {
-            instance: `${config.metrics.domain as string}_${hostname()}_${
+            instance: `${this.config.domain as string}_${hostname()}_${
               process.pid
             }`,
           },
@@ -125,7 +131,7 @@ class Metrics {
         {
           jobName: 'payid_gauge_metrics',
           groupings: {
-            instance: config.metrics.domain as string,
+            instance: this.config.domain as string,
           },
         },
         (err, _resp, _body): void => {
@@ -134,15 +140,15 @@ class Metrics {
           }
         },
       )
-    }, config.metrics.pushIntervalInSeconds * 1000)
+    }, this.config.pushIntervalInSeconds * 1000)
   }
 
   /**
    * Set a recurring timer that will generate PayID count metrics every PAYID_COUNT_REFRESH_INTERVAL seconds.
    */
   public scheduleRecurringPayIdCountMetrics(): void {
-    const refreshIntervalInSeconds =
-      config.metrics.payIdCountRefreshIntervalInSeconds
+    const refreshIntervalInSeconds = this.config
+      .payIdCountRefreshIntervalInSeconds
 
     // Generate the metrics immediately so we don't wait for the interval
     this.generateAddressCountMetrics().catch((err) =>
@@ -193,7 +199,7 @@ class Metrics {
       {
         paymentNetwork,
         environment,
-        org: config.metrics.domain,
+        org: this.config.domain,
         result: found ? 'found' : 'not_found',
       },
       1,
@@ -209,7 +215,7 @@ class Metrics {
       {
         paymentNetwork: 'unknown',
         environment: 'unknown',
-        org: config.metrics.domain,
+        org: this.config.domain,
         result: 'error: bad_accept_header',
       },
       1,
@@ -238,7 +244,7 @@ class Metrics {
         {
           paymentNetwork: addressCount.paymentNetwork,
           environment: addressCount.environment,
-          org: config.metrics.domain,
+          org: this.config.domain,
         },
         addressCount.count,
       )
@@ -252,14 +258,14 @@ class Metrics {
 
     this.payIdGauge.set(
       {
-        org: config.metrics.domain,
+        org: this.config.domain,
       },
       payIdCount,
     )
   }
 }
 
-const metrics = new Metrics()
+const metrics = new Metrics(configuration.metrics)
 
 export default metrics
 
@@ -274,7 +280,7 @@ export default metrics
  * @throws An error if pushing metrics is enabled, but the required configuration to push metrics is missing or malformed.
  */
 export function checkMetricsConfiguration(
-  metricsConfig: typeof config.metrics,
+  metricsConfig: typeof configuration.metrics,
 ): void {
   const oneDayInSeconds = 86_400
 
