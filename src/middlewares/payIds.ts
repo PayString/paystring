@@ -7,7 +7,7 @@ import {
   getPreferredAddressHeaderPair,
 } from '../services/basePayId'
 import { parseAcceptHeaders } from '../services/headers'
-import { recordPayIdLookupResult } from '../services/metrics'
+import metrics from '../services/metrics'
 import { urlToPayId, constructUrl } from '../services/urls'
 import { LookupError, LookupErrorType } from '../utils/errors'
 
@@ -53,26 +53,19 @@ export default async function getPaymentInfo(
   // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Respond with a 404 if we can't find the requested payment information
   if (preferredAddressInfo === undefined) {
-    let message = `Payment information for ${payId} could not be found.`
-    // When we only have a single accept type, we can give a more detailed error message
-    if (parsedAcceptHeaders.length === 1) {
-      const { paymentNetwork, environment } = parsedAcceptHeaders[0]
-      message = `Payment information for ${payId} in ${paymentNetwork} `
-      // eslint-disable-next-line max-depth -- TODO:(@dino-rodriguez) This should be refactored
-      if (environment) {
-        message += `on ${environment} `
-      }
-      message += 'could not be found.'
-    }
+    // Record metrics for 404s
     parsedAcceptHeaders.forEach((acceptType) =>
-      recordPayIdLookupResult(
+      metrics.recordPayIdLookupResult(
         false,
         acceptType.paymentNetwork,
         acceptType.environment,
       ),
     )
 
-    throw new LookupError(message, LookupErrorType.Unknown)
+    throw new LookupError(
+      `Payment information for ${payId} could not be found.`,
+      LookupErrorType.Unknown,
+    )
   }
 
   const {
@@ -96,7 +89,8 @@ export default async function getPaymentInfo(
   res.locals.payId = payId
   res.locals.paymentInformation = formattedPaymentInfo
   res.locals.response = formattedPaymentInfo
-  recordPayIdLookupResult(
+
+  metrics.recordPayIdLookupResult(
     true,
     preferredParsedAcceptHeader.paymentNetwork,
     preferredParsedAcceptHeader.environment,

@@ -8,7 +8,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
-describe('E2E - privateAPIRouter - POST /users', function (): void {
+describe('E2E - adminApiRouter - POST /users', function (): void {
   before(async function () {
     app = await appSetup()
   })
@@ -36,7 +36,7 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
     }
 
     // WHEN we make a POST request to /users with that user information
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
@@ -65,7 +65,7 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
     }
 
     // WHEN we make a POST request to /users with that user information
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
@@ -92,7 +92,7 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
     }
 
     // WHEN we make a POST request to /users with that user information
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
@@ -119,7 +119,7 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
     }
 
     // WHEN we make a POST request to /users with that user information
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)
@@ -150,7 +150,7 @@ describe('E2E - privateAPIRouter - POST /users', function (): void {
     }
 
     // WHEN we make a POST request to /users with that user information
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(userInformation)

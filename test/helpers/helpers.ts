@@ -12,7 +12,7 @@ import syncDatabaseSchema from '../../src/db/syncDatabaseSchema'
  *
  * @returns A deeply cloned object.
  */
-function structuredClone<T>(obj: T): T {
+export function structuredClone<T>(obj: T): T {
   return v8.deserialize(v8.serialize(obj))
 }
 

@@ -5,7 +5,7 @@ import { CryptoAddressDetails, AchAddressDetails } from './publicAPI'
  */
 export interface Account {
   readonly id: string
-  payId: string
+  readonly payId: string
 
   readonly createdAt: Date
   readonly updatedAt: Date
@@ -16,11 +16,11 @@ export interface Account {
  */
 export interface Address {
   readonly id: number
-  accountId: string
+  readonly accountId: string
 
-  paymentNetwork: string
-  environment?: string | null
-  details: CryptoAddressDetails | AchAddressDetails
+  readonly paymentNetwork: string
+  readonly environment?: string | null
+  readonly details: CryptoAddressDetails | AchAddressDetails
 
   readonly createdAt: Date
   readonly updatedAt: Date

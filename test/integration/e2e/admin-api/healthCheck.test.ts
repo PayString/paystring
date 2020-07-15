@@ -8,13 +8,13 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 
-describe('E2E - privateAPIRouter - Health Check', function (): void {
+describe('E2E - adminApiRouter - Health Check', function (): void {
   before(async function () {
     app = await appSetup()
   })
 
   it('Returns a 200 - OK for a GET /status/health', function (done): void {
-    request(app.privateAPIExpress)
+    request(app.adminApiExpress)
       .get('/status/health')
       .expect(HttpStatus.OK, 'OK', done)
   })

@@ -26,7 +26,8 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           environment: 'MAINNET',
           addressDetailsType: 'CryptoAddressDetails',
           addressDetails: {
-            address: 'X7zmKiqEhMznSXgj9cirEnD5sWo3iZSbeFRexSFN1xZ8Ktn',
+            address: 'rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg',
+            tag: '67298042',
           },
         },
       ],
@@ -34,7 +35,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -57,7 +58,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           environment: 'TESTNET',
           addressDetailsType: 'CryptoAddressDetails',
           addressDetails: {
-            address: 'TVacixsWrqyWCr98eTYP7FSzE9NwupESR4TrnijN7fccNiS',
+            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
           },
         },
       ],
@@ -65,7 +66,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -96,7 +97,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -127,7 +128,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -146,12 +147,11 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
-      message:
-        'Payment information for johndoe$127.0.0.1 in XRPL on TESTNET could not be found.',
+      message: 'Payment information for johndoe$127.0.0.1 could not be found.',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
@@ -160,25 +160,44 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
   })
 
-  it('Returns a 404 for an PayID without the relevant associated address', function (done): void {
+  it('Returns a 404 for a PayID without the relevant associated address', function (done): void {
     // GIVEN a known PayID that exists but does not have an associated devnet XRP address
     const payId = '/alice'
     const acceptHeader = 'application/xrpl-devnet+json'
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
-      message:
-        'Payment information for alice$127.0.0.1 in XRPL on DEVNET could not be found.',
+      message: 'Payment information for alice$127.0.0.1 could not be found.',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-devnet
-    request(app.publicAPIExpress)
+    request(app.publicApiExpress)
       .get(payId)
       .set('PayID-Version', '1.0')
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
+  })
+
+  it('Returns a 404 for a PayID request with payid+json, when that PayID has been deleted', function (done): void {
+    // GIVEN a PayID known not to exist
+    const payId = '/johndoe'
+    const acceptHeader = 'application/payid+json'
+    const expectedErrorResponse = {
+      statusCode: 404,
+      error: 'Not Found',
+      message: 'Payment information for johndoe$127.0.0.1 could not be found.',
+    }
+
+    // WHEN we request all addresses for that PayID
+    request(app.publicApiExpress)
+      .get(payId)
+      .set('PayID-Version', '1.0')
+      .set('Accept', acceptHeader)
+      // THEN we get back a 404 with the expected error response.
+      .expect(HttpStatus.NotFound, expectedErrorResponse, done)
+    // })
   })
 
   // Shut down Express application and close DB connections
