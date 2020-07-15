@@ -4,6 +4,7 @@ import { Counter, Gauge, Pushgateway, Registry } from 'prom-client'
 
 import configuration from '../config'
 import { getAddressCounts, getPayIdCount } from '../data-access/reports'
+import { AddressCount } from '../types/reports'
 import logger from '../utils/logger'
 
 /**
@@ -14,7 +15,6 @@ import logger from '../utils/logger'
  * and shut down the recurring metrics Timeouts.
  */
 class Metrics {
-  private readonly config: typeof configuration.metrics
   // Custom Prometheus registries.
   // The default registry gets used for other metrics that we don't want to collect from partners, like memory usage.
   //
@@ -40,13 +40,27 @@ class Metrics {
   private recurringMetricsPushTimeout?: NodeJS.Timeout
   private recurringMetricsTimeout?: NodeJS.Timeout
 
+  // These are passed in from the constructor
+  // This will allow us to extract this into a separate library
+  private readonly config: typeof configuration.metrics
+  private readonly getAddressCounts: () => Promise<AddressCount[]>
+  private readonly getPayIdCount: () => Promise<number>
+
   /**
    * Create a new Metrics instance.
    *
    * @param config - The metrics configuration object.
+   * @param addressCountFn - A function to retrieve count of addresses, grouped by payment network and environment.
+   * @param payIdCountFn - A function to retrieve the count of PayIds in the database.
    */
-  public constructor(config: typeof configuration.metrics) {
+  public constructor(
+    config: typeof configuration.metrics,
+    addressCountFn: () => Promise<AddressCount[]>,
+    payIdCountFn: () => Promise<number>,
+  ) {
     this.config = config
+    this.getAddressCounts = addressCountFn
+    this.getPayIdCount = payIdCountFn
     this.payIdLookupCounterRegistry = new Registry()
     this.payIdGaugeRegistry = new Registry()
 
@@ -236,7 +250,7 @@ class Metrics {
 
   /** Generates the count of addresses grouped by [paymentNetwork, environment]. */
   public async generateAddressCountMetrics(): Promise<void> {
-    const addressCounts = await getAddressCounts()
+    const addressCounts = await this.getAddressCounts()
 
     // Set the address count for a given [paymentNetwork, environment] tuple.
     addressCounts.forEach((addressCount) => {
@@ -254,7 +268,7 @@ class Metrics {
   /** Generates the count of PayIDs. */
   public async generatePayIdCountMetrics(): Promise<void> {
     // TODO: Should this just return a number?
-    const payIdCount = await getPayIdCount()
+    const payIdCount = await this.getPayIdCount()
 
     this.payIdGauge.set(
       {
@@ -265,7 +279,11 @@ class Metrics {
   }
 }
 
-const metrics = new Metrics(configuration.metrics)
+const metrics = new Metrics(
+  configuration.metrics,
+  getAddressCounts,
+  getPayIdCount,
+)
 
 export default metrics
 
