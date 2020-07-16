@@ -61,7 +61,7 @@ export function checkAdminApiVersionHeaders(
  * A middleware asserting that Admin requests have an appropriate Content-Type header.
  *
  * @param req - An Express Request object.
- * @param _res - An Express Response object. Unused parameters can be conventionally underscored to avoid the check.
+ * @param _res - An Express Response object.
  * @param next - An Express next() function.
  * @throws A ParseError if the Content-Type header is missing, malformed, or unsupported.
  */
