@@ -52,7 +52,7 @@ class Metrics {
    *
    * @param config - The metrics configuration object.
    * @param addressCountFn - A function to retrieve count of addresses, grouped by payment network and environment.
-   * @param payIdCountFn - A function to retrieve the count of PayIds in the database.
+   * @param payIdCountFn - A function to retrieve the count of PayIDs in the database.
    */
   public constructor(
     config: typeof configuration.metrics,
