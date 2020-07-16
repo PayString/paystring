@@ -27,10 +27,12 @@
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
     "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
-    "devEnvUp": "docker-compose up -d",
-    "devDbUp": "docker-compose up -d db",
-    "devDown": "docker-compose down",
-    "compareVersions": "./version.sh $npm_package_version"
+    "devEnvUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
+    "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
+    "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
+    "compareVersions": "bash -c '. ./scripts/version.sh && compare_versions $npm_package_version'",
+    "bump": "bash -c '. ./scripts/version.sh && bump $npm_package_version'",
+    "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
@@ -56,7 +58,7 @@
     "@types/semver": "^7.3.1",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
-    "@typescript-eslint/parser": "^3.4.0",
+    "@typescript-eslint/parser": "^3.5.0",
     "@xpring-eng/eslint-config-base": "^0.9.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
