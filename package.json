@@ -15,10 +15,11 @@
   "author": "",
   "main": "./build/src/index.js",
   "scripts": {
-    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML",
+    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML && npm run copyJSON",
     "buildWatch": "tsc --watch --project .",
     "copyHTML": "copyfiles -u 1 src/html/* build/src",
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
+    "copyJSON": "copyfiles -u 1 src/**/*.json build/src",
     "lint": "eslint . --ext .ts --fix --max-warnings 0 && prettier --write '**/*.{md,json}' && npm run compareVersions",
     "lintNoFix": "eslint . --ext .ts --max-warnings 0 && prettier --check '**/*.{md,json}' && npm run compareVersions",
     "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
@@ -44,7 +45,8 @@
     "pg": "8.2.1",
     "prom-client": "^12.0.0",
     "semver": "^7.3.2",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.5",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.2",

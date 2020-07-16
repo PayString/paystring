@@ -1,5 +1,9 @@
+import * as dotenv from 'dotenv'
+
 export const payIdServerVersions: readonly string[] = ['1.0']
 export const adminApiVersions: readonly string[] = ['2020-05-28']
+
+dotenv.config()
 
 /**
  * Application configuration.
@@ -30,6 +34,10 @@ const config = {
     payIdVersion: payIdServerVersions[payIdServerVersions.length - 1],
     adminApiVersion: adminApiVersions[adminApiVersions.length - 1],
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
+  },
+  discovery: {
+    easyCheckoutHost:
+      process.env.EASY_CHECKOUT_HOST ?? 'https://dev.wallet.xpring.io',
   },
   metrics: {
     /**
