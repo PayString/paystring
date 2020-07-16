@@ -1,5 +1,8 @@
 import config from '../config'
 
+/**
+ * Represents a Link object in a PayID Discovery JRD (JSON Resource Descriptor).
+ */
 interface JrdLink {
   rel: string
   template: string
