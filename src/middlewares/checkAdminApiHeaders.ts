@@ -100,7 +100,7 @@ export function checkContentType(
 /**
  * A middleware asserting that the request has an Accept-Patch header in response.
  *
- * @param _req - An Express Request object. Unused parameters can be conventionally underscored to avoid the check.
+ * @param _req - An Express Request object.
  * @param res - An Express Response object.
  * @param next - An Express next() function.
  */
