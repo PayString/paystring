@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- Will be fixed in standalone metrics lib. */
 import { hostname } from 'os'
 
 import { Counter, Gauge, Pushgateway, Registry } from 'prom-client'
