@@ -70,7 +70,7 @@ export function checkContentType(
   _res: Response,
   next: NextFunction,
 ): void {
-  type Mime = 'application/json' | 'application/merge-patch+json'
+  type MimeType = 'application/json' | 'application/merge-patch+json'
   // The default media type required is 'application/json' for POST and PUT requests
   let mediaType: Mime = 'application/json'
 
