@@ -110,7 +110,7 @@ export function addAcceptPatchHeader(
   next: NextFunction,
 ): void {
   /**
-   * Add this header to all responses.
+   * Add this header to the response.
    * Accept-Patch in response to any method means that PATCH is allowed on the resource identified by the Request-URI.
    * The Accept-Patch response HTTP header advertises which media-type the server is able to understand for a PATCH request.
    */
