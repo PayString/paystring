@@ -58,17 +58,16 @@ export function checkAdminApiVersionHeaders(
 }
 
 /**
- * A middleware asserting that all Admin requests have an appropriate Content-Type header and an Accept-Patch header in response.
+ * A middleware asserting that Admin requests have an appropriate Content-Type header.
  *
  * @param req - An Express Request object.
- * @param res - An Express Response object.
+ * @param _res - An Express Response object. Unused parameters can be conventionally underscored to avoid the check.
  * @param next - An Express next() function.
- *
  * @throws A ParseError if the Content-Type header is missing, malformed, or unsupported.
  */
-export function checkAdminApiContentTypeHeaders(
+export function checkContentType(
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction,
 ): void {
   type Mime = 'application/json' | 'application/merge-patch+json'
@@ -85,47 +84,61 @@ export function checkAdminApiContentTypeHeaders(
      * JSON data structure to describe the changes to be made to a target resource.
      */
     mediaType = 'application/merge-patch+json'
-
-    // res.header('Accept-Patch', mediaType)
   }
 
-  /**
-   *  This Regex will match the endpoint /users/:payId BUT will not match any sub endpoints.
-   *
-   * /users/alice$xpring.money - Matches
-   * /users/alicexpring.money - Matches (even if malformed PayID)
-   * /users/alice$xpring.money/addresses - Does not match
-   * /users/alice$xpring.money/addresses/example - Does not match.
-   */
-  // const patchEndpointRegex = /\/users\/[^\/]+$/giu
-  const patchEndpointRegex = /\/users\/[^/]+$/giu
-
-  // .test() is ~30% faster than .match() - https://jsperf.com/test-vs-match-regex
-  if (patchEndpointRegex.test(req.originalUrl)) {
-    /**
-     * Add this header to all responses. We add it early so even errors will respond with Accept-Patch header.
-     * Accept-Patch in response to any method means that PATCH is allowed on the resource identified by the Request-URI.
-     * The Accept-Patch response HTTP header advertises which media-type the server is able to understand for a PATCH request.
-     *
-     * Based on the Regex match, this header will be added for the following endpoints:
-     * GET /users/:payId
-     * PUT /users/:payId
-     * PATCH /users/:payId.
-     *
-     * POST /users will not have an Accept-Patch header in the response as the endpoint "/users" doesn't match "/users/:payId".
-     */
-
-    res.header('Accept-Patch', 'application/merge-patch+json')
-  }
-
-  // A GET and DELETE requests don't need a "Content-Type: application/json" header
+  // POST, PUT and PATCH requests need a "Content-Type: application/json" header
   if (
     req.header('Content-Type') !== mediaType &&
-    req.method !== 'GET' &&
-    req.method !== 'DELETE'
+    ['POST', 'PUT', 'PATCH'].includes(req.method)
   ) {
     throw new ContentTypeError(mediaType)
   }
+
+  next()
+}
+
+/**
+ * A middleware asserting that the request has an Accept-Patch header in response.
+ *
+ * @param _req - An Express Request object. Unused parameters can be conventionally underscored to avoid the check.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ */
+export function addAcceptPatchHeader(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  /**
+   * Add this header to all responses.
+   * Accept-Patch in response to any method means that PATCH is allowed on the resource identified by the Request-URI.
+   * The Accept-Patch response HTTP header advertises which media-type the server is able to understand for a PATCH request.
+   */
+  res.header('Accept-Patch', 'application/merge-patch+json')
+
+  next()
+}
+
+/**
+ * A middleware adding an Allow header in the response.
+ *
+ * @param _req - An Express Request object. Unused parameters can be conventionally underscored to avoid the check.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ */
+export function addAllowHeader(
+  _req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  /**
+   * Add this header to all responses. Advertising Support in OPTIONS.
+   * A server can advertise its support for the PATCH method by adding it to the listing of allowed methods in the
+   * "Allow" OPTIONS response header defined in HTTP/1.1.  The PATCH method MAY appear in the "Allow" header
+   * even if the Accept-Patch header is absent, in which case the list of allowed patch documents is not advertised.
+   * Https://tools.ietf.org/html/rfc5789#section-3.
+   */
+  res.header('Allow', 'GET, PUT, DELETE, PATCH, OPTIONS')
 
   next()
 }

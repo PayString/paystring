@@ -2,7 +2,9 @@ import * as express from 'express'
 
 import {
   checkAdminApiVersionHeaders,
-  checkAdminApiContentTypeHeaders,
+  checkContentType,
+  addAcceptPatchHeader,
+  addAllowHeader,
 } from '../middlewares/checkAdminApiHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
@@ -21,14 +23,20 @@ const adminApiRouter = express.Router()
  */
 adminApiRouter
   // Get user route
-  .get('/*', checkAdminApiVersionHeaders, wrapAsync(getUser), sendSuccess)
+  .get(
+    '/*',
+    checkAdminApiVersionHeaders,
+    addAcceptPatchHeader,
+    wrapAsync(getUser),
+    sendSuccess,
+  )
 
   // Create user route
   .post(
     '/',
     express.json(),
     checkAdminApiVersionHeaders,
-    // TODO -> checkAdminApiContentTypeHeaders for application/json
+    // TODO => checkContentType + E2E tests,
     wrapAsync(postUser),
     sendSuccess,
   )
@@ -38,21 +46,37 @@ adminApiRouter
     '/*',
     express.json(),
     checkAdminApiVersionHeaders,
-    // TODO -> checkAdminApiContentTypeHeaders for application/json
+    addAcceptPatchHeader,
+    // TODO => checkContentType + E2E tests,
     wrapAsync(putUser),
     sendSuccess,
   )
 
   // Delete user route
-  .delete('/*', checkAdminApiVersionHeaders, wrapAsync(deleteUser), sendSuccess)
+  .delete(
+    '/*',
+    checkAdminApiVersionHeaders,
+    addAcceptPatchHeader,
+    wrapAsync(deleteUser),
+    sendSuccess,
+  )
 
   // Patch user PayID route
   .patch(
     '/:payId',
     express.json({ type: 'application/merge-patch+json' }),
     checkAdminApiVersionHeaders,
-    checkAdminApiContentTypeHeaders,
+    addAcceptPatchHeader,
+    checkContentType,
     wrapAsync(patchUserPayId),
+    sendSuccess,
+  )
+
+  .options(
+    '/:payId',
+    checkAdminApiVersionHeaders,
+    addAcceptPatchHeader,
+    addAllowHeader,
     sendSuccess,
   )
 

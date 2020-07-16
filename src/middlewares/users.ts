@@ -277,15 +277,15 @@ export async function patchUserPayId(
   const account = await replaceUserPayId(oldPayId, newPayId)
 
   // If we try to update a PayID which doesn't exist, the 'account' object will be null.
-  if (account) {
-    res.locals.status = HttpStatus.Created
-    res.locals.payId = newPayId
-  } else {
+  if (!account) {
     throw new LookupError(
       `The PayID ${oldPayId} doesn't exist.`,
       LookupErrorType.MissingPayId,
     )
   }
+
+  res.locals.status = HttpStatus.Created
+  res.locals.payId = newPayId
 
   next()
 }
