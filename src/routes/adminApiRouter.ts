@@ -22,6 +22,15 @@ const adminApiRouter = express.Router()
  * Routes for the PayID Admin API.
  */
 adminApiRouter
+  // Options user PayID route
+  .options(
+    '/:payId',
+    checkAdminApiVersionHeaders,
+    addAcceptPatchHeader,
+    addAllowHeader,
+    sendSuccess,
+  )
+
   // Get user route
   .get(
     '/*',
@@ -58,15 +67,6 @@ adminApiRouter
     checkAdminApiVersionHeaders,
     addAcceptPatchHeader,
     wrapAsync(deleteUser),
-    sendSuccess,
-  )
-
-  // Options user PayID route
-  .options(
-    '/:payId',
-    checkAdminApiVersionHeaders,
-    addAcceptPatchHeader,
-    addAllowHeader,
     sendSuccess,
   )
 
