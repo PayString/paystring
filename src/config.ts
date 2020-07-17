@@ -36,8 +36,9 @@ const config = {
     logLevel: process.env.LOG_LEVEL ?? 'INFO',
   },
   discovery: {
-    easyCheckoutHost:
-      process.env.EASY_CHECKOUT_HOST ?? 'https://dev.wallet.xpring.io',
+    easyCheckoutTemplate:
+      process.env.EASY_CHECKOUT_TEMPLATE ??
+      'https://dev.wallet.xpring.io/wallet/xrp/testnet/payto?receiverPayId={receiverPayId}&amount={amount}&nextURL={nextURL}?easyCheckoutSuccess=true',
   },
   metrics: {
     /**

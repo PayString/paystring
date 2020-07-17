@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
-import generateLinks from './jrdLinks'
+import config from '../config'
 
 /**
  * Constructs a PayID Discovery JRD from a PayID.
@@ -28,4 +28,26 @@ export default async function constructJrd(
   }
 
   return next()
+}
+
+/**
+ * Represents a Link object in a PayID Discovery JRD (JSON Resource Descriptor).
+ */
+interface JrdLink {
+  rel: string
+  template: string
+}
+
+/**
+ * Generate a list of JrdLinks to return as a result of PayID Discovery.
+ *
+ * @returns An array of JrdLinks containing PayID Discovery metadata.
+ */
+function generateLinks(): JrdLink[] {
+  return [
+    {
+      rel: 'https://payid.org/ns/easy-checkout-url/1.0',
+      template: config.discovery.easyCheckoutTemplate,
+    },
+  ]
 }
