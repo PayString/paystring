@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 
 import config from '../config'
+import { ParseError, ParseErrorType } from '../utils/errors'
 
 /**
  * Constructs a PayID Discovery JRD from a PayID.
@@ -9,6 +10,7 @@ import config from '../config'
  * @param res - Stores the JRD to be returned to the client.
  * @param next - Passes req/res to next middleware.
  * @returns A Promise resolving to nothing.
+ * @throws ParseError if the PayID is missing from the request parameters.
  */
 export default async function constructJrd(
   req: Request,
@@ -17,8 +19,10 @@ export default async function constructJrd(
 ): Promise<void> {
   const payId = req.query.resource
   if (!payId || Array.isArray(payId) || typeof payId !== 'string') {
-    // TODO: return error
-    return next()
+    throw new ParseError(
+      'A `payId` must be provided in the resource request parameter.',
+      ParseErrorType.MissingPayId,
+    )
   }
 
   const links = generateLinks()
