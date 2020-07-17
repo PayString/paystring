@@ -38,7 +38,7 @@ const config = {
   discovery: {
     easyCheckoutTemplate:
       process.env.EASY_CHECKOUT_TEMPLATE ??
-      'https://dev.wallet.xpring.io/wallet/xrp/testnet/payto?receiverPayId={receiverPayId}&amount={amount}&nextURL={nextURL}?easyCheckoutSuccess=true',
+      'https://dev.wallet.xpring.io/wallet/xrp/testnet/payto?receiverPayId={receiverPayId}&amount={amount}&nextUrl={nextUrl}?easyCheckoutSuccess=true',
   },
   metrics: {
     /**
