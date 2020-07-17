@@ -72,7 +72,7 @@ export function checkContentType(
 ): void {
   type MimeType = 'application/json' | 'application/merge-patch+json'
   // The default media type required is 'application/json' for POST and PUT requests
-  let mediaType: Mime = 'application/json'
+  let mediaType: MimeType = 'application/json'
 
   if (req.method === 'PATCH') {
     /**
@@ -98,7 +98,7 @@ export function checkContentType(
 }
 
 /**
- * A middleware asserting that the request has an Accept-Patch header in response.
+ * A middleware putting an Accept-Patch header in the response.
  *
  * @param _req - An Express Request object.
  * @param res - An Express Response object.
@@ -138,7 +138,7 @@ export function addAllowHeader(
    * even if the Accept-Patch header is absent, in which case the list of allowed patch documents is not advertised.
    * Https://tools.ietf.org/html/rfc5789#section-3.
    */
-  res.header('Allow', 'GET, PUT, DELETE, PATCH, OPTIONS')
+  res.header('Allow', 'GET, PUT, OPTIONS, DELETE, PATCH')
 
   next()
 }

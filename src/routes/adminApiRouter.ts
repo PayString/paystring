@@ -61,6 +61,15 @@ adminApiRouter
     sendSuccess,
   )
 
+  // Options user PayID route
+  .options(
+    '/:payId',
+    checkAdminApiVersionHeaders,
+    addAcceptPatchHeader,
+    addAllowHeader,
+    sendSuccess,
+  )
+
   // Patch user PayID route
   .patch(
     '/:payId',
@@ -69,14 +78,6 @@ adminApiRouter
     addAcceptPatchHeader,
     checkContentType,
     wrapAsync(patchUserPayId),
-    sendSuccess,
-  )
-
-  .options(
-    '/:payId',
-    checkAdminApiVersionHeaders,
-    addAcceptPatchHeader,
-    addAllowHeader,
     sendSuccess,
   )
 

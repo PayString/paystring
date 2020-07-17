@@ -16,21 +16,20 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
     app = await appSetup()
   })
 
-  it('Returns a 200, the Allow and Accept-Patch header', function (done): void {
+  it('Returns a 200 with the Allow header', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
-    // AND a correct Allow header
-    const allowHeader = 'GET, PUT, DELETE, PATCH, OPTIONS'
+    // AND the Allow header expected
+    const allowHeader = 'GET, PUT, OPTIONS, DELETE, PATCH'
 
     // WHEN we make an OPTIONS request to /users/:payId
     request(app.adminApiExpress)
       .options(`/users/${payId}`)
-      // WITH the correct PayID-API-Version header
       .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /text\/plain/u)
-      // THEN we expect the Accept-Patch header value to be application/merge-patch+json
+      // THEN we expect the Accept-Patch header in the response
       .expect('Accept-Patch', contentType)
-      // THEN we expect the Allow header to contain the correct methods
+      // THEN we expect the Allow header in the response
       .expect('Allow', allowHeader)
       // AND we expect back a 200-OK
       .expect(HttpStatus.OK, done)
