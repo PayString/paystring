@@ -40,6 +40,7 @@ publicApiRouter
   // Health route
   .get('/status/health', sendSuccess)
 
+  // PayID Discovery route
   .get('/.well-known/webfinger', constructJrd, sendSuccess)
 
   // Base PayID route
