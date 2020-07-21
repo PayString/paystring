@@ -86,7 +86,7 @@ export function checkContentType(
     mediaType = 'application/merge-patch+json'
   }
 
-  // POST, PUT and PATCH requests need a "Content-Type: application/json" header
+  // POST, PUT and PATCH requests need a valid Content-Type header
   if (
     req.header('Content-Type') !== mediaType &&
     ['POST', 'PUT', 'PATCH'].includes(req.method)
