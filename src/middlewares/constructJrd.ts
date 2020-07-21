@@ -19,6 +19,10 @@ export default async function constructJrd(
   next: NextFunction,
 ): Promise<void> {
   const payId = req.query.resource
+
+  // Query parameters could be a string or a ParsedQs, or an array of either.
+  // PayID Discovery only allows for one 'resource' query parameter, so we
+  // check for that here.
   if (!payId || Array.isArray(payId) || typeof payId !== 'string') {
     throw new ParseError(
       'A `payId` must be provided in the resource request parameter.',
