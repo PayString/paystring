@@ -1,0 +1,6 @@
+[
+  {
+    "rel": "https://payid.org/ns/payid-easy-checkout/1.0",
+    "template": "https://dev.wallet.xpring.io/wallet/xrp/testnet/payto?receiverPayId={receiverPayId}&amount={amount}&nextUrl={nextUrl}?easyCheckoutSuccess=true"
+  }
+]
