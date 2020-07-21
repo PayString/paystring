@@ -39,6 +39,9 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
 
+    // AND the expected Allow header
+    const allowHeader = 'GET, PUT, OPTIONS, DELETE, PATCH'
+
     // AND our expected error response
     const expectedErrorResponse = {
       error: 'Bad Request',
@@ -52,6 +55,10 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
       .options(`/users/${payId}`)
       // WITHOUT the 'PayID-API-Version' header
       .expect('Content-Type', /json/u)
+      // THEN we expect the Allow header in the response
+      .expect('Allow', allowHeader)
+      // THEN we expect the Accept-Patch header in the response
+      .expect('Accept-Patch', contentType)
       // THEN we expect back a 400 - Bad Request
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })

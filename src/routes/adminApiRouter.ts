@@ -25,17 +25,17 @@ adminApiRouter
   // Options user PayID route
   .options(
     '/:payId',
-    checkAdminApiVersionHeaders,
-    addAcceptPatchHeader,
     addAllowHeader,
+    addAcceptPatchHeader,
+    checkAdminApiVersionHeaders,
     sendSuccess,
   )
 
   // Get user route
   .get(
     '/*',
-    checkAdminApiVersionHeaders,
     addAcceptPatchHeader,
+    checkAdminApiVersionHeaders,
     wrapAsync(getUser),
     sendSuccess,
   )
@@ -54,8 +54,8 @@ adminApiRouter
   .put(
     '/*',
     express.json(),
-    checkAdminApiVersionHeaders,
     addAcceptPatchHeader,
+    checkAdminApiVersionHeaders,
     // TODO => checkContentType + E2E tests,
     wrapAsync(putUser),
     sendSuccess,
@@ -64,8 +64,8 @@ adminApiRouter
   // Delete user route
   .delete(
     '/*',
-    checkAdminApiVersionHeaders,
     addAcceptPatchHeader,
+    checkAdminApiVersionHeaders,
     wrapAsync(deleteUser),
     sendSuccess,
   )
@@ -74,8 +74,8 @@ adminApiRouter
   .patch(
     '/:payId',
     express.json({ type: 'application/merge-patch+json' }),
-    checkAdminApiVersionHeaders,
     addAcceptPatchHeader,
+    checkAdminApiVersionHeaders,
     checkContentType,
     wrapAsync(patchUserPayId),
     sendSuccess,
