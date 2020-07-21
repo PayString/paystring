@@ -27,10 +27,10 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
       .options(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .expect('Content-Type', /text\/plain/u)
-      // THEN we expect the Accept-Patch header in the response
-      .expect('Accept-Patch', contentType)
       // THEN we expect the Allow header in the response
       .expect('Allow', allowHeader)
+      // THEN we expect the Accept-Patch header in the response
+      .expect('Accept-Patch', contentType)
       // AND we expect back a 200-OK
       .expect(HttpStatus.OK, done)
   })
