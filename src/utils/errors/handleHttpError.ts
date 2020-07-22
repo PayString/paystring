@@ -42,6 +42,10 @@ export default function handleHttpError(
       error = Boom.conflict(msg).output.payload
       break
 
+    case HttpStatus.UnsupportedMediaType:
+      error = Boom.unsupportedMediaType(msg).output.payload
+      break
+
     default:
       // This is a 500 internal server error
       error = Boom.badImplementation(msg).output.payload
