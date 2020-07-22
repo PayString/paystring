@@ -13,11 +13,11 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  * @returns A Promise resolving to nothing.
  * @throws ParseError if the PayID is missing from the request parameters.
  */
-export default async function constructJrd(
+export default function constructJrd(
   req: Request,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   const payId = req.query.resource
 
   // Query parameters could be a string or a ParsedQs, or an array of either.
