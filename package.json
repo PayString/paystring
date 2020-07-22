@@ -1,6 +1,6 @@
 {
   "name": "payid",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "The PayID Server reference implementation",
   "keywords": [],
   "homepage": "https://github.com/payid-org/payid#readme",
@@ -15,10 +15,11 @@
   "author": "",
   "main": "./build/src/index.js",
   "scripts": {
-    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML",
+    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML && npm run copyJSON",
     "buildWatch": "tsc --watch --project .",
     "copyHTML": "copyfiles -u 1 src/html/* build/src",
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
+    "copyJSON": "copyfiles -u 1 src/**/*.json build/src",
     "lint": "eslint . --ext .ts --fix --max-warnings 0 && prettier --write '**/*.{md,json}' && npm run compareVersions",
     "lintNoFix": "eslint . --ext .ts --max-warnings 0 && prettier --check '**/*.{md,json}' && npm run compareVersions",
     "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
@@ -27,10 +28,12 @@
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
     "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
-    "devEnvUp": "docker-compose up -d",
-    "devDbUp": "docker-compose up -d db",
-    "devDown": "docker-compose down",
-    "compareVersions": "./version.sh $npm_package_version"
+    "devEnvUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
+    "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
+    "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
+    "compareVersions": "bash -c '. ./scripts/version.sh && compare_versions $npm_package_version'",
+    "bump": "bash -c '. ./scripts/version.sh && bump $npm_package_version $1' -l ",
+    "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
@@ -56,7 +59,7 @@
     "@types/semver": "^7.3.1",
     "@types/supertest": "^2.0.10",
     "@typescript-eslint/eslint-plugin": "^3.5.0",
-    "@typescript-eslint/parser": "^3.4.0",
+    "@typescript-eslint/parser": "^3.5.0",
     "@xpring-eng/eslint-config-base": "^0.9.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",

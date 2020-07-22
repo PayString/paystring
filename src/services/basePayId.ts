@@ -57,6 +57,10 @@ export function getPreferredAddressHeaderPair(
       preferredAddresses: readonly AddressInformation[]
     }
   | undefined {
+  if (allAddresses.length === 0) {
+    return undefined
+  }
+
   // Find the optimal payment information from a sorted list
   for (const acceptHeader of sortedParsedAcceptHeaders) {
     // Return all addresses for application/payid+json

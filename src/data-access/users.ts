@@ -42,6 +42,30 @@ export async function insertUser(
 }
 
 /**
+ * Replace only the user PayID in the account table in the PayID database.
+ *
+ * @param oldPayId - The current PayID which needs to be updated.
+ * @param newPayId - The new PayID of the user.
+ *
+ * @returns The updated user Account.
+ */
+export async function replaceUserPayId(
+  oldPayId: string,
+  newPayId: string,
+): Promise<Account | null> {
+  const account = await knex<Account>('account')
+    .where('payId', oldPayId)
+    .update({ payId: newPayId })
+    .returning('*')
+
+  if (account.length === 1) {
+    return account[0]
+  }
+
+  return null
+}
+
+/**
  * Update the PayID and addresses for a given user.
  *
  * @param oldPayId - The old PayID of the user.

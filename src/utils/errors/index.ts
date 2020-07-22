@@ -1,3 +1,4 @@
+import ContentTypeError from './contentTypeError'
 import DatabaseError, {
   DatabaseErrorMessage,
   handleDatabaseError,
@@ -17,4 +18,5 @@ export {
   ParseErrorType,
   LookupError,
   LookupErrorType,
+  ContentTypeError,
 }
