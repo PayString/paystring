@@ -18,8 +18,8 @@ export interface CryptoAddressDetails {
  * Matching schema for AddressDetailsType.FiatAddress.
  */
 export interface FiatAddressDetails {
-  accountNumber: string
-  routingNumber?: string
+  readonly accountNumber: string
+  readonly routingNumber?: string
 }
 
 /**
