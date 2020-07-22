@@ -2,7 +2,7 @@ import HttpStatus from '@xpring-eng/http-status'
 import * as request from 'supertest'
 
 import App from '../../../../src/app'
-import { appSetup } from '../../../helpers/helpers'
+import { appCleanup, appSetup } from '../../../helpers/helpers'
 
 // eslint-disable-next-line node/file-extension-in-import -- typescript needs .json extension
 import * as discoveryLinks from './testDiscoveryLinks.json'
@@ -13,6 +13,10 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
     app = await appSetup()
+  })
+
+  after(function () {
+    appCleanup(app)
   })
 
   it('Discovery query returns JRD', function (done): void {
@@ -28,5 +32,20 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
       .get(`/.well-known/webfinger?resource=${payId}`)
       // THEN we get back a JRD with subject = the PayID and all links from the discoveryLinks.json file
       .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
+  it('Discovery query with no PayID in request parameter returns 400', function (done): void {
+    // GIVEN no PayID for a PayID Discovery request
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'A PayID must be provided in the `resource` request parameter.',
+    }
+
+    // WHEN we make a GET request to the PayID Discovery endpoint with no `resource` request parameter
+    request(app.publicApiExpress)
+      .get('/.well-known/webfinger')
+      // THEN we get back a 400 with the expected error message
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 })
