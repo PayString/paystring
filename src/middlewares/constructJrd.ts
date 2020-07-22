@@ -25,7 +25,7 @@ export default async function constructJrd(
   // check for that here.
   if (!payId || Array.isArray(payId) || typeof payId !== 'string') {
     throw new ParseError(
-      'A `payId` must be provided in the resource request parameter.',
+      'A PayID must be provided in the `resource` request parameter.',
       ParseErrorType.MissingPayId,
     )
   }
