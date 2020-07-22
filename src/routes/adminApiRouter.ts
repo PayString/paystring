@@ -5,7 +5,7 @@ import {
   checkContentType,
   addAcceptPatchHeader,
   addAllowHeader,
-} from '../middlewares/checkAdminApiHeaders'
+} from '../middlewares/adminApiHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
 import {
