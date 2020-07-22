@@ -8,11 +8,13 @@ import { appCleanup, appSetup } from '../../../helpers/helpers'
 import * as discoveryLinks from './testDiscoveryLinks.json'
 
 let app: App
+let discoveryPath: string
 
 describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
     app = await appSetup()
+    discoveryPath = '/.well-known/webfinger'
   })
 
   after(function () {
@@ -29,7 +31,7 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
 
     // WHEN we make a GET request to the PayID Discovery endpoint
     request(app.publicApiExpress)
-      .get(`/.well-known/webfinger?resource=${payId}`)
+      .get(`${discoveryPath}?resource=${payId}`)
       // THEN we get back a JRD with subject = the PayID and all links from the discoveryLinks.json file
       .expect(HttpStatus.OK, expectedResponse, done)
   })
@@ -44,7 +46,7 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
 
     // WHEN we make a GET request to the PayID Discovery endpoint with no `resource` request parameter
     request(app.publicApiExpress)
-      .get('/.well-known/webfinger')
+      .get(discoveryPath)
       // THEN we get back a 400 with the expected error message
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
