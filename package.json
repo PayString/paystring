@@ -31,10 +31,8 @@
     "devEnvUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
     "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
     "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
-    "compareVersions": "./scripts/version/compare.sh $npm_package_version",
     "bump": "./scripts/version/bump.sh $npm_package_version $1",
-    "release": "hub release create -d -m $npm_package_version $npm_package_version",
-    "cut": "npm run bump $npm_config_bump && git push --follow-tags && npm run release"
+    "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
