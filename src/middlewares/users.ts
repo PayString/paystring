@@ -33,7 +33,7 @@ export async function getUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(dino) Validate PayID
-  const payId = req.params[0].toLowerCase()
+  const payId = req.params.payId.toLowerCase()
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Could use a similar regex to the one used by the database.
@@ -121,7 +121,7 @@ export async function putUser(
 ): Promise<void> {
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
-  const rawPayId = req.params[0]
+  const rawPayId = req.params.payId
   const rawNewPayId = req.body?.payId
   const addresses = req.body?.addresses
 
@@ -203,7 +203,7 @@ export async function deleteUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(hbergren) This absolutely needs to live in middleware
-  const payId = req.params[0].toLowerCase()
+  const payId = req.params.payId.toLowerCase()
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
