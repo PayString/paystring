@@ -16,10 +16,6 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
     app = await appSetup()
   })
 
-  after(function () {
-    appCleanup(app)
-  })
-
   it('Discovery query returns JRD', function (done): void {
     // GIVEN a PayID
     const payId = 'alice$wallet.com'
@@ -48,5 +44,9 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
       .get(discoveryPath)
       // THEN we get back a 400 with the expected error message
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
+  after(function () {
+    appCleanup(app)
   })
 })
