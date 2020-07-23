@@ -28,6 +28,7 @@
     "startWatch": "tsc-watch --onSuccess 'npm run start'",
     "test": "nyc mocha 'test/**/*.test.ts'",
     "testWatch": "nyc mocha --watch 'test/**/*.test.ts'",
+    "devEnvUp": "run-script-os",
     "devEnvUp:default": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
     "devEnvUp:win32": "set PAYID_DOCKER_IMAGE_VERSION=%npm_package_version%&&docker-compose up -d",
     "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
