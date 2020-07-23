@@ -20,8 +20,8 @@
     "copyHTML": "copyfiles -u 1 src/html/* build/src",
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
     "copyJSON": "copyfiles -u 1 src/**/*.json build/src",
-    "lint": "eslint . --ext .ts --fix --max-warnings 0 && prettier --write '**/*.{md,json}' && npm run compareVersions",
-    "lintNoFix": "eslint . --ext .ts --max-warnings 0 && prettier --check '**/*.{md,json}' && npm run compareVersions",
+    "lint": "eslint . --ext .ts --fix --max-warnings 0 && prettier --write '**/*.{md,json}'",
+    "lintNoFix": "eslint . --ext .ts --max-warnings 0 && prettier --check '**/*.{md,json}'",
     "lintWatch": "chokidar src/**/*.ts -c \"npm run lint\" --initial --verbose",
     "prestart": "npm run build",
     "start": "node build/src/index.js",
@@ -31,8 +31,7 @@
     "devEnvUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
     "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
     "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
-    "compareVersions": "bash -c '. ./scripts/version.sh && compare_versions $npm_package_version'",
-    "bump": "bash -c '. ./scripts/version.sh && bump $npm_package_version $1' -l ",
+    "bump": "./scripts/version/bump.sh $npm_package_version $1",
     "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
   "dependencies": {

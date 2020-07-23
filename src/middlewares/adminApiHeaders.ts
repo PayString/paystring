@@ -14,7 +14,7 @@ import { ParseError, ParseErrorType, ContentTypeError } from '../utils/errors'
  *
  * @throws A ParseError if the PayID-API-Version header is missing, malformed, or unsupported.
  */
-export function checkAdminApiVersionHeaders(
+export function checkRequestAdminApiVersionHeaders(
   req: Request,
   res: Response,
   next: NextFunction,
@@ -65,7 +65,7 @@ export function checkAdminApiVersionHeaders(
  * @param next - An Express next() function.
  * @throws A ParseError if the Content-Type header is missing, malformed, or unsupported.
  */
-export function checkContentType(
+export function checkRequestContentType(
   req: Request,
   _res: Response,
   next: NextFunction,
@@ -104,7 +104,7 @@ export function checkContentType(
  * @param res - An Express Response object.
  * @param next - An Express next() function.
  */
-export function addAcceptPatchHeader(
+export function addAcceptPatchResponseHeader(
   _req: Request,
   res: Response,
   next: NextFunction,
@@ -115,30 +115,6 @@ export function addAcceptPatchHeader(
    * The Accept-Patch response HTTP header advertises which media-type the server is able to understand for a PATCH request.
    */
   res.header('Accept-Patch', 'application/merge-patch+json')
-
-  next()
-}
-
-/**
- * A middleware adding an Allow header in the response.
- *
- * @param _req - An Express Request object. Unused parameters can be conventionally underscored to avoid the check.
- * @param res - An Express Response object.
- * @param next - An Express next() function.
- */
-export function addAllowHeader(
-  _req: Request,
-  res: Response,
-  next: NextFunction,
-): void {
-  /**
-   * Add this header to all responses. Advertising Support in OPTIONS.
-   * A server can advertise its support for the PATCH method by adding it to the listing of allowed methods in the
-   * "Allow" OPTIONS response header defined in HTTP/1.1.  The PATCH method MAY appear in the "Allow" header
-   * even if the Accept-Patch header is absent, in which case the list of allowed patch documents is not advertised.
-   * Https://tools.ietf.org/html/rfc5789#section-3.
-   */
-  res.header('Allow', 'GET, PUT, OPTIONS, DELETE, PATCH')
 
   next()
 }
