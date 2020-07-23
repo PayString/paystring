@@ -31,8 +31,7 @@
     "devEnvUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
     "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
     "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
-    "compareVersions": "bash -c '. ./scripts/version.sh && compare_versions $npm_package_version'",
-    "bump": "bash -c '. ./scripts/version.sh && bump $npm_package_version $1' -l ",
+    "bump": "./scripts/version/bump.sh $npm_package_version $1",
     "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
   "dependencies": {
