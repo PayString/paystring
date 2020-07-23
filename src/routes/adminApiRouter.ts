@@ -1,10 +1,9 @@
 import * as express from 'express'
 
 import {
-  checkAdminApiVersionHeaders,
-  checkContentType,
-  addAcceptPatchHeader,
-  addAllowHeader,
+  checkRequestAdminApiVersionHeaders,
+  checkRequestContentType,
+  addAcceptPatchResponseHeader,
 } from '../middlewares/adminApiHeaders'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import sendSuccess from '../middlewares/sendSuccess'
@@ -22,61 +21,41 @@ const adminApiRouter = express.Router()
  * Routes for the PayID Admin API.
  */
 adminApiRouter
-  // Options user PayID route
-  .options(
-    '/:payId',
-    addAllowHeader,
-    addAcceptPatchHeader,
-    checkAdminApiVersionHeaders,
-    sendSuccess,
-  )
+  // All /:payId requests should have an Accept-Patch response header with the PATCH mime type
+  .use('/:payId', addAcceptPatchResponseHeader)
+
+  // All [POST, PUT, PATCH] requests should have an appropriate Content-Type header,
+  // AND all Admin API requests should have an appropriate PayID-API-Version header.
+  .use('/*', checkRequestContentType, checkRequestAdminApiVersionHeaders)
 
   // Get user route
-  .get(
-    '/*',
-    addAcceptPatchHeader,
-    checkAdminApiVersionHeaders,
-    wrapAsync(getUser),
-    sendSuccess,
-  )
+  .get('/:payId', wrapAsync(getUser), sendSuccess)
 
   // Create user route
   .post(
     '/',
     express.json(),
-    checkAdminApiVersionHeaders,
-    // TODO => checkContentType + E2E tests,
+    // TODO:(hbergren) checkRequestContentType E2E tests,
     wrapAsync(postUser),
     sendSuccess,
   )
 
   // Replace user route
   .put(
-    '/*',
+    '/:payId',
     express.json(),
-    addAcceptPatchHeader,
-    checkAdminApiVersionHeaders,
-    // TODO => checkContentType + E2E tests,
+    // TODO:(hbergren) checkRequestContentType E2E tests,
     wrapAsync(putUser),
     sendSuccess,
   )
 
   // Delete user route
-  .delete(
-    '/*',
-    addAcceptPatchHeader,
-    checkAdminApiVersionHeaders,
-    wrapAsync(deleteUser),
-    sendSuccess,
-  )
+  .delete('/:payId', wrapAsync(deleteUser), sendSuccess)
 
-  // Patch user PayID route
+  // Patch user's PayID route
   .patch(
     '/:payId',
     express.json({ type: 'application/merge-patch+json' }),
-    addAcceptPatchHeader,
-    checkAdminApiVersionHeaders,
-    checkContentType,
     wrapAsync(patchUserPayId),
     sendSuccess,
   )
