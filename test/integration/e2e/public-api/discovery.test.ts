@@ -8,13 +8,12 @@ import { appCleanup, appSetup } from '../../../helpers/helpers'
 import * as discoveryLinks from './testDiscoveryLinks.json'
 
 let app: App
-let discoveryPath: string
+const discoveryPath = '/.well-known/webfinger'
 
 describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
     app = await appSetup()
-    discoveryPath = '/.well-known/webfinger'
   })
 
   after(function () {
