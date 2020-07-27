@@ -15,7 +15,9 @@
   "author": "",
   "main": "./build/src/index.js",
   "scripts": {
-    "build": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML && npm run copyJSON",
+    "build": "run-script-os",
+    "build:default": "rm -rf build && tsc --project . && npm run copySQL && npm run copyHTML && npm run copyJSON",
+    "build:win32": "del /q /f build && tsc --project . && npm run copySQL && npm run copyHTML && npm run copyJSON",
     "buildWatch": "tsc --watch --project .",
     "copyHTML": "copyfiles -u 1 src/html/* build/src",
     "copySQL": "copyfiles -u 1 **/*.sql build/src",
@@ -31,8 +33,8 @@
     "devEnvUp": "run-script-os",
     "devEnvUp:default": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
     "devEnvUp:win32": "set PAYID_DOCKER_IMAGE_VERSION=%npm_package_version%&&docker-compose up -d",
-    "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
-    "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
+    "devDbUp": "docker-compose up -d db",
+    "devDown": "docker-compose down",
     "bump": "./scripts/version/bump.sh $npm_package_version $1",
     "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
