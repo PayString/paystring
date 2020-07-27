@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS address (
 
 	details jsonb NOT NULL,
 
-        identity_key_signature varchar(600),
+	identity_key_signature varchar(600),
 
 	-- AUDIT COLUMNS
 	created_at timestamp with time zone NOT NULL DEFAULT(CURRENT_TIMESTAMP),
