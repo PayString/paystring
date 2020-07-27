@@ -16,19 +16,28 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
     app = await appSetup()
   })
 
-  it('Returns a 200 with the Allow header', function (done): void {
+  it('Returns a 200 with PATCH in the Allow header', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
-    // AND the Allow header expected
-    const allowHeader = 'GET, PUT, OPTIONS, DELETE, PATCH'
 
     // WHEN we make an OPTIONS request to /users/:payId
     request(app.adminApiExpress)
       .options(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
-      .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Allow header in the response
-      .expect('Allow', allowHeader)
+      .expect('Allow', /PATCH/u)
+      // AND we expect back a 200-OK
+      .expect(HttpStatus.OK, done)
+  })
+
+  it('Returns a 200 with the appropriate Accept-Patch response header', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
+
+    // WHEN we make an OPTIONS request to /users/:payId
+    request(app.adminApiExpress)
+      .options(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
       // THEN we expect the Accept-Patch header in the response
       .expect('Accept-Patch', contentType)
       // AND we expect back a 200-OK
@@ -38,10 +47,6 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
   it('Returns a 400 - the PayID-API-Version header is missing', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
-
-    // AND the expected Allow header
-    const allowHeader = 'GET, PUT, OPTIONS, DELETE, PATCH'
-
     // AND our expected error response
     const expectedErrorResponse = {
       error: 'Bad Request',
@@ -55,11 +60,9 @@ describe('E2E - adminApiRouter - OPTIONS /users/:payId', function (): void {
       .options(`/users/${payId}`)
       // WITHOUT the 'PayID-API-Version' header
       .expect('Content-Type', /json/u)
-      // THEN we expect the Allow header in the response
-      .expect('Allow', allowHeader)
       // THEN we expect the Accept-Patch header in the response
       .expect('Accept-Patch', contentType)
-      // THEN we expect back a 400 - Bad Request
+      // AND we expect back a 400 - Bad Request
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
