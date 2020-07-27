@@ -1,5 +1,6 @@
+import { AddressCount } from '@payid-org/payid-metrics'
+
 import knex from '../db/knex'
-import { AddressCount } from '../types/reports'
 
 /**
  * Retrieve count of addresses, grouped by payment network and environment.

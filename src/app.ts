@@ -1,12 +1,13 @@
 import { Server } from 'http'
 
+import { checkMetricsConfiguration } from '@payid-org/payid-metrics'
 import * as express from 'express'
 
 import config from './config'
 import syncDatabaseSchema from './db/syncDatabaseSchema'
 import sendSuccess from './middlewares/sendSuccess'
 import { metricsRouter, adminApiRouter, publicApiRouter } from './routes'
-import metrics, { checkMetricsConfiguration } from './services/metrics'
+import metrics from './services/metrics'
 import logger from './utils/logger'
 
 /**
