@@ -107,7 +107,7 @@ export function getAddressDetailsType(
   address: AddressInformation,
 ): AddressDetailsType {
   if (address.paymentNetwork === 'ACH') {
-    return AddressDetailsType.AchAddress
+    return AddressDetailsType.FiatAddress
   }
   return AddressDetailsType.CryptoAddress
 }
