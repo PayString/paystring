@@ -3,4 +3,4 @@
 -- This column will be used to store user signatures confirming
 -- ownership of an address.
 ALTER TABLE address
-ADD COLUMN IF NOT EXISTS identity_key_signature varchar(600);
+ADD COLUMN IF NOT EXISTS identity_key_signature varchar;

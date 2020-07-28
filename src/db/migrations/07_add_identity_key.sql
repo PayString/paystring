@@ -4,4 +4,4 @@
 -- querying addresses can verify the individual user confirmed ownership
 -- of an address via a signature.
 ALTER TABLE account
-ADD COLUMN IF NOT EXISTS identity_key varchar(600);
+ADD COLUMN IF NOT EXISTS identity_key varchar;
