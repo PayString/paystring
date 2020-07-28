@@ -17,7 +17,7 @@ interface VerifiedAddressPayload {
 /**
  * Object containing a signature corresponding to an address.
  *
- * Protected -- base64 encoded identity key
+ * protected -- base64 encoded identity key.
  * signature -- base64 encoded signature.
  */
 interface VerifiedAddressSignature {
