@@ -6,7 +6,7 @@ import { Address } from './publicAPI'
 // eslint-disable-next-line import/no-unused-modules -- will disable in next PR
 export interface VerifiedAddress {
   readonly payload: VerifiedAddressPayload
-  readonly signatures: VerifiedAddressSignature[]
+  readonly signatures: readonly VerifiedAddressSignature[]
 }
 
 interface VerifiedAddressPayload {
