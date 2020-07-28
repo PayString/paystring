@@ -3,6 +3,7 @@ import * as path from 'path'
 import * as express from 'express'
 
 import checkPublicApiVersionHeaders from '../middlewares/checkPublicApiVersionHeaders'
+import constructJrd from '../middlewares/constructJrd'
 import errorHandler, { wrapAsync } from '../middlewares/errorHandler'
 import initializeMetrics from '../middlewares/initializeMetrics'
 import getPaymentInfo from '../middlewares/payIds'
@@ -38,6 +39,9 @@ publicApiRouter
 
   // Health route
   .get('/status/health', sendSuccess)
+
+  // PayID Discovery route
+  .get('/.well-known/webfinger', constructJrd, sendSuccess)
 
   // Base PayID route
   .get(

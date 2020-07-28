@@ -1,9 +1,11 @@
+/* eslint-disable max-lines -- Will be fixed in standalone metrics lib. */
 import { hostname } from 'os'
 
 import { Counter, Gauge, Pushgateway, Registry } from 'prom-client'
 
-import config from '../config'
+import configuration from '../config'
 import { getAddressCounts, getPayIdCount } from '../data-access/reports'
+import { AddressCount } from '../types/reports'
 import logger from '../utils/logger'
 
 /**
@@ -39,8 +41,27 @@ class Metrics {
   private recurringMetricsPushTimeout?: NodeJS.Timeout
   private recurringMetricsTimeout?: NodeJS.Timeout
 
-  // TODO:(hbergren) Should config be a parameter here?
-  public constructor() {
+  // These are passed in from the constructor
+  // This will allow us to extract this into a separate library
+  private readonly config: typeof configuration.metrics
+  private readonly getAddressCounts: () => Promise<AddressCount[]>
+  private readonly getPayIdCount: () => Promise<number>
+
+  /**
+   * Create a new Metrics instance.
+   *
+   * @param config - The metrics configuration object.
+   * @param addressCountFn - A function to retrieve count of addresses, grouped by payment network and environment.
+   * @param payIdCountFn - A function to retrieve the count of PayIDs in the database.
+   */
+  public constructor(
+    config: typeof configuration.metrics,
+    addressCountFn: () => Promise<AddressCount[]>,
+    payIdCountFn: () => Promise<number>,
+  ) {
+    this.config = config
+    this.getAddressCounts = addressCountFn
+    this.getPayIdCount = payIdCountFn
     this.payIdLookupCounterRegistry = new Registry()
     this.payIdGaugeRegistry = new Registry()
 
@@ -85,18 +106,18 @@ class Metrics {
    * Configured through the environment/defaults set in the PayID app config.
    */
   public scheduleRecurringMetricsPush(): void {
-    if (!config.metrics.pushMetrics) {
+    if (!this.config.pushMetrics) {
       return
     }
 
     const payIdLookupCounterGateway = new Pushgateway(
-      config.metrics.gatewayUrl,
+      this.config.gatewayUrl,
       [],
       this.payIdLookupCounterRegistry,
     )
 
     const payIdGaugeGateway = new Pushgateway(
-      config.metrics.gatewayUrl,
+      this.config.gatewayUrl,
       [],
       this.payIdGaugeRegistry,
     )
@@ -108,7 +129,7 @@ class Metrics {
         {
           jobName: 'payid_counter_metrics',
           groupings: {
-            instance: `${config.metrics.domain as string}_${hostname()}_${
+            instance: `${this.config.domain as string}_${hostname()}_${
               process.pid
             }`,
           },
@@ -125,7 +146,7 @@ class Metrics {
         {
           jobName: 'payid_gauge_metrics',
           groupings: {
-            instance: config.metrics.domain as string,
+            instance: this.config.domain as string,
           },
         },
         (err, _resp, _body): void => {
@@ -134,15 +155,15 @@ class Metrics {
           }
         },
       )
-    }, config.metrics.pushIntervalInSeconds * 1000)
+    }, this.config.pushIntervalInSeconds * 1000)
   }
 
   /**
    * Set a recurring timer that will generate PayID count metrics every PAYID_COUNT_REFRESH_INTERVAL seconds.
    */
   public scheduleRecurringPayIdCountMetrics(): void {
-    const refreshIntervalInSeconds =
-      config.metrics.payIdCountRefreshIntervalInSeconds
+    const refreshIntervalInSeconds = this.config
+      .payIdCountRefreshIntervalInSeconds
 
     // Generate the metrics immediately so we don't wait for the interval
     this.generateAddressCountMetrics().catch((err) =>
@@ -193,7 +214,7 @@ class Metrics {
       {
         paymentNetwork,
         environment,
-        org: config.metrics.domain,
+        org: this.config.domain,
         result: found ? 'found' : 'not_found',
       },
       1,
@@ -209,7 +230,7 @@ class Metrics {
       {
         paymentNetwork: 'unknown',
         environment: 'unknown',
-        org: config.metrics.domain,
+        org: this.config.domain,
         result: 'error: bad_accept_header',
       },
       1,
@@ -230,7 +251,7 @@ class Metrics {
 
   /** Generates the count of addresses grouped by [paymentNetwork, environment]. */
   public async generateAddressCountMetrics(): Promise<void> {
-    const addressCounts = await getAddressCounts()
+    const addressCounts = await this.getAddressCounts()
 
     // Set the address count for a given [paymentNetwork, environment] tuple.
     addressCounts.forEach((addressCount) => {
@@ -238,7 +259,7 @@ class Metrics {
         {
           paymentNetwork: addressCount.paymentNetwork,
           environment: addressCount.environment,
-          org: config.metrics.domain,
+          org: this.config.domain,
         },
         addressCount.count,
       )
@@ -248,18 +269,22 @@ class Metrics {
   /** Generates the count of PayIDs. */
   public async generatePayIdCountMetrics(): Promise<void> {
     // TODO: Should this just return a number?
-    const payIdCount = await getPayIdCount()
+    const payIdCount = await this.getPayIdCount()
 
     this.payIdGauge.set(
       {
-        org: config.metrics.domain,
+        org: this.config.domain,
       },
       payIdCount,
     )
   }
 }
 
-const metrics = new Metrics()
+const metrics = new Metrics(
+  configuration.metrics,
+  getAddressCounts,
+  getPayIdCount,
+)
 
 export default metrics
 
@@ -274,7 +299,7 @@ export default metrics
  * @throws An error if pushing metrics is enabled, but the required configuration to push metrics is missing or malformed.
  */
 export function checkMetricsConfiguration(
-  metricsConfig: typeof config.metrics,
+  metricsConfig: typeof configuration.metrics,
 ): void {
   const oneDayInSeconds = 86_400
 
