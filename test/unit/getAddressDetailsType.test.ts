@@ -4,7 +4,7 @@ import { getAddressDetailsType } from '../../src/services/basePayId'
 import { AddressDetailsType } from '../../src/types/publicAPI'
 
 describe('Base PayID - getAddressDetailsType()', function (): void {
-  it('Returns AchAddressDetails for addressDetailsType when formatting ACH AddressInformation', function () {
+  it('Returns FiatAddressDetails for addressDetailsType when formatting ACH AddressInformation', function () {
     // GIVEN an array of AddressInformation with a single ACH (empty environment) entry
     const addressInfo = {
       paymentNetwork: 'ACH',
@@ -18,8 +18,8 @@ describe('Base PayID - getAddressDetailsType()', function (): void {
     // WHEN we get the address details type
     const addressDetailsType = getAddressDetailsType(addressInfo)
 
-    // THEN we get back an AddressDetailsType of AchAddress
-    assert.deepStrictEqual(addressDetailsType, AddressDetailsType.AchAddress)
+    // THEN we get back an AddressDetailsType of FiatAddress
+    assert.deepStrictEqual(addressDetailsType, AddressDetailsType.FiatAddress)
   })
 
   it('Returns CryptoAddressDetails for addressDetailsType when formatting XRP AddressInformation', function () {

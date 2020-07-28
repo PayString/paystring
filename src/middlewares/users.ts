@@ -2,7 +2,12 @@ import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
 import getAllAddressInfoFromDatabase from '../data-access/payIds'
-import { insertUser, replaceUser, removeUser } from '../data-access/users'
+import {
+  insertUser,
+  replaceUser,
+  removeUser,
+  replaceUserPayId,
+} from '../data-access/users'
 import {
   LookupError,
   LookupErrorType,
@@ -28,7 +33,7 @@ export async function getUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(dino) Validate PayID
-  const payId = req.params[0].toLowerCase()
+  const payId = req.params.payId.toLowerCase()
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Could use a similar regex to the one used by the database.
@@ -116,7 +121,7 @@ export async function putUser(
 ): Promise<void> {
   // TODO:(hbergren) Validate req.body and throw a 400 Bad Request when appropriate
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
-  const rawPayId = req.params[0]
+  const rawPayId = req.params.payId
   const rawNewPayId = req.body?.payId
   const addresses = req.body?.addresses
 
@@ -198,7 +203,7 @@ export async function deleteUser(
   next: NextFunction,
 ): Promise<void> {
   // TODO:(hbergren) This absolutely needs to live in middleware
-  const payId = req.params[0].toLowerCase()
+  const payId = req.params.payId.toLowerCase()
 
   // TODO:(hbergren) More validation? Assert that the PayID is `https://` and of a certain form?
   // Do that using a regex route param in Express? Could use a similar regex to the one used by the database.
@@ -212,5 +217,75 @@ export async function deleteUser(
   await removeUser(payId)
 
   res.locals.status = HttpStatus.NoContent
+  next()
+}
+
+/**
+ * Updates a PayID only, not the addresses.
+ *
+ * @param req - An Express Request object, holding the PayID.
+ * @param res - An Express Response object.
+ * @param next - An Express next() function.
+ *
+ * @throws A ParseError if the PayID is missing from the request.
+ * @throws A LookupError if the PayID doesn't already exist in the database.
+ */
+export async function patchUserPayId(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const rawOldPayId = req.params.payId
+  if (!rawOldPayId) {
+    throw new ParseError(
+      'A `payId` must be provided in the path. A well-formed API call would look like `PATCH /users/alice$xpring.money`.',
+      ParseErrorType.MissingPayId,
+    )
+  }
+
+  // "Potential" because we don't know yet if there will be an error or not
+  const rawNewPotentialPayId = req.body.payId
+
+  if (!rawNewPotentialPayId || typeof rawNewPotentialPayId !== 'string') {
+    throw new ParseError(
+      'A `payId` must be provided in the request body.',
+      ParseErrorType.MissingPayId,
+    )
+  }
+
+  // TODO: move this to validation
+  if (!rawOldPayId.includes('$') || !rawNewPotentialPayId.includes('$')) {
+    throw new ParseError(
+      'Bad input. PayIDs must contain a "$"',
+      ParseErrorType.InvalidPayId,
+    )
+  }
+
+  // TODO: We should rip this out since PayIDs now officially support multiple '$'.
+  if (
+    (rawOldPayId.match(/\$/gu) || []).length !== 1 ||
+    (rawNewPotentialPayId.match(/\$/gu) || []).length !== 1
+  ) {
+    throw new ParseError(
+      'Bad input. PayIDs must contain only one "$"',
+      ParseErrorType.InvalidPayId,
+    )
+  }
+  const newPayId = rawNewPotentialPayId.toLowerCase()
+  const oldPayId = rawOldPayId.toLowerCase()
+
+  const account = await replaceUserPayId(oldPayId, newPayId)
+
+  // If we try to update a PayID which doesn't exist, the 'account' object will be null.
+  if (!account) {
+    throw new LookupError(
+      `The PayID ${oldPayId} doesn't exist.`,
+      LookupErrorType.MissingPayId,
+    )
+  }
+
+  res.locals.status = HttpStatus.Created
+  res.locals.payId = newPayId
+
   next()
 }

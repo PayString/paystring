@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Bumps the NPM version, create a git tag, & bump the Docker version.
+# Bumps the NPM version.
 #
 # $1 - The current NPM version.
 # $2 - The type of version bump (major, minor, patch).
@@ -14,35 +14,38 @@ function bump() {
    ]]; then
       error "Invalid bump increment. Please specify 'major', 'minor', or 'patch'."
    else
-      # Make sure versions are equal
-      compare_versions $current_version
+      declare ir versions_match=$(compare_versions current_version)
 
-      # Bump NPM version and git tag
-      declare -r new_version=$(npm version $bump_increment)
+      # Bump only if Git & NPM versions are equal
+      if [[ versions_match ]]; then
+        declare -r new_version=$(npm --no-git-tag-version version $bump_increment)
 
-      # Bump the Docker image version by finding and replacing the old
-      # version for the new. Drop the 'v' from the Git tag.
-      sed -i "" "s|payid:$current_version|payid:${new_version:1}|g" docker-compose.yml
+        echo "NPM Version: "${new_version:1}
+      else
+        error "Version Mismatch:
+
+        NPM Version: "$npm_version"
+        Git Tag Version: "${git_tag_version:1}"
+        "
+      fi
    fi
 }
 
-# Compares the Docker image version, NPM version, and Git tag version
-# in the repo. Throws an error if any do not match.
+# Compares the NPM version and Git tag version
+# in the repo. 
 #
 # $1 - The NPM version string.
+# 
+# returns - A boolean indicating if the versions match.
 function compare_versions {
    declare -r npm_version=$1
    declare -r git_tag_version=$(git describe --tags | cut -f 1 -d '-')
 
    # Drop the 'v' from the Git tag for the comparison.
    if [[ $npm_version != ${git_tag_version:1} ]]; then
-      error "Version Mismatch:
-
-      NPM Version: "$npm_version"
-      Git Tag Version: "${git_tag_version:1}"
-      "
+     false
    else
-      echo "NPM, Git Tag Version: "$npm_version
+     true
    fi
 }
 

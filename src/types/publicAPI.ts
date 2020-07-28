@@ -3,7 +3,7 @@
  */
 export enum AddressDetailsType {
   CryptoAddress = 'CryptoAddressDetails',
-  AchAddress = 'AchAddressDetails',
+  FiatAddress = 'FiatAddressDetails',
 }
 
 /**
@@ -15,11 +15,11 @@ export interface CryptoAddressDetails {
 }
 
 /**
- * Matching schema for AddressDetailsType.AchAddress.
+ * Matching schema for AddressDetailsType.FiatAddress.
  */
-export interface AchAddressDetails {
+export interface FiatAddressDetails {
   readonly accountNumber: string
-  readonly routingNumber: string
+  readonly routingNumber?: string
 }
 
 /**
@@ -39,5 +39,5 @@ export interface Address {
   readonly paymentNetwork: string
   readonly environment?: string
   readonly addressDetailsType: AddressDetailsType
-  readonly addressDetails: CryptoAddressDetails | AchAddressDetails
+  readonly addressDetails: CryptoAddressDetails | FiatAddressDetails
 }
