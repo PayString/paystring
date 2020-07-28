@@ -21,16 +21,6 @@ interface VerifiedAddressPayload {
  * signature -- base64 encoded signatureA.
  */
 interface VerifiedAddressSignature {
-  name: VerifiedAddressSignatureType
   protected: string
   signature: string
-}
-
-/**
- * Identifies the type of signature being used, as of now we are only
- * implementing IdentityKey signatures, but future types like
- * WebPKI or ProofOfControl should be added to this enum.
- */
-enum VerifiedAddressSignatureType {
-  IdentityKey = 'IdentityKey',
 }
