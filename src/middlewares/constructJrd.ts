@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 
+// eslint-disable-next-line node/file-extension-in-import -- necessary for JSON
 import * as discoveryLinks from '../discoveryLinks.json'
 import { ParseError, ParseErrorType } from '../utils/errors'
 
