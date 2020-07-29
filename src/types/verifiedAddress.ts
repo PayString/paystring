@@ -15,8 +15,7 @@ interface VerifiedAddressPayload {
 }
 
 /**
- * Object containing a base64 encoded identity key (protected) alongside a
- * corresponding signature.
+ * JWS object for verification.
  */
 interface VerifiedAddressSignature {
   protected: string

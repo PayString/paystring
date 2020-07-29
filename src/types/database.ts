@@ -25,8 +25,6 @@ export interface Address {
 
   readonly identityKeySignature?: string
 
-  readonly identityKeySignature?: string
-
   readonly createdAt: Date
   readonly updatedAt: Date
 }
