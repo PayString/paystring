@@ -4,7 +4,6 @@ import * as request from 'supertest'
 import App from '../../../../src/app'
 import { appCleanup, appSetup } from '../../../helpers/helpers'
 
-// eslint-disable-next-line node/file-extension-in-import -- necessary for JSON
 import * as discoveryLinks from './testDiscoveryLinks.json'
 
 let app: App
