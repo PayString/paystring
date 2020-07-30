@@ -65,6 +65,24 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .expect(HttpStatus.OK, updatedInformation, done)
   })
 
+  it('Returns a 200 and updated user payload when removing all addresses', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'empty$xpring.money'
+    const updatedInformation = {
+      payId: 'empty$xpring.money',
+      addresses: [],
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect back a 200-OK, with the updated user information
+      .expect(HttpStatus.OK, updatedInformation, done)
+  })
+
   it('Returns a 201 and inserted user payload for a Admin API PUT creating a new user', function (done): void {
     // GIVEN a PayID known to not exist on the PayID service
     const payId = 'notjohndoe$xpring.money'
