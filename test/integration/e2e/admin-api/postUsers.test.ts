@@ -45,6 +45,40 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${userInformation.payId}`)
       // THEN we expect back a 201 - CREATED
+      .expect(HttpStatus.Created, done)
+  })
+
+  it('Returns a 201 when creating a new user, without an Accept-Patch header in the response', function (done): void {
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const userInformation = {
+      payId: 'johnfoo$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDtq',
+          },
+        },
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          details: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DC',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/u)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/users/${userInformation.payId}`)
+      // THEN we expect back a 201 - CREATED
       .expect(HttpStatus.Created)
       .end(function (err, res) {
         if (err) {
@@ -84,17 +118,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${payId}`)
       // THEN we expect back a 201 - CREATED
-      .expect(HttpStatus.Created)
-      .end(function (err, res) {
-        if (err) {
-          return done(err)
-        }
-
-        // AND ensure Accept-Patch header does not exist
-        expect(res.header).to.not.have.key('Accept-Patch')
-
-        return done()
-      })
+      .expect(HttpStatus.Created, done)
   })
 
   it('Returns a 201 when creating a new user with an address without an environment (ACH)', function (done): void {
@@ -121,17 +145,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${userInformation.payId}`)
       // THEN we expect back a 201 - CREATED
-      .expect(HttpStatus.Created)
-      .end(function (err, res) {
-        if (err) {
-          return done(err)
-        }
-
-        // AND ensure Accept-Patch header does not exist
-        expect(res.header).to.not.have.key('Accept-Patch')
-
-        return done()
-      })
+      .expect(HttpStatus.Created, done)
   })
 
   it('Returns a 201 - creates PayID containing a "."', function (done): void {
@@ -156,17 +170,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .send(userInformation)
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect back a 201 - CREATED
-      .expect(HttpStatus.Created)
-      .end(function (err, res) {
-        if (err) {
-          return done(err)
-        }
-
-        // AND ensure Accept-Patch header does not exist
-        expect(res.header).to.not.have.key('Accept-Patch')
-
-        return done()
-      })
+      .expect(HttpStatus.Created, done)
   })
 
   it('Returns a 409 - Conflict when attempting to create a user that already exists', function (done): void {
@@ -197,17 +201,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .send(userInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT and our expected error response
-      .expect(HttpStatus.Conflict, expectedErrorResponse)
-      .end(function (err, res) {
-        if (err) {
-          return done(err)
-        }
-
-        // AND ensure Accept-Patch header does not exist
-        expect(res.header).to.not.have.key('Accept-Patch')
-
-        return done()
-      })
+      .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
 
   it('Returns a 415 - Unsupported Media Type when sending a wrong Content-Type header', function (done): void {
@@ -250,17 +244,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .send(userInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 415 - Unsupported Media Type and our expected error response
-      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse)
-      .end(function (err, res) {
-        if (err) {
-          return done(err)
-        }
-
-        // AND ensure Accept-Patch header does not exist
-        expect(res.header).to.not.have.key('Accept-Patch')
-
-        return done()
-      })
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
   })
 
   it('Returns a 415 - Unsupported Media Type when Content-Type header is missing', function (done): void {
@@ -302,17 +286,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .send(userInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 415 - Unsupported Media Type and our expected error response
-      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse)
-      .end(function (err, res) {
-        if (err) {
-          return done(err)
-        }
-
-        // AND ensure Accept-Patch header does not exist
-        expect(res.header).to.not.have.key('Accept-Patch')
-
-        return done()
-      })
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
   })
 
   after(function () {
