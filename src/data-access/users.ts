@@ -8,6 +8,27 @@ import { Account, Address, AddressInformation } from '../types/database'
 import logger from '../utils/logger'
 
 /**
+ * Checks if a given PayID exists in the account table in the PayID database.
+ *
+ * @param payId - The PayID to insert in the account table.
+ *
+ * @returns A boolean indicating whether the PayID exists.
+ *
+ * Note: This could actually be done in getAllAddressInfoFromDatabase,
+ * if we changed the return type a bit, which would let us always do a single database call,
+ * instead of having to call this as a follow-up check, but it's probably cleaner to
+ * let them have separate concerns until performance becomes an issue.
+ */
+// TODO:(hbergren): Type payId better
+export async function checkUserExistence(payId: string): Promise<boolean> {
+  const result = await knex.select(
+    knex.raw('exists(select 1 from account where pay_id = ?)', payId),
+  )
+
+  return result[0].exists
+}
+
+/**
  * Inserts a new user/PayID into the account table in the PayID database.
  *
  * @param payId - The PayID to insert in the account table.
@@ -174,6 +195,10 @@ async function insertAddresses(
   addresses: readonly DatabaseAddress[],
   transaction: Transaction,
 ): Promise<readonly AddressInformation[]> {
+  if (addresses.length === 0) {
+    return []
+  }
+
   // TODO:(hbergren) Verify that the number of inserted addresses matches the input address array length?
   return knex
     .insert(addresses)
