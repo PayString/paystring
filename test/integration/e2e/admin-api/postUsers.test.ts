@@ -47,6 +47,38 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .expect(HttpStatus.Created, done)
   })
 
+  it('Returns a 201 when creating a new user with an identity key', function (done): void {
+    const payId = 'jacksmith$xpring.money'
+		const identityKey = `Imp3ayI6IHsKICAia3R5IjogIkVDIiwgCiAgInVzZSI6ICJzaWciL`
+
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const userInformation = {
+      payId: payId.toUpperCase(),
+			identityKey,
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/u)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/users/${payId}`)
+      // AND we expect back a 201 - CREATED
+      .expect(HttpStatus.Created, done)
+  })
+
+
   it('Returns a 201 when creating a new user with an uppercase PayID', function (done): void {
     const payId = 'johnsmith$xpring.money'
 
