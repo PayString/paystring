@@ -12,7 +12,7 @@ import logger from '../utils/logger'
  *
  * @param payId - The PayID to insert in the account table.
  * @param addresses - The payment addresses for that PayID to insert into the database.
- * @param identityKey - base64 encoded public key of user for signing addresses.
+ * @param identityKey - Base64 encoded public key of user for signing addresses.
  *
  * @returns The addresses inserted for this user.
  */
@@ -21,13 +21,13 @@ import logger from '../utils/logger'
 export async function insertUser(
   payId: string,
   addresses: readonly AddressInformation[],
-	identityKey: string | undefined = undefined
+  identityKey: string | undefined = undefined,
 ): Promise<readonly AddressInformation[]> {
   return knex.transaction(async (transaction: Transaction) => {
     const insertedAddresses = await knex
       .insert({
         payId,
-				identityKey
+        identityKey,
       })
       .into<Account>('account')
       .transacting(transaction)

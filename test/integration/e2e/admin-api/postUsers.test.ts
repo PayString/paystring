@@ -49,12 +49,12 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
 
   it('Returns a 201 when creating a new user with an identity key', function (done): void {
     const payId = 'jacksmith$xpring.money'
-		const identityKey = `Imp3ayI6IHsKICAia3R5IjogIkVDIiwgCiAgInVzZSI6ICJzaWciL`
+    const identityKey = `Imp3ayI6IHsKICAia3R5IjogIkVDIiwgCiAgInVzZSI6ICJzaWciL`
 
     // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
       payId: payId.toUpperCase(),
-			identityKey,
+      identityKey,
       addresses: [
         {
           paymentNetwork: 'XRPL',
@@ -77,7 +77,6 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
-
 
   it('Returns a 201 when creating a new user with an uppercase PayID', function (done): void {
     const payId = 'johnsmith$xpring.money'

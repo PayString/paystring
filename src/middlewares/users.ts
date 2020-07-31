@@ -124,7 +124,7 @@ export async function putUser(
   const rawPayId = req.params.payId
   const rawNewPayId = req.body?.payId
   const addresses = req.body?.addresses
-	const identityKey = req.body?.identityKey
+  const identityKey = req.body?.identityKey
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
