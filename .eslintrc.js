@@ -22,7 +22,7 @@ module.exports = {
 
   plugins: ['import', 'node'],
 
-  extends: ['@xpring-eng/eslint-config-base/loose'],
+  extends: ['@xpring-eng/eslint-config-mocha', '@xpring-eng/eslint-config-base/loose'],
 
   rules: {
     // We explicitly use `process.exit()` because all other errors should really be handled.
