@@ -42,7 +42,7 @@ export async function checkUserExistence(payId: string): Promise<boolean> {
 export async function insertUser(
   payId: string,
   addresses: readonly AddressInformation[],
-  identityKey: string | undefined = undefined,
+  identityKey?: string,
 ): Promise<readonly AddressInformation[]> {
   return knex.transaction(async (transaction: Transaction) => {
     const insertedAddresses = await knex

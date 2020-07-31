@@ -54,7 +54,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
 
     // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
-      payId: payId.toUpperCase(),
+      payId,
       identityKey,
       addresses: [
         {
@@ -78,7 +78,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
-      
+
   it('Returns a 201 when creating a new user, without an Accept-Patch header in the response', function (done): void {
     // GIVEN a user with a PayID known to not exist on the PayID service
     const userInformation = {
