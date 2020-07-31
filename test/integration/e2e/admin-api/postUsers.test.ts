@@ -1,4 +1,5 @@
 import HttpStatus from '@xpring-eng/http-status'
+import { expect } from 'chai'
 import * as request from 'supertest'
 import 'mocha'
 
@@ -43,7 +44,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${userInformation.payId}`)
-      // AND we expect back a 201 - CREATED
+      // THEN we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
 
@@ -77,6 +78,50 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // AND we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
+      
+  it('Returns a 201 when creating a new user, without an Accept-Patch header in the response', function (done): void {
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const userInformation = {
+      payId: 'johnfoo$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDtq',
+          },
+        },
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          details: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DC',
+          },
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/u)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/users/${userInformation.payId}`)
+      // THEN we expect back a 201 - CREATED
+      .expect(HttpStatus.Created)
+      .end(function (err, res) {
+        if (err) {
+          return done(err)
+        }
+
+        // AND ensure Accept-Patch header does not exist
+        expect(res.header).to.not.have.key('Accept-Patch')
+
+        return done()
+      })
+  })
 
   it('Returns a 201 when creating a new user with an uppercase PayID', function (done): void {
     const payId = 'johnsmith$xpring.money'
@@ -103,7 +148,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${payId}`)
-      // AND we expect back a 201 - CREATED
+      // THEN we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
 
@@ -130,7 +175,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .expect('Content-Type', /text\/plain/u)
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${userInformation.payId}`)
-      // AND we expect back a 201 - CREATED
+      // THEN we expect back a 201 - CREATED
       .expect(HttpStatus.Created, done)
   })
 
@@ -188,6 +233,91 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       .expect('Content-Type', /json/u)
       // THEN we expect back a 409 - CONFLICT and our expected error response
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
+  })
+
+  it('Returns a 415 - Unsupported Media Type when sending a wrong Content-Type header', function (done): void {
+    // GIVEN our new PayID user (must be sent as a String instead of an Object if Content-Type is not application/json)
+    // Otherwise an error ERR_INVALID_ARG_TYPE will be thrown by Supertest in the send() method.
+    const userInformation = `{
+      payId: 'johnfoo$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDtq',
+          },
+        },
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          details: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DC',
+          },
+        },
+      ],
+    }`
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 415,
+      error: 'Unsupported Media Type',
+      message:
+        "A 'Content-Type' header is required for this request: 'Content-Type: application/json'.",
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .post(`/users`)
+      // WITH a wrong Content-Type
+      .set('Content-Type', 'application/xml')
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect back a 415 - Unsupported Media Type and our expected error response
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
+  })
+
+  it('Returns a 415 - Unsupported Media Type when Content-Type header is missing', function (done): void {
+    // GIVEN our new PayID user (must be sent as a String instead of an Object
+    // otherwise Supertest will automatically add a "Content-Type: application/json" header.)
+    const userInformation = `{
+      payId: 'johnfoo$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDtq',
+          },
+        },
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          details: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DC',
+          },
+        },
+      ],
+    }`
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 415,
+      error: 'Unsupported Media Type',
+      message:
+        "A 'Content-Type' header is required for this request: 'Content-Type: application/json'.",
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .post(`/users`)
+      // WITHOUT a Content-Type
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect back a 415 - Unsupported Media Type and our expected error response
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
   })
 
   after(function () {

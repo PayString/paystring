@@ -46,5 +46,5 @@ services:
       - POSTGRES_PASSWORD=password
       # If POSTGRES_DB != database_development, change DB_NAME in the payid service above
       - POSTGRES_DB=database_development
-      # Uncomment if you want to change the Postgres user (in that case, change DB_NAME in the payid service). Default value: postgres
+      # Uncomment if you want to change the Postgres user (in that case, change DB_USERNAME in the payid service). Default value: postgres
       #- POSTGRES_USER=postgres

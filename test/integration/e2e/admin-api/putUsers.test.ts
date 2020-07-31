@@ -8,6 +8,8 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
+const acceptPatch = 'application/merge-patch+json'
+
 describe('E2E - adminApiRouter - PUT /users', function (): void {
   before(async function () {
     app = await appSetup()
@@ -35,6 +37,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 200-OK, with the updated user information
       .expect(HttpStatus.OK, updatedInformation, done)
   })
@@ -53,6 +57,26 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           },
         },
       ],
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN we expect back a 200-OK, with the updated user information
+      .expect(HttpStatus.OK, updatedInformation, done)
+  })
+
+  it('Returns a 200 and updated user payload when removing all addresses', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'empty$xpring.money'
+    const updatedInformation = {
+      payId: 'empty$xpring.money',
+      addresses: [],
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
@@ -90,6 +114,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the PayID inserted is that of the request body, not the URL path
       .expect('Location', `/users/${insertedInformation.payId}`)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // AND we expect back a 201 - CREATED, with the inserted user information
       .expect(HttpStatus.Created, insertedInformation, done)
   })
@@ -121,6 +147,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       // THEN we expect the Location header to be set to the path of the created user resource
       // Note that the PayID inserted is that of the request body, not the URL path, and we expect a lowercase response
       .expect('Location', `/users/${newPayId}`)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // AND we expect back a 201 - CREATED, with the inserted user information (but the PayID lowercased)
       .expect(
         HttpStatus.Created,
@@ -155,6 +183,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -185,6 +215,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -215,6 +247,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 400 - Bad Request, with the expected error payload response
       .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
@@ -248,6 +282,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 409 - CONFLICT and our expected error response
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
   })
@@ -281,8 +317,89 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 409 - CONFLICT and our expected error response
       .expect(HttpStatus.Conflict, expectedErrorResponse, done)
+  })
+
+  it('Returns a 415 - Unsupported Media Type when sending a wrong Content-Type header', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
+    // We need to send the body as a String if Content-Type is not application/json.
+    // Otherwise an error ERR_INVALID_ARG_TYPE will be thrown by Supertest in the send() method.
+    const updatedInformation = `{
+      payId: 'alice$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }`
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 415,
+      error: 'Unsupported Media Type',
+      message:
+        "A 'Content-Type' header is required for this request: 'Content-Type: application/json'.",
+    }
+
+    // WHEN we make a PUT request to /users/:payId with that updated user information
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      // WITH a wrong Content-Type
+      .set('Content-Type', 'application/xml')
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN we expect back a 415 - Unsupported Media Type and our expected error response
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
+  })
+
+  it('Returns a 415 - Unsupported Media Type when Content-Type header is missing', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'alice$xpring.money'
+    // We need to send the body as a String if Content-Type is not sent.
+    // Otherwise Supertest will automatically add a "Content-Type: application/json" header.
+    const updatedInformation = `{
+      payId: 'alice$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVZG1yJZf6QH85fPPRX1jswRYTZFg3H4um3Muu3S27SdJkr',
+          },
+        },
+      ],
+    }`
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 415,
+      error: 'Unsupported Media Type',
+      message:
+        "A 'Content-Type' header is required for this request: 'Content-Type: application/json'.",
+    }
+
+    // WHEN we make a PUT request to /users/:payId with that updated user information
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      // WITHOUT a Content-Type
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN we expect back a 415 - Unsupported Media Type and our expected error response
+      .expect(HttpStatus.UnsupportedMediaType, expectedErrorResponse, done)
   })
 
   after(function () {

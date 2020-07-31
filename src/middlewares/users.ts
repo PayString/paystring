@@ -7,6 +7,7 @@ import {
   replaceUser,
   removeUser,
   replaceUserPayId,
+  checkUserExistence,
 } from '../data-access/users'
 import {
   LookupError,
@@ -45,15 +46,15 @@ export async function getUser(
   }
 
   // TODO:(hbergren) Does not work for multiple accounts
-  const addresses = await getAllAddressInfoFromDatabase(payId)
-
-  // TODO:(hbergren) Should it be possible to have a PayID with no addresses?
-  if (addresses.length === 0) {
+  const doesUserExist = await checkUserExistence(payId)
+  if (!doesUserExist) {
     throw new LookupError(
       `No information could be found for the PayID ${payId}.`,
       LookupErrorType.Unknown,
     )
   }
+
+  const addresses = await getAllAddressInfoFromDatabase(payId)
 
   res.locals.response = {
     payId,
