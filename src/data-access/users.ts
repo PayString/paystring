@@ -195,6 +195,10 @@ async function insertAddresses(
   addresses: readonly DatabaseAddress[],
   transaction: Transaction,
 ): Promise<readonly AddressInformation[]> {
+  if (addresses.length === 0) {
+    return []
+  }
+
   // TODO:(hbergren) Verify that the number of inserted addresses matches the input address array length?
   return knex
     .insert(addresses)
