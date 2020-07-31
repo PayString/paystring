@@ -33,6 +33,7 @@ export async function checkUserExistence(payId: string): Promise<boolean> {
  *
  * @param payId - The PayID to insert in the account table.
  * @param addresses - The payment addresses for that PayID to insert into the database.
+ * @param identityKey - Base64 encoded public key of user for signing addresses.
  *
  * @returns The addresses inserted for this user.
  */
@@ -41,11 +42,13 @@ export async function checkUserExistence(payId: string): Promise<boolean> {
 export async function insertUser(
   payId: string,
   addresses: readonly AddressInformation[],
+  identityKey?: string,
 ): Promise<readonly AddressInformation[]> {
   return knex.transaction(async (transaction: Transaction) => {
     const insertedAddresses = await knex
       .insert({
         payId,
+        identityKey,
       })
       .into<Account>('account')
       .transacting(transaction)

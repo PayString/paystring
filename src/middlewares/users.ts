@@ -98,7 +98,7 @@ export async function postUser(
   // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
   // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
   // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
-  await insertUser(payId, req.body.addresses)
+  await insertUser(payId, req.body.addresses, req.body.identityKey)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware
   res.locals.status = HttpStatus.Created
@@ -125,6 +125,7 @@ export async function putUser(
   const rawPayId = req.params.payId
   const rawNewPayId = req.body?.payId
   const addresses = req.body?.addresses
+  const identityKey = req.body?.identityKey
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
@@ -171,7 +172,7 @@ export async function putUser(
 
   updatedAddresses = await replaceUser(payId, newPayId, addresses)
   if (updatedAddresses === null) {
-    updatedAddresses = await insertUser(newPayId, addresses)
+    updatedAddresses = await insertUser(newPayId, addresses, identityKey)
     statusCode = HttpStatus.Created
   }
 
