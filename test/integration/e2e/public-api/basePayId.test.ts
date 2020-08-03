@@ -31,6 +31,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -62,6 +63,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -93,6 +95,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -124,6 +127,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
