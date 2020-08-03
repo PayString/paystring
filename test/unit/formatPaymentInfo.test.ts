@@ -43,6 +43,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$example.com',
     }
 
@@ -75,6 +76,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we format it and don't pass in a PayID
@@ -108,6 +110,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we format it
@@ -141,6 +144,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$example.com',
       memo: 'memo',
     }
