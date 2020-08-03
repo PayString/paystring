@@ -1,5 +1,5 @@
 import { AddressInformation } from '../types/database'
-import { AddressDetailsType, PaymentInformation } from '../types/publicAPI'
+import { AddressDetailsType, PaymentInformation } from '../types/protocol'
 
 import { ParsedAcceptHeader } from './headers'
 

@@ -1,8 +1,3 @@
-/* eslint-disable import/no-cycle --
-Cycle between this file and types/verifiedAddress.ts. Should we combine these into one?
-*/
-import { VerifiedAddress } from './verifiedAddress'
-
 /**
  * Type of payment address in PaymentInformation.
  */
@@ -41,9 +36,30 @@ export interface PaymentInformation {
 /**
  * Address information included inside of a PaymentInformation object.
  */
-export interface Address {
+interface Address {
   readonly paymentNetwork: string
   readonly environment?: string
   readonly addressDetailsType: AddressDetailsType
   readonly addressDetails: CryptoAddressDetails | FiatAddressDetails
+}
+
+/**
+ * Object containing address information alongside signatures.
+ */
+interface VerifiedAddress {
+  readonly payload: VerifiedAddressPayload
+  readonly signatures: readonly VerifiedAddressSignature[]
+}
+
+interface VerifiedAddressPayload {
+  payId: string
+  payIdAddress: Address
+}
+
+/**
+ * JWS object for verification.
+ */
+interface VerifiedAddressSignature {
+  protected: string
+  signature: string
 }

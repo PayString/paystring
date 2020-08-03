@@ -1,7 +1,7 @@
 import { assert } from 'chai'
 
 import { getAddressDetailsType } from '../../src/services/basePayId'
-import { AddressDetailsType } from '../../src/types/publicAPI'
+import { AddressDetailsType } from '../../src/types/protocol'
 
 describe('Base PayID - getAddressDetailsType()', function (): void {
   it('Returns FiatAddressDetails for addressDetailsType when formatting ACH AddressInformation', function () {
