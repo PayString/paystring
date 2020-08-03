@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
 
-// eslint-disable-next-line node/file-extension-in-import -- typescript needs .json extension
 import * as discoveryLinks from '../discoveryLinks.json'
 import { ParseError, ParseErrorType } from '../utils/errors'
 
@@ -32,7 +31,7 @@ export default function constructJrd(
 
   res.locals.response = {
     subject: payId,
-    discoveryLinks,
+    links: discoveryLinks,
   }
 
   return next()

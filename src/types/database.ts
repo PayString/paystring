@@ -1,4 +1,4 @@
-import { CryptoAddressDetails, AchAddressDetails } from './publicAPI'
+import { CryptoAddressDetails, FiatAddressDetails } from './publicAPI'
 
 /**
  * Model of the Account table schema for the database.
@@ -6,6 +6,7 @@ import { CryptoAddressDetails, AchAddressDetails } from './publicAPI'
 export interface Account {
   readonly id: string
   readonly payId: string
+  readonly identityKey?: string
 
   readonly createdAt: Date
   readonly updatedAt: Date
@@ -20,7 +21,9 @@ export interface Address {
 
   readonly paymentNetwork: string
   readonly environment?: string | null
-  readonly details: CryptoAddressDetails | AchAddressDetails
+  readonly details: CryptoAddressDetails | FiatAddressDetails
+
+  readonly identityKeySignature?: string
 
   readonly createdAt: Date
   readonly updatedAt: Date
