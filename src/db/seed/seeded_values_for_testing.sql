@@ -7,7 +7,8 @@ INSERT INTO account(id, pay_id) VALUES
 ('223ece9c-2a15-48e1-9df6-d9ac77c5db90', 'bob$127.0.0.1'),
 ('ec06236e-d134-4a7b-b69e-0606fb54b67b', 'alice$xpring.money'),
 ('69b0d20a-cdef-4bb9-adf9-2109979a12af', 'bob$xpring.money'),
-('b253bed2-79ce-45d0-bbdd-96867aa85fd5', 'zebra$xpring.money');
+('b253bed2-79ce-45d0-bbdd-96867aa85fd5', 'zebra$xpring.money'),
+('8a75f884-ab16-40c4-a82a-aca454dad6b2', 'empty$xpring.money');
 
 INSERT INTO address(account_id, payment_network, environment, details) VALUES
 ('232370e9-045e-4269-96ec-5a79091d65ff', 'XRPL', 'MAINNET', '{"address": "rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg", "tag": "67298042"}'),

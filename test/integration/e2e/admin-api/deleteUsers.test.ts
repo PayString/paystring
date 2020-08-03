@@ -8,6 +8,8 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 let app: App
 const payIdApiVersion = '2020-05-28'
 
+const acceptPatch = 'application/merge-patch+json'
+
 describe('E2E - adminApiRouter - DELETE /users', function (): void {
   before(async function () {
     app = await appSetup()
@@ -26,6 +28,8 @@ describe('E2E - adminApiRouter - DELETE /users', function (): void {
     request(app.adminApiExpress)
       .delete(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 204-No Content, indicating successful deletion
       .expect(HttpStatus.NoContent)
       .then((_res) => {
@@ -53,6 +57,8 @@ describe('E2E - adminApiRouter - DELETE /users', function (): void {
     request(app.adminApiExpress)
       .delete(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 204-No Content, indicating successful deletion
       .expect(HttpStatus.NoContent)
       .then((_res) => {
@@ -75,6 +81,8 @@ describe('E2E - adminApiRouter - DELETE /users', function (): void {
     request(app.adminApiExpress)
       .delete(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
       // THEN we expect back a 204 - No Content
       .expect(HttpStatus.NoContent, done)
   })

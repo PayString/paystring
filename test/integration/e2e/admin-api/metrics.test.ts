@@ -100,7 +100,7 @@ describe('E2E - adminApiRouter - GET /metrics', function (): void {
 
     // We create 8 PayIDs in the tests before this one,
     // and start with 5 seeded PayIDs, for a total of 13.
-    await assertMetrics(/actual_payid_count\{org="127.0.0.1"\} 13/u)
+    await assertMetrics(/actual_payid_count\{org="127.0.0.1"\} 14/u)
   })
 
   /**
