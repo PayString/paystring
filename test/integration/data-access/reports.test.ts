@@ -46,7 +46,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
 
   it('getPayIdCount - Returns a count of PayIDs', async function () {
     const payIdCount = await getPayIdCount()
-    const expectedPayIdCount = 6
+    const expectedPayIdCount = 8
 
     assert.strictEqual(payIdCount, expectedPayIdCount)
   })

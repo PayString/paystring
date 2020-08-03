@@ -1,7 +1,7 @@
 import 'mocha'
 import { assert } from 'chai'
 
-import getAllAddressInfoFromDatabase from '../../../src/data-access/payIds'
+import { getAllAddressInfoFromDatabase } from '../../../src/data-access/payIds'
 import { seedDatabase } from '../../helpers/helpers'
 
 describe('Data Access - getAllAddressInfoFromDatabase()', function (): void {
