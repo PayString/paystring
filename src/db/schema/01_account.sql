@@ -4,6 +4,7 @@
 CREATE TABLE IF NOT EXISTS account (
 	id uuid PRIMARY KEY DEFAULT(gen_random_uuid()),
 	pay_id varchar(200) UNIQUE NOT NULL,
+	identity_key varchar,
 
 	-- AUDIT COLUMNS
 	created_at timestamp with time zone NOT NULL DEFAULT(CURRENT_TIMESTAMP),

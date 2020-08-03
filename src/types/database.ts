@@ -6,6 +6,7 @@ import { CryptoAddressDetails, FiatAddressDetails } from './publicAPI'
 export interface Account {
   readonly id: string
   readonly payId: string
+  readonly identityKey?: string
 
   readonly createdAt: Date
   readonly updatedAt: Date
@@ -21,6 +22,8 @@ export interface Address {
   readonly paymentNetwork: string
   readonly environment?: string | null
   readonly details: CryptoAddressDetails | FiatAddressDetails
+
+  readonly identityKeySignature?: string
 
   readonly createdAt: Date
   readonly updatedAt: Date
