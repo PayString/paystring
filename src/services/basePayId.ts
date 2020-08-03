@@ -29,6 +29,7 @@ export function formatPaymentInfo(
         addressDetails: address.details,
       }
     }),
+    verifiedAddresses: [],
     ...(payId && { payId }),
   }
 

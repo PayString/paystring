@@ -1,3 +1,8 @@
+/* eslint-disable import/no-cycle --
+Cycle between this file and types/verifiedAddress.ts. Should we combine these into one?
+*/
+import { VerifiedAddress } from './verifiedAddress'
+
 /**
  * Type of payment address in PaymentInformation.
  */
@@ -27,8 +32,9 @@ export interface FiatAddressDetails {
  * case of a GET request to the base path /).
  */
 export interface PaymentInformation {
-  readonly addresses: Address[]
   readonly payId?: string
+  readonly addresses: Address[]
+  readonly verifiedAddresses: VerifiedAddress[]
   readonly memo?: string
 }
 
