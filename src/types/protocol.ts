@@ -1,9 +1,11 @@
+/* eslint-disable no-inline-comments -- It is useful to have inline comments for interfaces. */
 /**
  * Type of payment address in PaymentInformation.
  */
 export enum AddressDetailsType {
   CryptoAddress = 'CryptoAddressDetails',
-  FiatAddress = 'FiatAddressDetails',
+  FiatAddress = 'FiatAddressDetails', // Replaces AchAddressDetails
+  AchAddress = 'AchAddressDetails', // Maintain compatibility for 1.0
 }
 
 /**
