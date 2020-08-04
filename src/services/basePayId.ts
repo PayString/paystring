@@ -9,14 +9,15 @@ import { ParsedAcceptHeader } from './headers'
  * a Base PayID flow.
  *
  * @param addresses - Array of address information associated with a PayID.
+ * @param version - The PayID protocol response version.
  * @param payId - Optionally include a PayId.
  * @param memoFn - A function, taking an optional PaymentInformation object,
- *                 that returns a string to be used as the memo.
- *
+ * that returns a string to be used as the memo.
  * @returns The formatted PaymentInformation object.
  */
 export function formatPaymentInfo(
   addresses: readonly AddressInformation[],
+  version: string,
   payId?: string,
   memoFn?: (paymentInformation: PaymentInformation) => string,
 ): PaymentInformation {
@@ -25,7 +26,7 @@ export function formatPaymentInfo(
       return {
         paymentNetwork: address.paymentNetwork,
         ...(address.environment && { environment: address.environment }),
-        addressDetailsType: getAddressDetailsType(address),
+        addressDetailsType: getAddressDetailsType(address, version),
         addressDetails: address.details,
       }
     }),
@@ -102,12 +103,17 @@ export function getPreferredAddressHeaderPair(
  * Gets the associated AddressDetailsType for an address.
  *
  * @param address - The address information associated with a PayID.
+ * @param version - The PayID protocol version.
  * @returns The AddressDetailsType for the address.
  */
 export function getAddressDetailsType(
   address: AddressInformation,
+  version: string,
 ): AddressDetailsType {
   if (address.paymentNetwork === 'ACH') {
+    if (version === '1.0') {
+      return AddressDetailsType.AchAddress
+    }
     return AddressDetailsType.FiatAddress
   }
   return AddressDetailsType.CryptoAddress

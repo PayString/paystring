@@ -1,4 +1,4 @@
-export const payIdServerVersions: readonly string[] = ['1.0']
+export const payIdServerVersions: readonly string[] = ['1.0', '1.1']
 export const adminApiVersions: readonly string[] = ['2020-05-28']
 
 /**

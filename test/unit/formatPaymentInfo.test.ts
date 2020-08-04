@@ -3,6 +3,8 @@ import { assert } from 'chai'
 import { formatPaymentInfo } from '../../src/services/basePayId'
 import { AddressDetailsType } from '../../src/types/protocol'
 
+const version1dot1 = '1.1'
+
 describe('Base PayID - formatPaymentInfo()', function (): void {
   it('Returns CryptoAddressDetails & FiatAddressDetails for addressDetailsTypes when formatting array with multiple AddressInformation', function () {
     // GIVEN an array of AddressInformation with an ACH entry
@@ -48,7 +50,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     }
 
     // WHEN we format it
-    const paymentInfo = formatPaymentInfo(addressInfo, payId)
+    const paymentInfo = formatPaymentInfo(addressInfo, version1dot1, payId)
 
     // THEN we get back a PaymentInformation object with the appropriate address details
     assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
@@ -80,7 +82,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     }
 
     // WHEN we format it and don't pass in a PayID
-    const paymentInfo = formatPaymentInfo(addressInfo)
+    const paymentInfo = formatPaymentInfo(addressInfo, version1dot1)
 
     // THEN we get back a PaymentInformation object without a PayID
     assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
@@ -114,7 +116,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     }
 
     // WHEN we format it
-    const paymentInfo = formatPaymentInfo(addressInfo)
+    const paymentInfo = formatPaymentInfo(addressInfo, version1dot1)
 
     // THEN we get back a PaymentInformation object with no environment
     assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
@@ -153,7 +155,12 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     const memoFn = (): string => 'memo'
 
     // WHEN we format the address information
-    const paymentInfo = formatPaymentInfo(addressInfo, payId, memoFn)
+    const paymentInfo = formatPaymentInfo(
+      addressInfo,
+      version1dot1,
+      payId,
+      memoFn,
+    )
 
     // THEN we get back a PaymentInformation object with a memo
     assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
