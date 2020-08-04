@@ -30,6 +30,7 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
@@ -51,6 +52,40 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
       identityKey:
         'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M=',
       addresses: [],
+      verifiedAddresses: [],
+    }
+
+    // WHEN we make a GET request to /users/ with that PayID as our user
+    request(app.adminApiExpress)
+      .get(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN We expect back a 200 - OK, with the account information
+      .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
+  it('Returns a 200 and correct information for a user with an identity key and verified addresses', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'postmalone$example.com'
+    const expectedResponse = {
+      payId: 'postmalone$example.com',
+      identityKey:
+        'eWVldCB5ZWV0IGluIHRoZSBzdHJlZXQgc3RyZWV0IHNlZSB3aGF0IEkgbWVhbg==',
+      addresses: [],
+      verifiedAddresses: [
+        // NOT the format, will update tomorrow
+        {
+          environment: 'TESTNET',
+          paymentNetwork: 'BTC',
+          identityKeySignature:
+            'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
+          details: {
+            address: '2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE',
+          },
+        },
+      ],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
@@ -70,6 +105,7 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
     const expectedResponse = {
       payId: 'empty$xpring.money',
       addresses: [],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
@@ -95,6 +131,7 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
