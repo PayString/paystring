@@ -26,7 +26,6 @@ import { LookupError, LookupErrorType } from '../utils/errors'
  *
  * @throws A LookupError if we could not find payment information for the given PayID.
  */
-// eslint-disable-next-line max-lines-per-function -- I think this limit should be a little less restrictive.
 export default async function getPaymentInfo(
   req: Request,
   res: Response,
@@ -59,6 +58,7 @@ export default async function getPaymentInfo(
       throw new LookupError(
         `PayID ${payId} could not be found.`,
         LookupErrorType.MissingPayId,
+        parsedAcceptHeaders,
       )
     }),
   ])
@@ -72,17 +72,10 @@ export default async function getPaymentInfo(
   // Respond with a 404 if we can't find the requested payment information
   if (preferredAddressInfo === undefined) {
     // Record metrics for 404s
-    parsedAcceptHeaders.forEach((acceptType) =>
-      metrics.recordPayIdLookupResult(
-        false,
-        acceptType.paymentNetwork,
-        acceptType.environment,
-      ),
-    )
-
     throw new LookupError(
       `Payment information for ${payId} could not be found.`,
       LookupErrorType.MissingAddress,
+      parsedAcceptHeaders,
     )
   }
 

@@ -7,6 +7,7 @@ import {
   handleHttpError,
   ParseErrorType,
   LookupErrorType,
+  LookupError,
 } from '../utils/errors'
 
 /**
@@ -47,8 +48,18 @@ export default function errorHandler(
     }
 
     // Collect metrics on public API requests to a PayID that does not exist
-    if (err.kind === LookupErrorType.MissingPayId) {
-      metrics.recordPayIdLookupResult(false, 'unknown', 'unknown')
+    if (
+      err.kind === LookupErrorType.MissingPayId &&
+      err instanceof LookupError &&
+      err.headers
+    ) {
+      err.headers.forEach((acceptType) =>
+        metrics.recordPayIdLookupResult(
+          false,
+          acceptType.paymentNetwork,
+          acceptType.environment,
+        ),
+      )
     }
   }
 

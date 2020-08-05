@@ -43,7 +43,7 @@ describe('E2E - adminApiRouter - GET /metrics', function (): void {
     await createPayId(payId, network, testnet)
     await lookupPayId('bogus', asAccept(network, testnet), HttpStatus.NotFound)
     await assertMetrics(
-      /payid_lookup_request\{paymentNetwork="unknown",environment="unknown",org="127.0.0.1",result="not_found"\} 1/u,
+      /payid_lookup_request\{paymentNetwork="ETH",environment="TESTNET",org="127.0.0.1",result="not_found"\} 1/u,
     )
   })
 
