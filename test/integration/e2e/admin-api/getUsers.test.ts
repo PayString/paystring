@@ -75,15 +75,14 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
         'eWVldCB5ZWV0IGluIHRoZSBzdHJlZXQgc3RyZWV0IHNlZSB3aGF0IEkgbWVhbg==',
       addresses: [],
       verifiedAddresses: [
-        // NOT the format, will update tomorrow
         {
-          environment: 'TESTNET',
           paymentNetwork: 'BTC',
-          identityKeySignature:
-            'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
+          environment: 'TESTNET',
           details: {
             address: '2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE',
           },
+          identityKeySignature:
+            'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
         },
       ],
     }
