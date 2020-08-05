@@ -1,7 +1,6 @@
 import { AddressInformation } from '../types/database'
+import { ParsedAcceptHeader } from '../types/headers'
 import { AddressDetailsType, PaymentInformation } from '../types/protocol'
-
-import { ParsedAcceptHeader } from './headers'
 
 /**
  * Format AddressInformation into a PaymentInformation object.
