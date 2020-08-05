@@ -33,6 +33,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -68,6 +69,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -104,6 +106,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -141,6 +144,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
