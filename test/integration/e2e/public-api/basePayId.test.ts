@@ -31,6 +31,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -62,6 +63,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -93,6 +95,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
@@ -124,13 +127,14 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {

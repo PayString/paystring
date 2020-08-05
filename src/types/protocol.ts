@@ -1,9 +1,11 @@
+/* eslint-disable no-inline-comments -- It is useful to have inline comments for interfaces. */
 /**
  * Type of payment address in PaymentInformation.
  */
 export enum AddressDetailsType {
   CryptoAddress = 'CryptoAddressDetails',
-  FiatAddress = 'FiatAddressDetails',
+  FiatAddress = 'FiatAddressDetails', // Replaces AchAddressDetails
+  AchAddress = 'AchAddressDetails', // Maintain compatibility for 1.0
 }
 
 /**
@@ -27,17 +29,39 @@ export interface FiatAddressDetails {
  * case of a GET request to the base path /).
  */
 export interface PaymentInformation {
-  readonly addresses: Address[]
   readonly payId?: string
+  readonly addresses: Address[]
+  readonly verifiedAddresses: VerifiedAddress[]
   readonly memo?: string
 }
 
 /**
  * Address information included inside of a PaymentInformation object.
  */
-export interface Address {
+interface Address {
   readonly paymentNetwork: string
   readonly environment?: string
   readonly addressDetailsType: AddressDetailsType
   readonly addressDetails: CryptoAddressDetails | FiatAddressDetails
+}
+
+/**
+ * Object containing address information alongside signatures.
+ */
+interface VerifiedAddress {
+  readonly payload: VerifiedAddressPayload
+  readonly signatures: readonly VerifiedAddressSignature[]
+}
+
+interface VerifiedAddressPayload {
+  payId: string
+  payIdAddress: Address
+}
+
+/**
+ * JWS object for verification.
+ */
+interface VerifiedAddressSignature {
+  protected: string
+  signature: string
 }

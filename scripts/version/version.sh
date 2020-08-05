@@ -14,7 +14,7 @@ function bump() {
    ]]; then
       error "Invalid bump increment. Please specify 'major', 'minor', or 'patch'."
    else
-      declare ir versions_match=$(compare_versions current_version)
+      declare -r versions_match=$(compare_versions current_version)
 
       # Bump only if Git & NPM versions are equal
       if [[ versions_match ]]; then
