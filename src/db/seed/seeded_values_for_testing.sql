@@ -23,6 +23,7 @@ INSERT INTO address(account_id, payment_network, environment, details) VALUES
 /* Verified accounts and addresses */
 INSERT INTO account(id, pay_id, identity_key) VALUES
 ('27944333-faf6-41e8-90c3-1ec9001f0830', 'emptyverified$127.0.0.1', ''),
+('2955cce9-c350-4b60-9726-c415072961ed', 'verified$127.0.0.1', 'bGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ=='),
 ('67d9ad5f-5cd8-4a0c-b642-70e63354e647', 'postmalone$127.0.0.1', 'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M=');
 
 INSERT INTO address(account_id, payment_network, environment, details, identity_key_signature) VALUES

@@ -46,11 +46,11 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
 
   it('Returns a 200 and correct information for a user known to have an identity key', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
-    const payId = 'postmalone$127.0.0.1'
+    const payId = 'verified$127.0.0.1'
     const expectedResponse = {
-      payId: 'postmalone$127.0.0.1',
+      payId: 'verified$127.0.0.1',
       identityKey:
-        'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M=',
+        'bGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ==',
       addresses: [],
       verifiedAddresses: [],
     }
@@ -68,11 +68,11 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
 
   it('Returns a 200 and correct information for a user with an identity key and verified addresses', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
-    const payId = 'postmalone$example.com'
+    const payId = 'postmalone$127.0.0.1'
     const expectedResponse = {
-      payId: 'postmalone$example.com',
+      payId: 'postmalone$127.0.0.1',
       identityKey:
-        'eWVldCB5ZWV0IGluIHRoZSBzdHJlZXQgc3RyZWV0IHNlZSB3aGF0IEkgbWVhbg==',
+        'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M=',
       addresses: [],
       verifiedAddresses: [
         {
@@ -104,6 +104,7 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
     const expectedResponse = {
       payId: 'emptyverified$127.0.0.1',
       addresses: [],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a GET request to /users/ with that PayID as our user
