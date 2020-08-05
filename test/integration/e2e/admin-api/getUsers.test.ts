@@ -68,9 +68,9 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
 
   it('Returns a 200 and correct information for a user with an identity key and verified addresses', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
-    const payId = 'postmalone$example.com'
+    const payId = 'postmalone$127.0.0.1'
     const expectedResponse = {
-      payId: 'postmalone$example.com',
+      payId: 'postmalone$127.0.0.1',
       identityKey:
         'eWVldCB5ZWV0IGluIHRoZSBzdHJlZXQgc3RyZWV0IHNlZSB3aGF0IEkgbWVhbg==',
       addresses: [],
