@@ -31,7 +31,7 @@ export default function constructJrd(
 
   res.locals.response = {
     subject: payId,
-    discoveryLinks,
+    links: discoveryLinks,
   }
 
   return next()

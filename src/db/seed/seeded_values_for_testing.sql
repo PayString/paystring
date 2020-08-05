@@ -22,10 +22,10 @@ INSERT INTO address(account_id, payment_network, environment, details) VALUES
 
 /* Verified accounts and addresses */
 INSERT INTO account(id, pay_id, identity_key) VALUES
-('27944333-faf6-41e8-90c3-1ec9001f0830', 'verified$example.com', 'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M='),
-('2aa444ad-104b-46c7-95bb-6fd2ec3d1488', 'postmalone$example.com', 'eWVldCB5ZWV0IGluIHRoZSBzdHJlZXQgc3RyZWV0IHNlZSB3aGF0IEkgbWVhbg==');
+('27944333-faf6-41e8-90c3-1ec9001f0830', 'emptyverified$127.0.0.1', ''),
+('67d9ad5f-5cd8-4a0c-b642-70e63354e647', 'postmalone$127.0.0.1', 'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M=');
 
 INSERT INTO address(account_id, payment_network, environment, details, identity_key_signature) VALUES
-('2aa444ad-104b-46c7-95bb-6fd2ec3d1488', 'BTC', 'TESTNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==');
+('67d9ad5f-5cd8-4a0c-b642-70e63354e647', 'BTC', 'TESTNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==');
 
 END TRANSACTION;

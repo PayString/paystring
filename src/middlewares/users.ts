@@ -62,7 +62,7 @@ export async function getUser(
   const verifiedAddresses = await getAllVerifiedAddressInfoFromDatabase(payId)
   const identityKey = await getIdentityKeyFromDatabase(payId)
 
-  if (identityKey === null) {
+  if (identityKey === null || identityKey.length === 0) {
     res.locals.response = {
       payId,
       addresses,
