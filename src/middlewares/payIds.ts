@@ -55,8 +55,6 @@ export default async function getPaymentInfo(
       // If the PayID is found, but it has no identity key, it returns null instead
       // We can thus use this query to trigger 404s for missing PayIDs
       // ---
-      // TODO(dino): How should we capture metrics here?
-
       // Respond with a 404 if we can't find the requested PayID
       throw new LookupError(
         `PayID ${payId} could not be found.`,
