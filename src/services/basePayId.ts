@@ -84,9 +84,6 @@ export function getPreferredAddressHeaderPair(
     const foundVerifiedAddress = allVerifiedAddresses.find(
       (address) =>
         address.paymentNetwork === acceptHeader.paymentNetwork &&
-        // If no environment is found in our database, it returns null
-        // If the client doesn't send over an environment, it is undefined
-        // Below we convert null to undefined to do the comparison
         (address.environment ?? undefined) === acceptHeader.environment,
     )
 
