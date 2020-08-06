@@ -1,4 +1,4 @@
-import { CryptoAddressDetails, FiatAddressDetails } from './publicAPI'
+import { CryptoAddressDetails, FiatAddressDetails } from './protocol'
 
 /**
  * Model of the Account table schema for the database.

@@ -77,6 +77,7 @@ export default async function getPaymentInfo(
   // * NOTE: To append a memo, MUST set a memo in createMemo()
   const formattedPaymentInfo = formatPaymentInfo(
     preferredAddresses,
+    res.get('PayID-Version'),
     payId,
     createMemo,
   )
