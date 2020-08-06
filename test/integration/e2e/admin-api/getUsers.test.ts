@@ -43,6 +43,46 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
       .expect(HttpStatus.OK, expectedResponse, done)
   })
 
+  it('Returns a 200 and correct information for a user known to have an identity key', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'postmalone$127.0.0.1'
+    const expectedResponse = {
+      payId: 'postmalone$127.0.0.1',
+      identityKey:
+        'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M=',
+      addresses: [],
+    }
+
+    // WHEN we make a GET request to /users/ with that PayID as our user
+    request(app.adminApiExpress)
+      .get(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN We expect back a 200 - OK, with the account information
+      .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
+  it('Returns a 200 and correct information but no identity key for a user known to have an empty string identity key', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const payId = 'emptyverified$127.0.0.1'
+    const expectedResponse = {
+      payId: 'emptyverified$127.0.0.1',
+      addresses: [],
+    }
+
+    // WHEN we make a GET request to /users/ with that PayID as our user
+    request(app.adminApiExpress)
+      .get(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN We expect back a 200 - OK, with the account information
+      .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
   it('Returns a 200 and correct information for a user known to exist without any addresses', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'empty$xpring.money'

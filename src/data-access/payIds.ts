@@ -7,7 +7,7 @@ import { Address, AddressInformation } from '../types/database'
  * @param payId - The PayID used to retrieve address information.
  * @returns All of the address information associated with a given PayID.
  */
-export default async function getAllAddressInfoFromDatabase(
+export async function getAllAddressInfoFromDatabase(
   payId: string,
 ): Promise<readonly AddressInformation[]> {
   const addressInformation = await knex
@@ -17,4 +17,21 @@ export default async function getAllAddressInfoFromDatabase(
     .where('account.payId', payId)
 
   return addressInformation
+}
+
+/**
+ * Retrieves the identity key for a specific PayID.
+ *
+ * @param payId - The PayID that we are requesting an identityKey for.
+ * @returns The identity key for that PayID if it exists.
+ */
+export async function getIdentityKeyFromDatabase(
+  payId: string,
+): Promise<string | null> {
+  const identityKey = await knex
+    .select('account.identityKey')
+    .from<Account>('account')
+    .where('account.payId', payId)
+
+  return identityKey[0].identityKey
 }
