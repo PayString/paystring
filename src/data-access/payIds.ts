@@ -15,6 +15,31 @@ export async function getAllAddressInfoFromDatabase(
     .from<Address>('address')
     .innerJoin('account', 'address.accountId', 'account.id')
     .where('account.payId', payId)
+    .whereNull('address.identityKeySignature')
+
+  return addressInformation
+}
+
+/**
+ * Retrieve all verified adress data associated with a given PayID.
+ *
+ * @param payId -- The PayID used to retrieve verified address information.
+ * @returns All of the verified addresses associated with the given PayID.
+ */
+export async function getAllVerifiedAddressInfoFromDatabase(
+  payId: string,
+): Promise<readonly AddressInformation[]> {
+  const addressInformation = await knex
+    .select(
+      'address.paymentNetwork',
+      'address.environment',
+      'address.details',
+      'address.identityKeySignature',
+    )
+    .from<Address>('address')
+    .innerJoin('account', 'address.accountId', 'account.id')
+    .where('account.payId', payId)
+    .whereNotNull('address.identityKeySignature')
 
   return addressInformation
 }
