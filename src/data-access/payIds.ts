@@ -19,6 +19,7 @@ export async function getAllAddressInfoFromDatabase(
 
   return addressInformation
 }
+           
 /**
  * Retrieve all verified adress data associated with a given PayID.
  *
