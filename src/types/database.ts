@@ -34,5 +34,5 @@ export interface Address {
  */
 export type AddressInformation = Pick<
   Address,
-  'paymentNetwork' | 'environment' | 'details'
+  'paymentNetwork' | 'environment' | 'details' | 'identityKeySignature'
 >

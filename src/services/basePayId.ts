@@ -8,19 +8,24 @@ import { AddressDetailsType, PaymentInformation } from '../types/protocol'
  * a Base PayID flow.
  *
  * @param addresses - Array of address information associated with a PayID.
+ * @param verifiedAddresses - Array of address information associated with a PayID.
+ * @param identityKey - A base64 encoded identity key for verifiable PayID.
  * @param version - The PayID protocol response version.
  * @param payId - Optionally include a PayId.
  * @param memoFn - A function, taking an optional PaymentInformation object,
  * that returns a string to be used as the memo.
  * @returns The formatted PaymentInformation object.
  */
+// eslint-disable-next-line max-params -- We want 6 parameters here. I think this makes more sense that destructuring.
 export function formatPaymentInfo(
   addresses: readonly AddressInformation[],
+  verifiedAddresses: readonly AddressInformation[],
+  identityKey: string | null,
   version: string,
-  payId?: string,
+  payId: string,
   memoFn?: (paymentInformation: PaymentInformation) => string,
 ): PaymentInformation {
-  const paymentInformation = {
+  const paymentInformation: PaymentInformation = {
     addresses: addresses.map((address) => {
       return {
         paymentNetwork: address.paymentNetwork,
@@ -29,7 +34,28 @@ export function formatPaymentInfo(
         addressDetails: address.details,
       }
     }),
-    verifiedAddresses: [],
+    verifiedAddresses: verifiedAddresses.map((address) => {
+      return {
+        signatures: [
+          {
+            name: 'identityKey',
+            protected: identityKey ?? '',
+            signature: address.identityKeySignature ?? '',
+          },
+        ],
+        payload: {
+          payId,
+          // Call the address a "payIdAddress" so we don't step on the JWT "address"
+          // field if we ever change our minds
+          payIdAddress: {
+            paymentNetwork: address.paymentNetwork,
+            ...(address.environment && { environment: address.environment }),
+            addressDetailsType: getAddressDetailsType(address, version),
+            addressDetails: address.details,
+          },
+        },
+      }
+    }),
     ...(payId && { payId }),
   }
 
