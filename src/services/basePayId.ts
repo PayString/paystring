@@ -56,7 +56,7 @@ export function formatPaymentInfo(
         },
       }
     }),
-    ...(payId && { payId }),
+    payId,
   }
 
   return {
