@@ -26,7 +26,7 @@ import { LookupError, LookupErrorType } from '../utils/errors'
  *
  * @throws A LookupError if we could not find payment information for the given PayID.
  */
-// eslint-disable-next-line max-lines-per-function -- disable.
+// eslint-disable-next-line max-lines-per-function -- For this middleware, this limit is too restrictive.
 export default async function getPaymentInfo(
   req: Request,
   res: Response,
