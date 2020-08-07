@@ -26,6 +26,7 @@ import { LookupError, LookupErrorType } from '../utils/errors'
  *
  * @throws A LookupError if we could not find payment information for the given PayID.
  */
+// eslint-disable-next-line max-lines-per-function -- For this middleware, this limit is too restrictive.
 export default async function getPaymentInfo(
   req: Request,
   res: Response,
@@ -46,7 +47,12 @@ export default async function getPaymentInfo(
   const parsedAcceptHeaders = parseAcceptHeaders(req.accepts())
 
   // Get all addresses from DB
-  const [allAddressInfo, allVerifiedAddressInfo] = await Promise.all([
+  // TODO(aking): Refactor this into a single knex query
+  const [
+    allAddressInfo,
+    allVerifiedAddressInfo,
+    identityKey,
+  ] = await Promise.all([
     getAllAddressInfoFromDatabase(payId),
     getAllVerifiedAddressInfoFromDatabase(payId),
     getIdentityKeyFromDatabase(payId).catch((_err) => {
@@ -64,7 +70,11 @@ export default async function getPaymentInfo(
   ])
 
   // Content-negotiation to get preferred payment information
-  const [preferredHeader, preferredAddresses] = getPreferredAddressHeaderPair(
+  const [
+    preferredHeader,
+    preferredAddresses,
+    verifiedPreferredAddresses,
+  ] = getPreferredAddressHeaderPair(
     allAddressInfo,
     allVerifiedAddressInfo,
     parsedAcceptHeaders,
@@ -84,6 +94,8 @@ export default async function getPaymentInfo(
   // * NOTE: To append a memo, MUST set a memo in createMemo()
   const formattedPaymentInfo = formatPaymentInfo(
     preferredAddresses,
+    verifiedPreferredAddresses,
+    identityKey,
     res.get('PayID-Version'),
     payId,
     createMemo,
