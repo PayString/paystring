@@ -47,6 +47,7 @@ export default async function getPaymentInfo(
   const parsedAcceptHeaders = parseAcceptHeaders(req.accepts())
 
   // Get all addresses from DB
+  // TODO(aking): Refactor this into a single knex query
   const [
     allAddressInfo,
     allVerifiedAddressInfo,
