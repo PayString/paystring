@@ -44,56 +44,61 @@ export function formatPaymentInfo(
  * Accept types and a list of payment information.
  *
  * @param allAddresses - The array of AddressInformation objects to look through.
+ * @param allVerifiedAddresses - The array of verified AddressInformation objects to look through.
  * @param sortedParsedAcceptHeaders - An array of ParsedAcceptHeader objects, sorted by preference.
  *
- * @returns An object containing the AcceptMediaType and its associated AddressInformation
- * if one exists; returns undefined otherwise.
+ * @returns A tuple containing the AcceptMediaType (or undefined) and its associated AddressInformation
+ * if one exists.
  */
 export function getPreferredAddressHeaderPair(
   allAddresses: readonly AddressInformation[],
+  allVerifiedAddresses: readonly AddressInformation[],
   sortedParsedAcceptHeaders: readonly ParsedAcceptHeader[],
-):
-  | {
-      preferredParsedAcceptHeader: ParsedAcceptHeader
-      preferredAddresses: readonly AddressInformation[]
-    }
-  | undefined {
-  if (allAddresses.length === 0) {
-    return undefined
+): [
+  ParsedAcceptHeader | undefined,
+  readonly AddressInformation[],
+  readonly AddressInformation[],
+] {
+  if (allAddresses.length === 0 && allVerifiedAddresses.length === 0) {
+    return [undefined, [], []]
   }
 
   // Find the optimal payment information from a sorted list
   for (const acceptHeader of sortedParsedAcceptHeaders) {
     // Return all addresses for application/payid+json
     if (acceptHeader.paymentNetwork === 'PAYID') {
-      return {
-        preferredParsedAcceptHeader: acceptHeader,
-        preferredAddresses: allAddresses,
-      }
+      return [acceptHeader, allAddresses, allVerifiedAddresses]
     }
 
     // Otherwise, try to fetch the address for the respective media type
     // foundAddress -> what we have in our database
     // acceptHeader -> what the client sent over
-    const paymentInformationForAcceptType = allAddresses.find(
-      (foundAddress) =>
-        foundAddress.paymentNetwork === acceptHeader.paymentNetwork &&
+    const foundAddress = allAddresses.find(
+      (address) =>
+        address.paymentNetwork === acceptHeader.paymentNetwork &&
         // If no environment is found in our database, it returns null
         // If the client doesn't send over an environment, it is undefined
         // Below we convert null to undefined to do the comparison
-        (foundAddress.environment ?? undefined) === acceptHeader.environment,
+        (address.environment ?? undefined) === acceptHeader.environment,
+    )
+    const foundVerifiedAddress = allVerifiedAddresses.find(
+      (address) =>
+        address.paymentNetwork === acceptHeader.paymentNetwork &&
+        (address.environment ?? undefined) === acceptHeader.environment,
     )
 
     // Return the address + the media type to respond with
-    if (paymentInformationForAcceptType) {
-      return {
-        preferredParsedAcceptHeader: acceptHeader,
-        preferredAddresses: [paymentInformationForAcceptType],
-      }
+    // If either a unverified or verified address is found, we return
+    if (foundAddress || foundVerifiedAddress) {
+      return [
+        acceptHeader,
+        foundAddress ? [foundAddress] : [],
+        foundVerifiedAddress ? [foundVerifiedAddress] : [],
+      ]
     }
   }
 
-  return undefined
+  return [undefined, [], []]
 }
 
 // HELPERS

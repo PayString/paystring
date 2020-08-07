@@ -46,7 +46,7 @@ export default async function getPaymentInfo(
   const parsedAcceptHeaders = parseAcceptHeaders(req.accepts())
 
   // Get all addresses from DB
-  const [allAddressInfo] = await Promise.all([
+  const [allAddressInfo, allVerifiedAddressInfo] = await Promise.all([
     getAllAddressInfoFromDatabase(payId),
     getAllVerifiedAddressInfoFromDatabase(payId),
     getIdentityKeyFromDatabase(payId).catch((_err) => {
@@ -64,13 +64,14 @@ export default async function getPaymentInfo(
   ])
 
   // Content-negotiation to get preferred payment information
-  const preferredAddressInfo = getPreferredAddressHeaderPair(
+  const [preferredHeader, preferredAddresses] = getPreferredAddressHeaderPair(
     allAddressInfo,
+    allVerifiedAddressInfo,
     parsedAcceptHeaders,
   )
 
   // Respond with a 404 if we can't find the requested payment information
-  if (preferredAddressInfo === undefined) {
+  if (!preferredHeader) {
     // Record metrics for 404s
     throw new LookupError(
       `Payment information for ${payId} could not be found.`,
@@ -78,11 +79,6 @@ export default async function getPaymentInfo(
       parsedAcceptHeaders,
     )
   }
-
-  const {
-    preferredParsedAcceptHeader,
-    preferredAddresses,
-  } = preferredAddressInfo
 
   // Wrap addresses into PaymentInformation object (this is the response in Base PayID)
   // * NOTE: To append a memo, MUST set a memo in createMemo()
@@ -94,7 +90,7 @@ export default async function getPaymentInfo(
   )
 
   // Set the content-type to the media type corresponding to the returned address
-  res.set('Content-Type', preferredParsedAcceptHeader.mediaType)
+  res.set('Content-Type', preferredHeader.mediaType)
 
   // Store response information (or information to be used in other middlewares)
   // TODO:(hbergren), come up with a less hacky way to pipe around data than global state.
@@ -104,8 +100,8 @@ export default async function getPaymentInfo(
 
   metrics.recordPayIdLookupResult(
     true,
-    preferredParsedAcceptHeader.paymentNetwork,
-    preferredParsedAcceptHeader.environment,
+    preferredHeader.paymentNetwork,
+    preferredHeader.environment,
   )
   return next()
 }
