@@ -2,7 +2,13 @@ import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction, RequestHandler } from 'express'
 
 import metrics from '../services/metrics'
-import { PayIDError, handleHttpError, ParseErrorType } from '../utils/errors'
+import {
+  PayIDError,
+  handleHttpError,
+  ParseErrorType,
+  LookupErrorType,
+  LookupError,
+} from '../utils/errors'
 
 /**
  * An error handling middleware responsible for catching unhandled errors,
@@ -39,6 +45,21 @@ export default function errorHandler(
     // Collect metrics on public API requests with bad Accept headers
     if (err.kind === ParseErrorType.InvalidMediaType) {
       metrics.recordPayIdLookupBadAcceptHeader()
+    }
+
+    // Collect metrics on public API requests to a PayID that does not exist
+    if (
+      err.kind === LookupErrorType.MissingPayId &&
+      err instanceof LookupError &&
+      err.headers
+    ) {
+      err.headers.forEach((acceptType) =>
+        metrics.recordPayIdLookupResult(
+          false,
+          acceptType.paymentNetwork,
+          acceptType.environment,
+        ),
+      )
     }
   }
 

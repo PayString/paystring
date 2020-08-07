@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 
-import { getAllAddressInfoFromDatabase } from '../data-access/payIds'
+import {
+  getAllAddressInfoFromDatabase,
+  getAllVerifiedAddressInfoFromDatabase,
+  getIdentityKeyFromDatabase,
+} from '../data-access/payIds'
 import createMemo from '../hooks/memo'
 import {
   formatPaymentInfo,
@@ -42,7 +46,22 @@ export default async function getPaymentInfo(
   const parsedAcceptHeaders = parseAcceptHeaders(req.accepts())
 
   // Get all addresses from DB
-  const allAddressInfo = await getAllAddressInfoFromDatabase(payId)
+  const [allAddressInfo] = await Promise.all([
+    getAllAddressInfoFromDatabase(payId),
+    getAllVerifiedAddressInfoFromDatabase(payId),
+    getIdentityKeyFromDatabase(payId).catch((_err) => {
+      // This error is only emitted if the PayID is not found
+      // If the PayID is found, but it has no identity key, it returns null instead
+      // We can thus use this query to trigger 404s for missing PayIDs
+      // ---
+      // Respond with a 404 if we can't find the requested PayID
+      throw new LookupError(
+        `PayID ${payId} could not be found.`,
+        LookupErrorType.MissingPayId,
+        parsedAcceptHeaders,
+      )
+    }),
+  ])
 
   // Content-negotiation to get preferred payment information
   const preferredAddressInfo = getPreferredAddressHeaderPair(
@@ -50,21 +69,13 @@ export default async function getPaymentInfo(
     parsedAcceptHeaders,
   )
 
-  // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Respond with a 404 if we can't find the requested payment information
   if (preferredAddressInfo === undefined) {
     // Record metrics for 404s
-    parsedAcceptHeaders.forEach((acceptType) =>
-      metrics.recordPayIdLookupResult(
-        false,
-        acceptType.paymentNetwork,
-        acceptType.environment,
-      ),
-    )
-
     throw new LookupError(
       `Payment information for ${payId} could not be found.`,
-      LookupErrorType.Unknown,
+      LookupErrorType.MissingAddress,
+      parsedAcceptHeaders,
     )
   }
 
