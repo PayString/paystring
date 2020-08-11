@@ -1,10 +1,8 @@
 import { assert } from 'chai'
 
 import 'mocha'
-import {
-  ParsedAcceptHeader,
-  parseAcceptHeader,
-} from '../../src/services/headers'
+import { parseAcceptHeader } from '../../src/services/headers'
+import { ParsedAcceptHeader } from '../../src/types/headers'
 import { ParseError } from '../../src/utils/errors'
 
 describe('Parsing - Headers - parseAcceptHeader()', function (): void {

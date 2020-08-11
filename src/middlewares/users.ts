@@ -1,7 +1,11 @@
 import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
-import getAllAddressInfoFromDatabase from '../data-access/payIds'
+import {
+  getAllAddressInfoFromDatabase,
+  getAllVerifiedAddressInfoFromDatabase,
+  getIdentityKeyFromDatabase,
+} from '../data-access/payIds'
 import {
   insertUser,
   replaceUser,
@@ -55,12 +59,23 @@ export async function getUser(
   }
 
   const addresses = await getAllAddressInfoFromDatabase(payId)
+  const verifiedAddresses = await getAllVerifiedAddressInfoFromDatabase(payId)
+  const identityKey = await getIdentityKeyFromDatabase(payId)
 
-  res.locals.response = {
-    payId,
-    addresses,
+  if (identityKey === null || identityKey.length === 0) {
+    res.locals.response = {
+      payId,
+      addresses,
+      verifiedAddresses,
+    }
+  } else {
+    res.locals.response = {
+      payId,
+      identityKey,
+      addresses,
+      verifiedAddresses,
+    }
   }
-
   next()
 }
 
