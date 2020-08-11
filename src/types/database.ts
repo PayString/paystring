@@ -1,4 +1,4 @@
-import { CryptoAddressDetails, FiatAddressDetails } from './publicAPI'
+import { CryptoAddressDetails, FiatAddressDetails } from './protocol'
 
 /**
  * Model of the Account table schema for the database.
@@ -34,5 +34,5 @@ export interface Address {
  */
 export type AddressInformation = Pick<
   Address,
-  'paymentNetwork' | 'environment' | 'details'
+  'paymentNetwork' | 'environment' | 'details' | 'identityKeySignature'
 >

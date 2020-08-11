@@ -23,7 +23,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'BTC',
         environment: 'TESTNET',
-        count: 1,
+        count: 2,
       },
       {
         paymentNetwork: 'INTERLEDGER',
@@ -46,7 +46,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
 
   it('getPayIdCount - Returns a count of PayIDs', async function () {
     const payIdCount = await getPayIdCount()
-    const expectedPayIdCount = 6
+    const expectedPayIdCount = 9
 
     assert.strictEqual(payIdCount, expectedPayIdCount)
   })
