@@ -12,7 +12,7 @@ let app: App
 const XRPL_TESTNET_ACCEPT_HEADER = 'application/xrpl-testnet+json'
 const XRPL_MAINNET_ACCEPT_HEADER = 'application/xrpl-mainnet+json'
 
-describe('E2E - publicAPIRouter - Base PayId Content Negotiation', function (): void {
+describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
   // Boot up Express application and initialize DB connection pool
   before(async function () {
     app = await appSetup()
