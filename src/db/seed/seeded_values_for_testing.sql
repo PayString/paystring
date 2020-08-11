@@ -25,7 +25,7 @@ INSERT INTO address(account_id, payment_network, environment, details) VALUES
 ('223ece9c-2a15-48e1-9df6-d9ac77c5db90', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}'),
 ('ec06236e-d134-4a7b-b69e-0606fb54b67b', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}'),
 ('69b0d20a-cdef-4bb9-adf9-2109979a12af', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}'),
-/*('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'BTC',  'TESTNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}'),*/
+('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'BTC',  'MAINNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}'),
 ('b253bed2-79ce-45d0-bbdd-96867aa85fd5', 'INTERLEDGER', 'TESTNET', '{"address": "$xpring.money/zebra"}');
 
 /* Verified addresses*/

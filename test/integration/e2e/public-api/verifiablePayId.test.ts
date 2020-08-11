@@ -55,7 +55,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -101,7 +101,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -147,7 +147,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -203,6 +203,127 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
       .expect(HttpStatus.OK, expectedResponse, done)
   })
 
+  it('Returns all unverified & verified addresses for a known PayID and an all addresses header', function (done): void {
+    // GIVEN a PayID known to have an associated btc-testnet address
+    const payId = '/johnwick'
+    const acceptHeader = 'application/payid+json'
+    const expectedResponse: PaymentInformation = {
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'MAINNET',
+          addressDetailsType: AddressDetailsType.CryptoAddress,
+          addressDetails: {
+            address: '2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE',
+          },
+        },
+      ],
+      payId: 'johnwick$127.0.0.1',
+      verifiedAddresses: [
+        {
+          payload: {
+            payId: 'johnwick$127.0.0.1',
+            payIdAddress: {
+              addressDetails: {
+                address: '2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE',
+              },
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              environment: 'TESTNET',
+              paymentNetwork: 'BTC',
+            },
+          },
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'aGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ==',
+              signature:
+                'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
+            },
+          ],
+        },
+        {
+          payload: {
+            payId: 'johnwick$127.0.0.1',
+            payIdAddress: {
+              addressDetails: {
+                address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
+              },
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              environment: 'TESTNET',
+              paymentNetwork: 'XRPL',
+            },
+          },
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'aGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ==',
+              signature:
+                'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
+            },
+          ],
+        },
+        {
+          payload: {
+            payId: 'johnwick$127.0.0.1',
+            payIdAddress: {
+              addressDetails: {
+                address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
+              },
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              environment: 'MAINNET',
+              paymentNetwork: 'XRPL',
+            },
+          },
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'aGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ==',
+              signature:
+                'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
+            },
+          ],
+        },
+        {
+          payload: {
+            payId: 'johnwick$127.0.0.1',
+            payIdAddress: {
+              addressDetails: {
+                accountNumber: '000123456789',
+                routingNumber: '123456789',
+              },
+              addressDetailsType: AddressDetailsType.FiatAddress,
+              paymentNetwork: 'ACH',
+            },
+          },
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'aGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ==',
+              signature:
+                'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ==',
+            },
+          ],
+        },
+      ],
+    }
+
+    // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
+    request(app.publicApiExpress)
+      .get(payId)
+      .set('PayID-Version', '1.1')
+      .set('Accept', acceptHeader)
+      // THEN we get back our Accept header as the Content-Type
+      .expect((res) => {
+        assert.strictEqual(res.get('Content-Type').split('; ')[0], acceptHeader)
+      })
+      // AND we get back the BTC address associated with that PayID for btc-testnet.
+      .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
   it('Returns a 404 for a PayID without the relevant associated address', function (done): void {
     // GIVEN a known PayID that exists but does not have an associated devnet XRP address
     const payId = '/johnwick'
@@ -216,7 +337,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-devnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.

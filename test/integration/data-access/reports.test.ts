@@ -22,6 +22,11 @@ describe('Data Access - getPayIdCounts()', function (): void {
       },
       {
         paymentNetwork: 'BTC',
+        environment: 'MAINNET',
+        count: 1,
+      },
+      {
+        paymentNetwork: 'BTC',
         environment: 'TESTNET',
         count: 3,
       },
