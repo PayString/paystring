@@ -53,7 +53,7 @@
   "devDependencies": {
     "@arkweid/lefthook": "^0.7.2",
     "@fintechstudios/eslint-plugin-chai-as-promised": "^3.0.2",
-    "@types/chai": "^4.2.11",
+    "@types/chai": "^4.2.12",
     "@types/chai-as-promised": "^7.1.2",
     "@types/express": "^4.17.6",
     "@types/mocha": "^7.0.2",
@@ -67,7 +67,7 @@
     "@xpring-eng/eslint-config-mocha": "^1.0.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "chokidar": "^3.4.0",
+    "chokidar": "^3.4.2",
     "chokidar-cli": "^2.1.0",
     "copyfiles": "^2.3.0",
     "eslint": "^7.6.0",
