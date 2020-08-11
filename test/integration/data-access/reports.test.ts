@@ -18,12 +18,17 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'ACH',
         environment: null,
+        count: 2,
+      },
+      {
+        paymentNetwork: 'BTC',
+        environment: 'MAINNET',
         count: 1,
       },
       {
         paymentNetwork: 'BTC',
         environment: 'TESTNET',
-        count: 2,
+        count: 3,
       },
       {
         paymentNetwork: 'INTERLEDGER',
@@ -33,12 +38,12 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'XRPL',
         environment: 'MAINNET',
-        count: 1,
+        count: 2,
       },
       {
         paymentNetwork: 'XRPL',
         environment: 'TESTNET',
-        count: 4,
+        count: 5,
       },
     ]
     assert.deepEqual(results, expected)
@@ -46,7 +51,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
 
   it('getPayIdCount - Returns a count of PayIDs', async function () {
     const payIdCount = await getPayIdCount()
-    const expectedPayIdCount = 9
+    const expectedPayIdCount = 10
 
     assert.strictEqual(payIdCount, expectedPayIdCount)
   })
