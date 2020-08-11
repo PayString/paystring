@@ -2,7 +2,7 @@ import 'mocha'
 import * as chai from 'chai'
 import * as chaiAsPromised from 'chai-as-promised'
 
-import getAllAddressInfoFromDatabase from '../../../src/data-access/payIds'
+import { getAllAddressInfoFromDatabase } from '../../../src/data-access/payIds'
 import { insertUser } from '../../../src/data-access/users'
 
 chai.use(chaiAsPromised)

@@ -1,4 +1,4 @@
-import { PaymentInformation } from '../types/publicAPI'
+import { PaymentInformation } from '../types/protocol'
 
 /**
  * This function is expected to be overwritten by companies deploying
