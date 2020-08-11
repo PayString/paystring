@@ -62,6 +62,7 @@ interface VerifiedAddressPayload {
  * JWS object for verification.
  */
 interface VerifiedAddressSignature {
+  name: string
   protected: string
   signature: string
 }

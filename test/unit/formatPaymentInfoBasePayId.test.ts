@@ -50,46 +50,21 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     }
 
     // WHEN we format it
-    const paymentInfo = formatPaymentInfo(addressInfo, version1dot1, payId)
+    const paymentInfo = formatPaymentInfo(
+      addressInfo,
+      [],
+      '',
+      version1dot1,
+      payId,
+    )
 
     // THEN we get back a PaymentInformation object with the appropriate address details
     assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
   })
 
-  it('Does not return a payId field when it is not included as a parameter', function (): void {
-    // GIVEN an array of AddressInformation with an XRP entry
-    const addressInfo = [
-      {
-        paymentNetwork: 'XRP',
-        environment: 'TESTNET',
-        details: {
-          address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
-        },
-      },
-    ]
-    const expectedPaymentInfo = {
-      addresses: [
-        {
-          paymentNetwork: 'XRP',
-          environment: 'TESTNET',
-          addressDetailsType: AddressDetailsType.CryptoAddress,
-          addressDetails: {
-            address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
-          },
-        },
-      ],
-      verifiedAddresses: [],
-    }
-
-    // WHEN we format it and don't pass in a PayID
-    const paymentInfo = formatPaymentInfo(addressInfo, version1dot1)
-
-    // THEN we get back a PaymentInformation object without a PayID
-    assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
-  })
-
   it('Does not return a environment field when it is not included in the address information', function (): void {
     // GIVEN an array of AddressInformation with an ACH entry (no environment)
+    const payId = 'alice$example.com'
     const addressInfo = [
       {
         paymentNetwork: 'ACH',
@@ -113,10 +88,17 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         },
       ],
       verifiedAddresses: [],
+      payId,
     }
 
     // WHEN we format it
-    const paymentInfo = formatPaymentInfo(addressInfo, version1dot1)
+    const paymentInfo = formatPaymentInfo(
+      addressInfo,
+      [],
+      '',
+      version1dot1,
+      payId,
+    )
 
     // THEN we get back a PaymentInformation object with no environment
     assert.deepStrictEqual(paymentInfo, expectedPaymentInfo)
@@ -157,6 +139,8 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
     // WHEN we format the address information
     const paymentInfo = formatPaymentInfo(
       addressInfo,
+      [],
+      '',
       version1dot1,
       payId,
       memoFn,

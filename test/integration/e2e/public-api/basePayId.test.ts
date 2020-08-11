@@ -151,7 +151,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
-      message: 'Payment information for johndoe$127.0.0.1 could not be found.',
+      message: 'PayID johndoe$127.0.0.1 could not be found.',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
@@ -191,7 +191,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     const expectedErrorResponse = {
       statusCode: 404,
       error: 'Not Found',
-      message: 'Payment information for johndoe$127.0.0.1 could not be found.',
+      message: 'PayID johndoe$127.0.0.1 could not be found.',
     }
 
     // WHEN we request all addresses for that PayID
