@@ -8,6 +8,7 @@ import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
+const acceptPatch = 'application/merge-patch+json'
 
 describe('E2E - adminApiRouter - POST /users', function (): void {
   before(async function () {
@@ -83,7 +84,17 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       // THEN we expect the Location header to be set to the path of the created user resource
       .expect('Location', `/users/${userInformation.payId}`)
       // THEN we expect back a 201 - CREATED
-      .expect(HttpStatus.Created, done)
+      .expect(HttpStatus.Created)
+      .end(function () {
+        request(app.adminApiExpress)
+          .get(`/users/${userInformation.payId}`)
+          .set('PayID-API-Version', payIdApiVersion)
+          .expect('Content-Type', /json/u)
+          // THEN we expect to have an Accept-Patch header in the response
+          .expect('Accept-Patch', acceptPatch)
+          // THEN We expect back a 200 - OK, with the account information
+          .expect(HttpStatus.OK, userInformation, done)
+      })
   })
 
   it('Returns a 201 when creating a new user with an identity key', function (done): void {
