@@ -1,3 +1,4 @@
+import { ParsedAcceptHeader } from '../types/headers'
 import { ParseError, ParseErrorType } from '../utils/errors'
 
 const badAcceptHeaderErrorMessage = `Must have an Accept header of the form "application/{payment_network}(-{environment})+json".
@@ -7,22 +8,6 @@ const badAcceptHeaderErrorMessage = `Must have an Accept header of the form "app
       - 'Accept: application/ach+json'
       - 'Accept: application/payid+json'
       `
-
-/** A parsed HTTP Accept header object. */
-export interface ParsedAcceptHeader {
-  /** A raw Accept header media type. */
-  readonly mediaType: string
-
-  /** The payment network requested in the media type. */
-  readonly paymentNetwork: string
-
-  /**
-   * The environment requested in the media type.
-   *
-   * Optional, as some headers (like application/ach+json) don't have an environment.
-   */
-  readonly environment?: string
-}
 
 /**
  * Parses a list of accept headers to confirm they adhere to the PayID accept header syntax.
