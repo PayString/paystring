@@ -162,6 +162,7 @@ export async function removeUser(payId: string): Promise<void> {
 
 interface DatabaseAddress extends AddressInformation {
   readonly accountId: string
+  readonly identityKeySignature?: string
 }
 
 /**
@@ -182,6 +183,7 @@ function addAccountIdToAddresses(
     paymentNetwork: address.paymentNetwork.toUpperCase(),
     environment: address.environment?.toUpperCase(),
     details: address.details,
+    identityKeySignature: address.identityKeySignature,
   }))
 }
 
