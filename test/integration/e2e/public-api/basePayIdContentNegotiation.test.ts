@@ -41,7 +41,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // both testnet and mainnet, with no q for either
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as our Content-Type
       .expect((res) => {
@@ -57,7 +57,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
   it('Returns the preferred available address where the higher q is at the beginning', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address and xrpl-mainnet address
     const payId = '/alice'
-    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=1.0, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.5`
+    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=1.1, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.5`
     const expectedResponse = {
       addresses: [
         {
@@ -77,7 +77,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // and mainnet, with testnet having a higher q-value
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as the Content-Type
       .expect((res) => {
@@ -93,7 +93,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
   it('Returns the preferred available address where the higher q is at the end', function (done): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address and an xrpl-mainnet address
     const payId = '/alice'
-    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=1.0`
+    const acceptHeader = `${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=1.1`
     const expectedResponse = {
       addresses: [
         {
@@ -114,7 +114,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // xrpl-testnet and xrpl-mainnet, with a higher q for xrpl-mainnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-mainnet accept header as the Content-Type
       .expect((res) => {
@@ -131,7 +131,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // GIVEN a payment pointer known to have an associated xrpl-testnet address and mainnet address
     const payId = '/alice'
     const nonExistentAcceptType = 'application/fakenetwork-fakenet+json'
-    const acceptHeader = `${nonExistentAcceptType}; q=1.0, ${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.9`
+    const acceptHeader = `${nonExistentAcceptType}; q=1.1, ${XRPL_TESTNET_ACCEPT_HEADER}; q=0.5, ${XRPL_MAINNET_ACCEPT_HEADER}; q=0.9`
     const expectedResponse = {
       addresses: [
         {
@@ -152,7 +152,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // a non-existent network+environment most preferred, followed by xrpl-mainnet and xrpl-testnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-mainnet accept header as the Content-Type
       .expect((res) => {
