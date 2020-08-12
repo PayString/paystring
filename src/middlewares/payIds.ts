@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from 'express'
 
-import getAllAddressInfoFromDatabase from '../data-access/payIds'
+import {
+  getAllAddressInfoFromDatabase,
+  getAllVerifiedAddressInfoFromDatabase,
+  getIdentityKeyFromDatabase,
+} from '../data-access/payIds'
 import createMemo from '../hooks/memo'
 import {
   formatPaymentInfo,
@@ -22,6 +26,7 @@ import { LookupError, LookupErrorType } from '../utils/errors'
  *
  * @throws A LookupError if we could not find payment information for the given PayID.
  */
+// eslint-disable-next-line max-lines-per-function -- For this middleware, this limit is too restrictive.
 export default async function getPaymentInfo(
   req: Request,
   res: Response,
@@ -42,47 +47,62 @@ export default async function getPaymentInfo(
   const parsedAcceptHeaders = parseAcceptHeaders(req.accepts())
 
   // Get all addresses from DB
-  const allAddressInfo = await getAllAddressInfoFromDatabase(payId)
+  // TODO(aking): Refactor this into a single knex query
+  const [
+    allAddressInfo,
+    allVerifiedAddressInfo,
+    identityKey,
+  ] = await Promise.all([
+    getAllAddressInfoFromDatabase(payId),
+    getAllVerifiedAddressInfoFromDatabase(payId),
+    getIdentityKeyFromDatabase(payId).catch((_err) => {
+      // This error is only emitted if the PayID is not found
+      // If the PayID is found, but it has no identity key, it returns null instead
+      // We can thus use this query to trigger 404s for missing PayIDs
+      // ---
+      // Respond with a 404 if we can't find the requested PayID
+      throw new LookupError(
+        `PayID ${payId} could not be found.`,
+        LookupErrorType.MissingPayId,
+        parsedAcceptHeaders,
+      )
+    }),
+  ])
 
   // Content-negotiation to get preferred payment information
-  const preferredAddressInfo = getPreferredAddressHeaderPair(
+  const [
+    preferredHeader,
+    preferredAddresses,
+    verifiedPreferredAddresses,
+  ] = getPreferredAddressHeaderPair(
     allAddressInfo,
+    allVerifiedAddressInfo,
     parsedAcceptHeaders,
   )
 
-  // TODO:(hbergren) Distinguish between missing PayID in system, and missing address for paymentNetwork/environment.
   // Respond with a 404 if we can't find the requested payment information
-  if (preferredAddressInfo === undefined) {
+  if (!preferredHeader) {
     // Record metrics for 404s
-    parsedAcceptHeaders.forEach((acceptType) =>
-      metrics.recordPayIdLookupResult(
-        false,
-        acceptType.paymentNetwork,
-        acceptType.environment,
-      ),
-    )
-
     throw new LookupError(
       `Payment information for ${payId} could not be found.`,
-      LookupErrorType.Unknown,
+      LookupErrorType.MissingAddress,
+      parsedAcceptHeaders,
     )
   }
-
-  const {
-    preferredParsedAcceptHeader,
-    preferredAddresses,
-  } = preferredAddressInfo
 
   // Wrap addresses into PaymentInformation object (this is the response in Base PayID)
   // * NOTE: To append a memo, MUST set a memo in createMemo()
   const formattedPaymentInfo = formatPaymentInfo(
     preferredAddresses,
+    verifiedPreferredAddresses,
+    identityKey,
+    res.get('PayID-Version'),
     payId,
     createMemo,
   )
 
   // Set the content-type to the media type corresponding to the returned address
-  res.set('Content-Type', preferredParsedAcceptHeader.mediaType)
+  res.set('Content-Type', preferredHeader.mediaType)
 
   // Store response information (or information to be used in other middlewares)
   // TODO:(hbergren), come up with a less hacky way to pipe around data than global state.
@@ -92,8 +112,8 @@ export default async function getPaymentInfo(
 
   metrics.recordPayIdLookupResult(
     true,
-    preferredParsedAcceptHeader.paymentNetwork,
-    preferredParsedAcceptHeader.environment,
+    preferredHeader.paymentNetwork,
+    preferredHeader.environment,
   )
   return next()
 }

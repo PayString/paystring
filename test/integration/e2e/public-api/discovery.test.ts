@@ -4,7 +4,6 @@ import * as request from 'supertest'
 import App from '../../../../src/app'
 import { appCleanup, appSetup } from '../../../helpers/helpers'
 
-// eslint-disable-next-line node/file-extension-in-import -- typescript needs .json extension
 import * as discoveryLinks from './testDiscoveryLinks.json'
 
 let app: App
@@ -21,7 +20,7 @@ describe('E2E - publicAPIRouter - PayID Discovery', function (): void {
     const payId = 'alice$wallet.com'
     const expectedResponse = {
       subject: payId,
-      discoveryLinks,
+      links: discoveryLinks,
     }
 
     // WHEN we make a GET request to the PayID Discovery endpoint
