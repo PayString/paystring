@@ -59,6 +59,12 @@ const config = {
     /** How frequently (in seconds) to refresh the PayID Count report data from the database. */
     payIdCountRefreshIntervalInSeconds:
       Number(process.env.PAYID_COUNT_REFRESH_INTERVAL) || 60,
+
+    payIdProtocolVersion: payIdServerVersions[payIdServerVersions.length - 1],
+
+    serverAgent: `@payid-org/payid:${
+      process.env.npm_package_version ?? 'unknown.version'
+    }`,
   },
 }
 
