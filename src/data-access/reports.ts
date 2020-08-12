@@ -1,4 +1,4 @@
-import { AddressCount } from '@payid-org/payid-metrics'
+import { AddressCount } from '@payid-org/server-metrics'
 
 import knex from '../db/knex'
 

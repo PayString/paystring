@@ -1,6 +1,6 @@
 import { Server } from 'http'
 
-import { checkMetricsConfiguration } from '@payid-org/payid-metrics'
+import { checkMetricsConfiguration } from '@payid-org/server-metrics'
 import * as express from 'express'
 
 import config from './config'
@@ -69,7 +69,7 @@ export default class App {
     this.publicApiServer?.close()
     this.adminApiServer?.close()
 
-    metrics.stopMetricsGeneration()
+    metrics.stopMetrics()
   }
 
   /**
