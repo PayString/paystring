@@ -7,39 +7,26 @@ import * as request from 'supertest'
 import App from '../../../../src/app'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
+import {
+  XRPL_TESTNET_ADDRESS,
+  XRPL_MAINNET_ADDRESS,
+  XRPL_TESTNET_ACCEPT_HEADER,
+  XRPL_MAINNET_ACCEPT_HEADER,
+} from './payloads'
+
 let app: App
 
-const PAYID = '/alice'
-const XRPL_TESTNET_ACCEPT_HEADER = 'application/xrpl-testnet+json'
-const XRPL_MAINNET_ACCEPT_HEADER = 'application/xrpl-mainnet+json'
+const USER = '/alice'
+const PAYID = `${USER.slice(1)}$127.0.0.1`
 const XRPL_EXPECTED_TESTNET_RESPONSE = {
-  addresses: [
-    {
-      paymentNetwork: 'XRPL',
-      environment: 'TESTNET',
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
-      },
-    },
-  ],
+  addresses: [XRPL_TESTNET_ADDRESS],
   verifiedAddresses: [],
-  payId: 'alice$127.0.0.1',
+  payId: PAYID,
 }
 const XRPL_EXPECTED_MAINNET_RESPONSE = {
-  addresses: [
-    {
-      paymentNetwork: 'XRPL',
-      environment: 'MAINNET',
-      addressDetailsType: 'CryptoAddressDetails',
-      addressDetails: {
-        address: 'rw2ciyaNshpHe7bCHo4bRWq6pqqynnWKQg',
-        tag: '67298042',
-      },
-    },
-  ],
+  addresses: [XRPL_MAINNET_ADDRESS],
   verifiedAddresses: [],
-  payId: 'alice$127.0.0.1',
+  payId: PAYID,
 }
 
 describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
@@ -55,7 +42,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
     // both testnet and mainnet, with no q for either
     request(app.publicApiExpress)
-      .get(PAYID)
+      .get(USER)
       .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as our Content-Type
@@ -76,7 +63,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying testnet
     // and mainnet, with testnet having a higher q-value
     request(app.publicApiExpress)
-      .get(PAYID)
+      .get(USER)
       .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as the Content-Type
@@ -97,7 +84,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
     // xrpl-testnet and xrpl-mainnet, with a higher q for xrpl-mainnet
     request(app.publicApiExpress)
-      .get(PAYID)
+      .get(USER)
       .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-mainnet accept header as the Content-Type
@@ -119,7 +106,7 @@ describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying
     // a non-existent network+environment most preferred, followed by xrpl-mainnet and xrpl-testnet
     request(app.publicApiExpress)
-      .get(PAYID)
+      .get(USER)
       .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-mainnet accept header as the Content-Type
