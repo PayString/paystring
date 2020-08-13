@@ -20,11 +20,14 @@ export default function initializeMetrics(
 ): void {
   // Start metrics on the first public API request.
   // This will _always_ happen at initialization unless the PAYID_DOMAIN env var is set.
-  if (!config.metrics.domain || !metrics.areMetricsRunning()) {
+  if (
+    config.metrics.domain === 'missing_domain' ||
+    !metrics.areMetricsRunning()
+  ) {
     config.metrics.domain = req.hostname
 
     metrics.scheduleRecurringMetricsPush()
-    metrics.scheduleRecurringPayIdCountMetrics()
+    metrics.scheduleRecurringMetricsGeneration()
   }
 
   next()
