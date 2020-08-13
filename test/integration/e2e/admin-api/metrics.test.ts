@@ -103,6 +103,13 @@ describe('E2E - adminApiRouter - GET /metrics', function (): void {
     await assertMetrics(/actual_payid_count\{org="127.0.0.1"\} 18/u)
   })
 
+  it('Includes server version info', async function () {
+    await metrics.generatePayIdCountMetrics()
+    await assertMetrics(
+      /org="127.0.0.1",serverAgent="@payid-org\/payid:1.*.*",protocolVersion="1.*"\}/u,
+    )
+  })
+
   /**
    * A helper function that fetches PayID metrics and matches them against
    * expected metrics.

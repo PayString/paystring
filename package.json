@@ -41,7 +41,7 @@
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
-    "@payid-org/server-metrics": "github:payid-org/server-metrics#nh/server-and-protocol-version",
+    "@payid-org/server-metrics": "^1.1.0",
     "@xpring-eng/http-status": "^1.0.0",
     "@xpring-eng/logger": "^1.0.0",
     "express": "^4.17.1",
