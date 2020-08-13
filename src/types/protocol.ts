@@ -38,7 +38,7 @@ export interface PaymentInformation {
 /**
  * Address information included inside of a PaymentInformation object.
  */
-interface Address {
+export interface Address {
   readonly paymentNetwork: string
   readonly environment?: string
   readonly addressDetailsType: AddressDetailsType
