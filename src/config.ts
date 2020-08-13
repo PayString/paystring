@@ -1,3 +1,5 @@
+import { version as packageVersion } from '../package.json'
+
 export const payIdServerVersions: readonly string[] = ['1.0', '1.1']
 export const adminApiVersions: readonly string[] = ['2020-05-28']
 
@@ -62,9 +64,7 @@ const config = {
 
     payIdProtocolVersion: payIdServerVersions[payIdServerVersions.length - 1],
 
-    serverAgent: `@payid-org/payid:${
-      process.env.npm_package_version ?? 'unknown.version'
-    }`,
+    serverAgent: `@payid-org/payid:${packageVersion}`,
   },
 }
 
