@@ -33,13 +33,14 @@
     "devEnvUp": "run-script-os",
     "devEnvUp:default": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d",
     "devEnvUp:win32": "set PAYID_DOCKER_IMAGE_VERSION=%npm_package_version%&&docker-compose up -d",
-    "devDbUp": "docker-compose up -d db",
-    "devDown": "docker-compose down",
+    "devDbUp": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose up -d db",
+    "devDown": "PAYID_DOCKER_IMAGE_VERSION=$npm_package_version docker-compose down",
     "bump": "./scripts/version/bump.sh $npm_package_version $1",
     "release": "hub release create -d -m $npm_package_version $npm_package_version"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.0",
+    "@payid-org/server-metrics": "^1.0.0",
     "@xpring-eng/http-status": "^1.0.0",
     "@xpring-eng/logger": "^1.0.0",
     "express": "^4.17.1",
