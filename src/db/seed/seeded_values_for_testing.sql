@@ -13,6 +13,7 @@ INSERT INTO account(id, pay_id) VALUES
 /* Verified accounts*/
 INSERT INTO account(id, pay_id, identity_key) VALUES
 ('27944333-faf6-41e8-90c3-1ec9001f0830', 'emptyverified$127.0.0.1', ''),
+('9a75f884-ab16-40c4-a82a-aca454dad6b2', 'verifiabledemo$127.0.0.1', 'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0'),
 ('2955cce9-c350-4b60-9726-c415072961ed', 'verified$127.0.0.1', 'bGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ=='),
 ('67d9ad5f-5cd8-4a0c-b642-70e63354e647', 'postmalone$127.0.0.1', 'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M='),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'johnwick$127.0.0.1', 'aGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ==');
@@ -30,6 +31,7 @@ INSERT INTO address(account_id, payment_network, environment, details) VALUES
 
 /* Verified addresses*/
 INSERT INTO address(account_id, payment_network, environment, details, identity_key_signature) VALUES
+('9a75f884-ab16-40c4-a82a-aca454dad6b2', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}', 'rsoKeVLzwg2PpGRK0S10fpmh5WNtttF9dyJgSv3USEr4aN3bUBzp5ImRQo8wlh3E00GtZ2cse-lhoQ4zJKj0Jw'),
 ('67d9ad5f-5cd8-4a0c-b642-70e63354e647', 'BTC', 'TESTNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ=='),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'BTC', 'TESTNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ=='),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ=='),
