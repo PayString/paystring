@@ -28,17 +28,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
       payId: 'johnwick$127.0.0.1',
       verifiedAddresses: [
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
                 address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
               },
-              addressDetailsType: AddressDetailsType.CryptoAddress,
-              environment: 'MAINNET',
-              paymentNetwork: 'XRPL',
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -74,17 +74,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
       payId: 'johnwick$127.0.0.1',
       verifiedAddresses: [
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
                 address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
               },
-              addressDetailsType: AddressDetailsType.CryptoAddress,
-              environment: 'TESTNET',
-              paymentNetwork: 'XRPL',
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -120,17 +120,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
       payId: 'johnwick$127.0.0.1',
       verifiedAddresses: [
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
+              paymentNetwork: 'BTC',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
                 address: '2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE',
               },
-              addressDetailsType: AddressDetailsType.CryptoAddress,
-              environment: 'TESTNET',
-              paymentNetwork: 'BTC',
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -166,17 +166,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
       payId: 'johnwick$127.0.0.1',
       verifiedAddresses: [
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
+              paymentNetwork: 'ACH',
+              addressDetailsType: AddressDetailsType.FiatAddress,
               addressDetails: {
                 accountNumber: '000123456789',
                 routingNumber: '123456789',
               },
-              addressDetailsType: AddressDetailsType.FiatAddress,
-              paymentNetwork: 'ACH',
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -221,17 +221,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
       payId: 'johnwick$127.0.0.1',
       verifiedAddresses: [
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
+              paymentNetwork: 'BTC',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
                 address: '2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE',
               },
-              addressDetailsType: AddressDetailsType.CryptoAddress,
-              environment: 'TESTNET',
-              paymentNetwork: 'BTC',
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -243,17 +243,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
           ],
         },
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
-              addressDetails: {
-                address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
-              },
-              addressDetailsType: AddressDetailsType.CryptoAddress,
-              environment: 'TESTNET',
               paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
+              },
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -265,17 +265,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
           ],
         },
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
-              addressDetails: {
-                address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
-              },
-              addressDetailsType: AddressDetailsType.CryptoAddress,
+              paymentNetwork: 'XRPL',
               environment: 'MAINNET',
-              paymentNetwork: 'XRPL',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
+              },
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -287,17 +287,17 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
           ],
         },
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'johnwick$127.0.0.1',
             payIdAddress: {
+              paymentNetwork: 'ACH',
+              addressDetailsType: AddressDetailsType.FiatAddress,
               addressDetails: {
                 accountNumber: '000123456789',
                 routingNumber: '123456789',
               },
-              addressDetailsType: AddressDetailsType.FiatAddress,
-              paymentNetwork: 'ACH',
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
