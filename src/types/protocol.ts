@@ -49,13 +49,8 @@ export interface Address {
  * Object containing address information alongside signatures.
  */
 interface VerifiedAddress {
-  readonly payload: VerifiedAddressPayload
+  readonly payload: string
   readonly signatures: readonly VerifiedAddressSignature[]
-}
-
-interface VerifiedAddressPayload {
-  payId: string
-  payIdAddress: Address
 }
 
 /**

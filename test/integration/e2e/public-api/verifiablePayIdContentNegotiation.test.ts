@@ -23,10 +23,10 @@ const XRPL_EXPECTED_TESTNET_RESPONSE = {
   verifiedAddresses: [
     {
       signatures: [SIGNATURE],
-      payload: {
+      payload: JSON.stringify({
         payId: PAYID,
         payIdAddress: XRPL_TESTNET_ADDRESS,
-      },
+      }),
     },
   ],
   payId: PAYID,

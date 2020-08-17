@@ -43,7 +43,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'XRPL',
         environment: 'TESTNET',
-        count: 5,
+        count: 6,
       },
     ]
     assert.deepEqual(results, expected)
@@ -51,7 +51,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
 
   it('getPayIdCount - Returns a count of PayIDs', async function () {
     const payIdCount = await getPayIdCount()
-    const expectedPayIdCount = 10
+    const expectedPayIdCount = 11
 
     assert.strictEqual(payIdCount, expectedPayIdCount)
   })

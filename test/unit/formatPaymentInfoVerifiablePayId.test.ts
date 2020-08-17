@@ -35,17 +35,17 @@ describe('Verifiable PayID - formatPaymentInfo()', function (): void {
       addresses: [],
       verifiedAddresses: [
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'alice$example.com',
             payIdAddress: {
-              addressDetailsType: AddressDetailsType.CryptoAddress,
-              environment: 'TESTNET',
               paymentNetwork: 'XRP',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
                 address: 'rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS',
               },
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
@@ -55,17 +55,17 @@ describe('Verifiable PayID - formatPaymentInfo()', function (): void {
           ],
         },
         {
-          payload: {
+          payload: JSON.stringify({
             payId: 'alice$example.com',
             payIdAddress: {
-              addressDetailsType: AddressDetailsType.FiatAddress,
               paymentNetwork: 'ACH',
+              addressDetailsType: AddressDetailsType.FiatAddress,
               addressDetails: {
                 accountNumber: '000123456789',
                 routingNumber: '123456789',
               },
             },
-          },
+          }),
           signatures: [
             {
               name: 'identityKey',
