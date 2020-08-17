@@ -26,6 +26,8 @@ export function formatPaymentInfo(
   memoFn?: (paymentInformation: PaymentInformation) => string,
 ): PaymentInformation {
   const paymentInformation: PaymentInformation = {
+    payId,
+    version,
     addresses: addresses.map((address) => {
       return {
         paymentNetwork: address.paymentNetwork,
@@ -56,7 +58,6 @@ export function formatPaymentInfo(
         }),
       }
     }),
-    payId,
   }
 
   return {

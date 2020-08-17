@@ -27,6 +27,8 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
       },
     ]
     const expectedPaymentInfo = {
+      payId: 'alice$example.com',
+      version: '1.1',
       addresses: [
         {
           paymentNetwork: 'XRP',
@@ -46,7 +48,6 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
         },
       ],
       verifiedAddresses: [],
-      payId: 'alice$example.com',
     }
 
     // WHEN we format it
@@ -65,6 +66,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
   it('Does not return a environment field when it is not included in the address information', function (): void {
     // GIVEN an array of AddressInformation with an ACH entry (no environment)
     const payId = 'alice$example.com'
+    const version = '1.1'
     const addressInfo = [
       {
         paymentNetwork: 'ACH',
@@ -89,6 +91,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
       ],
       verifiedAddresses: [],
       payId,
+      version,
     }
 
     // WHEN we format it
@@ -131,6 +134,7 @@ describe('Base PayID - formatPaymentInfo()', function (): void {
       verifiedAddresses: [],
       payId: 'alice$example.com',
       memo: 'memo',
+      version: '1.1',
     }
 
     // AND GIVEN a createMemo() that returns a truthy value
