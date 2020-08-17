@@ -1,3 +1,5 @@
+import { version as packageVersion } from '../package.json'
+
 export const payIdServerVersions: readonly string[] = ['1.0', '1.1']
 export const adminApiVersions: readonly string[] = ['2020-05-28']
 
@@ -59,6 +61,10 @@ const config = {
     /** How frequently (in seconds) to refresh the PayID Count report data from the database. */
     payIdCountRefreshIntervalInSeconds:
       Number(process.env.PAYID_COUNT_REFRESH_INTERVAL) || 60,
+
+    payIdProtocolVersion: payIdServerVersions[payIdServerVersions.length - 1],
+
+    serverAgent: `@payid-org/payid:${packageVersion}`,
   },
 }
 
