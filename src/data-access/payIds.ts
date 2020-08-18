@@ -21,7 +21,7 @@ export async function getAllAddressInfoFromDatabase(
 }
 
 /**
- * Retrieve all verified adress data associated with a given PayID.
+ * Retrieve all verified address data associated with a given PayID.
  *
  * @param payId -- The PayID used to retrieve verified address information.
  * @returns All of the verified addresses associated with the given PayID.

@@ -29,11 +29,42 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
     request(app.adminApiExpress)
       .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN we expect back a 200-OK, with the updated user information
+      .expect(HttpStatus.OK, updatedInformation, done)
+  })
+
+  it('Returns a 200 and updated user payload when updating a verified address', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const updatedInformation = {
+      payId: 'donaldduck$127.0.0.1',
+      addresses: [],
+      verifiedAddresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'MAINNET',
+          details: {
+            address: 'rfvRiqhpZW1NURByu3iDsLVMT3zkzzMhJD',
+          },
+          identityKeySignature:
+            'bG9vayBhdCBtZSBJJ20gZW5jb2RpbiBnbW9yZSByYW5kb20gdHJhc2g=',
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${updatedInformation.payId}`)
       .set('PayID-API-Version', payIdApiVersion)
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
@@ -57,6 +88,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
@@ -77,6 +109,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
     const updatedInformation = {
       payId: 'empty$xpring.money',
       addresses: [],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
@@ -103,6 +136,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a PUT request to /users/ with the information to insert
@@ -136,6 +170,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           },
         },
       ],
+      verifiedAddresses: [],
     }
 
     // WHEN we make a PUT request to /users/ with the information to insert
@@ -155,6 +190,53 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
         { ...insertedInformation, ...{ payId: newPayId } },
         done,
       )
+  })
+
+  it('Returns a 201 when creating a new user with verifiedAddresses', function (done): void {
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const userInformation = {
+      payId: 'harrypotter$xpring.money',
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          details: {
+            address: 'mxNEbRXokcdJtT6sbukr1CTGVx8Tkxk3DB',
+          },
+        },
+      ],
+      verifiedAddresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'TESTNET',
+          details: {
+            address: 'TVQWr6BhgBLW2jbFyqqufgq8T9eN7KresB684ZSHKQ3oDth',
+          },
+          identityKeySignature:
+            'd2hhdCBhbSBJIGNvZGluZyB3aGF0IGlzIGxpZmUgcGxlYXNlIGhlbHA=',
+        },
+      ],
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .put(`/users/${userInformation.payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(userInformation)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/users/${userInformation.payId}`)
+      // THEN we expect back a 201 - CREATED
+      .expect(HttpStatus.Created)
+      .end(function () {
+        request(app.adminApiExpress)
+          .get(`/users/${userInformation.payId}`)
+          .set('PayID-API-Version', payIdApiVersion)
+          .expect('Content-Type', /json/u)
+          // THEN we expect to have an Accept-Patch header in the response
+          .expect('Accept-Patch', acceptPatch)
+          // THEN We expect back a 200 - OK, with the account information
+          .expect(HttpStatus.OK, userInformation, done)
+      })
   })
 
   it('Returns a 400 - Bad Request with an error payload for a request with a malformed PayID', function (done): void {
