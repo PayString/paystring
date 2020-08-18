@@ -1,4 +1,4 @@
-# PayID Server Release Process 
+# PayID Server Release Process
 
 ## Cutting a Release
 
@@ -41,17 +41,16 @@ The full process for cutting a release is as follows:
 
 3. To deploy the PayID server to `stage`/`prod`, click the `Run Pipeline` button in GitLab ( from the link above ).
 
-4. From here, a release `tag` must be specified for `stage`/`prod` deploys. Do so by setting the `DEPLOY_REF` variable 
+4. From here, a release `tag` must be specified for `stage`/`prod` deploys. Do so by setting the `DEPLOY_REF` variable
    as the relevant tag ( e.g. `v1.3` ). The click the `Run Pipeline` button.
 
-5. This should automatically kick off a pipeline that deploys `dev`. From within the pipeline, click the `publish stage
-   image` button, and after that is complete click the `deploy to stage` button.
+5. This should automatically kick off a pipeline that deploys `dev`. From within the pipeline, click the `publish stage image` button, and after that is complete click the `deploy to stage` button.
 
 6. If all goes well, repeat the same for the `prod` buttons in the pipeline.
 
 ## Communicating a Release
 
-1. Advertise to internal stakeholders. Refer to this [document](https://docs.google.com/document/d/1QjGc3VBqDARXVbTn0RcQZ164Vu5xNxaWKtmv6ouF8Mo/edit#) for details. 
+1. Advertise to internal stakeholders. Refer to this [document](https://docs.google.com/document/d/1QjGc3VBqDARXVbTn0RcQZ164Vu5xNxaWKtmv6ouF8Mo/edit#) for details.
 
 ## NPM Scripts Reference
 
