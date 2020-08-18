@@ -38,7 +38,7 @@ export interface PaymentInformation {
 /**
  * Address information included inside of a PaymentInformation object.
  */
-interface Address {
+export interface Address {
   readonly paymentNetwork: string
   readonly environment?: string
   readonly addressDetailsType: AddressDetailsType
@@ -49,13 +49,8 @@ interface Address {
  * Object containing address information alongside signatures.
  */
 interface VerifiedAddress {
-  readonly payload: VerifiedAddressPayload
+  readonly payload: string
   readonly signatures: readonly VerifiedAddressSignature[]
-}
-
-interface VerifiedAddressPayload {
-  payId: string
-  payIdAddress: Address
 }
 
 /**

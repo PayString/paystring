@@ -43,7 +43,7 @@ export function formatPaymentInfo(
             signature: address.identityKeySignature ?? '',
           },
         ],
-        payload: {
+        payload: JSON.stringify({
           payId,
           // Call the address a "payIdAddress" so we don't step on the JWT "address"
           // field if we ever change our minds
@@ -53,7 +53,7 @@ export function formatPaymentInfo(
             addressDetailsType: getAddressDetailsType(address, version),
             addressDetails: address.details,
           },
-        },
+        }),
       }
     }),
     payId,

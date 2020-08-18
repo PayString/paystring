@@ -43,7 +43,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'XRPL',
         environment: 'TESTNET',
-        count: 5,
+        count: 6,
       },
     ]
     assert.deepEqual(results, expected)
