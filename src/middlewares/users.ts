@@ -1,3 +1,5 @@
+/* eslint-disable max-lines -- TODO: Remove this disable when we have better parsing/validation */
+
 import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
@@ -131,6 +133,9 @@ export async function postUser(
   next()
 }
 
+/* eslint-disable max-lines-per-function, max-statements, complexity --
+ * TODO: Remove all these disables when we refactor parsing/validation for the private API.
+ */
 /**
  * Either create a new PayID, or update an existing PayID.
  *
@@ -234,6 +239,7 @@ export async function putUser(
 
   next()
 }
+/* eslint-enable max-lines-per-function, max-statements, complexity */
 
 /**
  * Removes a PayID from the PayID server.
