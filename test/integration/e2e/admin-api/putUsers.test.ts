@@ -43,6 +43,37 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .expect(HttpStatus.OK, updatedInformation, done)
   })
 
+  it('Returns a 200 and updated user payload when updating a verified address', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const updatedInformation = {
+      payId: 'donaldduck$127.0.0.1',
+      addresses: [],
+      verifiedAddresses: [
+        {
+          paymentNetwork: 'XRPL',
+          environment: 'MAINNET',
+          details: {
+            address: 'rfvRiqhpZW1NURByu3iDsLVMT3zkzzMhJD',
+          },
+          identityKeySignature:
+            'bG9vayBhdCBtZSBJJ20gZW5jb2RpbiBnbW9yZSByYW5kb20gdHJhc2g=',
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${updatedInformation.payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      // TODO: remove this done once you uncomment line 74
+      .expect('Accept-Patch', acceptPatch, done)
+    // THEN we expect back a 200-OK, with the updated user information
+    // .expect(HttpStatus.OK, updatedInformation, done)
+  })
+
   it('Returns a 200 and updated user payload when updating a PayID', function (done): void {
     // GIVEN a PayID known to resolve to an account on the PayID service
     const payId = 'alice$xpring.money'
