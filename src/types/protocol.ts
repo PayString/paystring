@@ -25,11 +25,11 @@ export interface FiatAddressDetails {
 }
 
 /**
- * Payment information included in a PaymentSetupDetails or by itself (in the
- * case of a GET request to the base path /).
+ * The payment information response payload of a PayID Protocol (Public API) request.
  */
 export interface PaymentInformation {
   readonly payId?: string
+  readonly version?: string
   readonly addresses: Address[]
   readonly verifiedAddresses: VerifiedAddress[]
   readonly memo?: string

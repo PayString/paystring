@@ -26,6 +26,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     const expectedResponse: PaymentInformation = {
       addresses: [],
       payId: 'johnwick$127.0.0.1',
+      version: '1.1',
       verifiedAddresses: [
         {
           payload: JSON.stringify({
@@ -72,6 +73,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     const expectedResponse: PaymentInformation = {
       addresses: [],
       payId: 'johnwick$127.0.0.1',
+      version: '1.1',
       verifiedAddresses: [
         {
           payload: JSON.stringify({
@@ -118,6 +120,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     const expectedResponse: PaymentInformation = {
       addresses: [],
       payId: 'johnwick$127.0.0.1',
+      version: '1.1',
       verifiedAddresses: [
         {
           payload: JSON.stringify({
@@ -164,6 +167,7 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     const expectedResponse: PaymentInformation = {
       addresses: [],
       payId: 'johnwick$127.0.0.1',
+      version: '1.1',
       verifiedAddresses: [
         {
           payload: JSON.stringify({
@@ -208,6 +212,8 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
     const payId = '/johnwick'
     const acceptHeader = 'application/payid+json'
     const expectedResponse: PaymentInformation = {
+      payId: 'johnwick$127.0.0.1',
+      version: '1.1',
       addresses: [
         {
           paymentNetwork: 'BTC',
@@ -218,7 +224,6 @@ describe('E2E - publicAPIRouter - Verifiable PayID', function (): void {
           },
         },
       ],
-      payId: 'johnwick$127.0.0.1',
       verifiedAddresses: [
         {
           payload: JSON.stringify({

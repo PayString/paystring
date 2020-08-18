@@ -10,7 +10,7 @@ import {
 describe('Verifiable PayID - formatPaymentInfo()', function (): void {
   it('Returns properly formatted array for Verifiable PayID', function () {
     // GIVEN an array of AddressInformation with an ACH entry
-    const version1dot1 = '1.1'
+    const version = '1.1'
     const payId = 'alice$example.com'
     const verifiedAddressInfo: AddressInformation[] = [
       {
@@ -76,6 +76,7 @@ describe('Verifiable PayID - formatPaymentInfo()', function (): void {
         },
       ],
       payId: 'alice$example.com',
+      version: '1.1',
     }
 
     // WHEN we format it
@@ -83,7 +84,7 @@ describe('Verifiable PayID - formatPaymentInfo()', function (): void {
       [],
       verifiedAddressInfo,
       'anIdentityKey',
-      version1dot1,
+      version,
       payId,
     )
 

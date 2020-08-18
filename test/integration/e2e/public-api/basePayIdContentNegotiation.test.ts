@@ -18,15 +18,19 @@ let app: App
 
 const USER = '/alice'
 const PAYID = `${USER.slice(1)}$127.0.0.1`
+const VERSION = '1.1'
+
 const XRPL_EXPECTED_TESTNET_RESPONSE = {
   addresses: [XRPL_TESTNET_ADDRESS],
   verifiedAddresses: [],
   payId: PAYID,
+  version: VERSION,
 }
 const XRPL_EXPECTED_MAINNET_RESPONSE = {
   addresses: [XRPL_MAINNET_ADDRESS],
   verifiedAddresses: [],
   payId: PAYID,
+  version: VERSION,
 }
 
 describe('E2E - publicAPIRouter - Content Negotiation', function (): void {
