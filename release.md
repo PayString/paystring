@@ -33,7 +33,7 @@ The full process for cutting a release is as follows:
 
 8. Fill in the release details and publish it in GitHub.
 
-## Deploying the PayID Server
+## Deploying the Xpring PayID Server (Xpring Employees)
 
 1. Every time a branch is merged into `master`, it is automatically deployed to `dev`.
 
