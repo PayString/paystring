@@ -50,7 +50,7 @@ The full process for cutting a release is as follows:
 
 ## Communicating a Release
 
-1. Advertise to internal stakeholders. Refer to this [document](https://docs.google.com/document/d/1QjGc3VBqDARXVbTn0RcQZ164Vu5xNxaWKtmv6ouF8Mo/edit#) for details.
+1. Advertise to internal stakeholders & post to the Discord & releases email list. Refer to this [document](https://docs.google.com/document/d/1QjGc3VBqDARXVbTn0RcQZ164Vu5xNxaWKtmv6ouF8Mo/edit#) for more specific details.
 
 ## NPM Scripts Reference
 
