@@ -18,6 +18,7 @@ let app: App
 
 const USER = '/johnwick'
 const PAYID = `${USER.slice(1)}$127.0.0.1`
+const VERSION = '1.1'
 const XRPL_EXPECTED_TESTNET_RESPONSE = {
   addresses: [],
   verifiedAddresses: [
@@ -30,6 +31,7 @@ const XRPL_EXPECTED_TESTNET_RESPONSE = {
     },
   ],
   payId: PAYID,
+  version: VERSION,
 }
 
 describe('E2E - publicAPIRouter - Verifiable PayId Content Negotiation', function (): void {
@@ -46,7 +48,7 @@ describe('E2E - publicAPIRouter - Verifiable PayId Content Negotiation', functio
     // both testnet and mainnet, with no q for either
     request(app.publicApiExpress)
       .get(USER)
-      .set('PayID-Version', '1.1')
+      .set('PayID-Version', VERSION)
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as our Content-Type
       .expect((res) => {
@@ -67,7 +69,7 @@ describe('E2E - publicAPIRouter - Verifiable PayId Content Negotiation', functio
     // and mainnet, with testnet having a higher q-value
     request(app.publicApiExpress)
       .get(USER)
-      .set('PayID-Version', '1.1')
+      .set('PayID-Version', VERSION)
       .set('Accept', acceptHeader)
       // THEN we get back an xrpl testnet header as the Content-Type
       .expect((res) => {
@@ -88,7 +90,7 @@ describe('E2E - publicAPIRouter - Verifiable PayId Content Negotiation', functio
     // xrpl-testnet and xrpl-mainnet, with a higher q for xrpl-testnet
     request(app.publicApiExpress)
       .get(USER)
-      .set('PayID-Version', '1.1')
+      .set('PayID-Version', VERSION)
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-testnet accept header as the Content-Type
       .expect((res) => {
@@ -110,7 +112,7 @@ describe('E2E - publicAPIRouter - Verifiable PayId Content Negotiation', functio
     // a non-existent network+environment most preferred, followed by xrpl-mainnet and xrpl-testnet
     request(app.publicApiExpress)
       .get(USER)
-      .set('PayID-Version', '1.1')
+      .set('PayID-Version', VERSION)
       .set('Accept', acceptHeader)
       // THEN we get back a xrpl-testnet accept header as the Content-Type
       .expect((res) => {

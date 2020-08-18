@@ -33,12 +33,13 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
       ],
       verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
+      version: '1.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-mainnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -65,12 +66,13 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
       ],
       verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
+      version: '1.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -97,12 +99,13 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
       ],
       verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
+      version: '1.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying btc-testnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back our Accept header as the Content-Type
       .expect((res) => {
@@ -129,6 +132,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
       ],
       verifiedAddresses: [],
       payId: 'alice$127.0.0.1',
+      version: '1.1',
     }
 
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying ACH
@@ -157,7 +161,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-testnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
@@ -177,7 +181,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we make a GET request to the public endpoint to retrieve payment info with an Accept header specifying xrpl-devnet
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       .expect('Content-Type', /application\/json/u)
       // THEN we get back a 404 with the expected error response.
@@ -197,7 +201,7 @@ describe('E2E - publicAPIRouter - Base PayID', function (): void {
     // WHEN we request all addresses for that PayID
     request(app.publicApiExpress)
       .get(payId)
-      .set('PayID-Version', '1.0')
+      .set('PayID-Version', '1.1')
       .set('Accept', acceptHeader)
       // THEN we get back a 404 with the expected error response.
       .expect(HttpStatus.NotFound, expectedErrorResponse, done)
