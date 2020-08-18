@@ -149,7 +149,6 @@ export async function putUser(
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
   const rawPayId = req.params.payId
   const rawNewPayId = req.body?.payId
-  const addresses = req.body?.addresses
   const identityKey = req.body?.identityKey
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
@@ -192,12 +191,20 @@ export async function putUser(
   const newPayId = rawNewPayId.toLowerCase()
 
   // TODO:(dino) validate body params before this
+  let allAddresses: AddressInformation[] = []
+  if (req.body.addresses !== undefined) {
+    allAddresses = allAddresses.concat(req.body.addresses)
+  }
+  if (req.body.verifiedAddresses !== undefined) {
+    allAddresses = allAddresses.concat(req.body.verifiedAddresses)
+  }
+
   let updatedAddresses
   let statusCode = HttpStatus.OK
 
-  updatedAddresses = await replaceUser(payId, newPayId, addresses)
+  updatedAddresses = await replaceUser(payId, newPayId, allAddresses)
   if (updatedAddresses === null) {
-    updatedAddresses = await insertUser(newPayId, addresses, identityKey)
+    updatedAddresses = await insertUser(newPayId, allAddresses, identityKey)
     statusCode = HttpStatus.Created
   }
 
@@ -206,10 +213,23 @@ export async function putUser(
     res.locals.payId = newPayId
   }
 
+  const addresses = updatedAddresses
+    .filter((address) => !address.identityKeySignature)
+    .map((address) => ({
+      paymentNetwork: address.paymentNetwork,
+      environment: address.environment,
+      details: address.details,
+    }))
+
+  const verifiedAddresses = updatedAddresses.filter((address) =>
+    Boolean(address.identityKeySignature),
+  )
+
   res.locals.status = statusCode
   res.locals.response = {
     payId: newPayId,
-    addresses: updatedAddresses,
+    addresses,
+    verifiedAddresses,
   }
 
   next()
