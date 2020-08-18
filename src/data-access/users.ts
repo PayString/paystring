@@ -209,5 +209,10 @@ async function insertAddresses(
     .insert(addresses)
     .into<Address>('address')
     .transacting(transaction)
-    .returning(['paymentNetwork', 'environment', 'details'])
+    .returning([
+      'paymentNetwork',
+      'environment',
+      'details',
+      'identityKeySignature',
+    ])
 }
