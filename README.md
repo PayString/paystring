@@ -12,7 +12,7 @@ By default, the server hosts the Public PayID API, on port 8080. It also hosts a
 
 To experiment with PayID, you can spin up a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file. If you want to work on the PayID server source code itself, you can spin up a Postgres database to develop against by running `npm run devDbUp`.
 
-To clean up the associated Docker containers after you create a local server, run `npm run devDown`.
+To clean up the associated Docker containers after you create a local server or database container, run `npm run devDown`.
 
 ## Further Reading
 
