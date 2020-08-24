@@ -12,6 +12,9 @@ export enum ParseErrorType {
   MissingPayId = 'MissingPayId',
   InvalidPayId = 'InvalidPayId',
 
+  // Verifiable PayID stuff
+  MultipleIdentityKeys = 'MultipleIdentityKeys',
+
   // These are the Public API version header errors for the PayID Protocol.
   MissingPayIdVersionHeader = 'MissingPayIdVersionHeader',
   InvalidPayIdVersionHeader = 'InvalidPayIdVersionHeader',

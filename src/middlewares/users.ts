@@ -16,6 +16,7 @@ import {
   checkUserExistence,
 } from '../data-access/users'
 import { AddressInformation } from '../types/database'
+import { VerifiedAddress, VerifiedAddressSignature } from '../types/protocol'
 import {
   LookupError,
   LookupErrorType,
@@ -117,15 +118,45 @@ export async function postUser(
   // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
   // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
   let allAddresses: AddressInformation[] = []
+  let identityKey: string | undefined
 
   if (req.body.addresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.addresses)
   }
-  if (req.body.verifiedAddresses !== undefined) {
+  // Checking for existence of identity key to see if we are using old Admin API format
+  if (
+    req.body.verifiedAddresses !== undefined &&
+    req.body.identityKey !== undefined
+  ) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
+    identityKey = req.body.identityKey
+  } else {
+    req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
+      address.signatures.forEach((signature: VerifiedAddressSignature) => {
+        const decodedKey = JSON.parse(
+          Buffer.from(signature.protected, 'base64').toString(),
+        )
+        // Get the first identity key
+        if (!identityKey && decodedKey.name === 'identityKey') {
+          identityKey = signature.protected
+        }
+        // Verify that there is only one identity key being used
+        if (
+          identityKey !== signature.protected &&
+          decodedKey.name === 'identityKey'
+        ) {
+          throw new ParseError(
+            'More than one identity key detected. Only one identity key per PayID can be used.',
+            ParseErrorType.MultipleIdentityKeys,
+          )
+        }
+        // Transform to format consumable by insert user
+        // TODO(dino): Implement this
+      })
+    })
   }
 
-  await insertUser(payId, allAddresses, req.body.identityKey)
+  await insertUser(payId, allAddresses, identityKey)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware
   res.locals.status = HttpStatus.Created
