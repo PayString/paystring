@@ -18,7 +18,7 @@ publicApiRouter
   // Allow the PayID Protocol to basically ignore CORS
   .use((_req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*')
-    res.header('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
+    res.header('Access-Control-Allow-Methods', 'GET, OPTIONS')
     res.header('Access-Control-Allow-Headers', 'PayID-Version')
     res.header(
       'Access-Control-Expose-Headers',
