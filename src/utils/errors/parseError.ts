@@ -21,6 +21,9 @@ export enum ParseErrorType {
   MissingPayIdApiVersionHeader = 'MissingPayIdApiVersionHeader',
   InvalidPayIdApiVersionHeader = 'InvalidPayIdApiVersionHeader',
   UnsupportedPayIdApiVersionHeader = 'UnsupportedPayIdApiVersionHeader',
+
+  // Verifiable PayID Stuff
+  IncompatibleRequestMethod = 'IncompatibleRequestMethod',
 }
 
 /**
