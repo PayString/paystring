@@ -4,9 +4,11 @@ import 'mocha'
 
 import App from '../../../../src/app'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
+import { AddressDetailsType } from '../../../../src/types/protocol'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
+const payIdNextApiVersion = '2020-08-24'
 
 const acceptPatch = 'application/merge-patch+json'
 
@@ -59,6 +61,56 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
     request(app.adminApiExpress)
       .get(`/users/${payId}`)
       .set('PayID-API-Version', payIdApiVersion)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN We expect back a 200 - OK, with the account information
+      .expect(HttpStatus.OK, expectedResponse, done)
+  })
+
+  it('Returns a 200 and correct information for a request using the next version', function (done): void {
+    // GIVEN a PayID known to resolve to an account on the PayID service
+    const expectedResponse = {
+      payId: 'nextversion$127.0.0.1',
+      version: '1.1',
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          addressDetailsType: AddressDetailsType.CryptoAddress,
+          addressDetails: {
+            address: 'mnBgkgCvqC3JeB5akfjAFik8qSG74r39dHJ',
+          },
+        }
+      ],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId: 'nextversion$127.0.0.1',
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rM19Xw44JvpC6fL2ioAZRuH6mpuwxcPqsu',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
+              signature: 'YnV0IHdoYXQgaWYgaXQgd3MgdGhlIHBpZ2VvbnMgYWxsIGFsb25nIGluIHRoZSBjdWJwYXJzZHM=',
+            },
+          ],
+        },
+      ],
+    }
+
+    // WHEN we make a GET request to /users/ with that PayID as our user
+    request(app.adminApiExpress)
+      .get(`/users/${expectedResponse.payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
       .expect('Content-Type', /json/u)
       // THEN we expect to have an Accept-Patch header in the response
       .expect('Accept-Patch', acceptPatch)
