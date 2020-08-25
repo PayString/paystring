@@ -1,7 +1,7 @@
 import { version as packageVersion } from '../package.json'
 
 export const payIdServerVersions: readonly string[] = ['1.0', '1.1']
-export const adminApiVersions: readonly string[] = ['2020-05-28']
+export const adminApiVersions: readonly string[] = ['2020-05-28', '2020-08-25']
 
 /**
  * Application configuration.

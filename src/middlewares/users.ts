@@ -3,6 +3,7 @@
 import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
+import { adminApiVersions } from '../config'
 import {
   getAllAddressInfoFromDatabase,
   getAllVerifiedAddressInfoFromDatabase,
@@ -124,13 +125,14 @@ export async function postUser(
     allAddresses = allAddresses.concat(req.body.addresses)
   }
   // Checking for existence of identity key to see if we are using old Admin API format
+  // TODO(dino): Use version instead of object inspection
   if (
     req.body.verifiedAddresses !== undefined &&
-    req.body.identityKey !== undefined
+    res.get('PayID-API-Version') < adminApiVersions[1]
   ) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
     identityKey = req.body.identityKey
-  } else {
+  } else if (res.get('PayID-API-Version') >= adminApiVersions[1]) {
     req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
       address.signatures.forEach((signature: VerifiedAddressSignature) => {
         const decodedKey = JSON.parse(
