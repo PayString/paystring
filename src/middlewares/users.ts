@@ -115,18 +115,18 @@ export async function postUser(
 
   const payId = rawPayId.toLowerCase()
 
+  // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
+  const requestVersion = String(req.get('PayID-API-Version'))
+  let allAddresses: AddressInformation[] = []
+  let identityKey: string | undefined
+
   // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
   // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
   // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
-  let allAddresses: AddressInformation[] = []
-  let identityKey: string | undefined
-  // This is defined because we checked it in checkRequestAdminApiVersionHeaders middleware
-  const requestVersion = String(req.get('PayID-API-Version'))
-
   if (req.body.addresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.addresses)
   }
-  // Checking for existence of identity key to see if we are using old Admin API format
+  // Check version header to determine which Admin API format we are using
   if (
     req.body.verifiedAddresses !== undefined &&
     requestVersion < adminApiVersions[1]
@@ -154,11 +154,12 @@ export async function postUser(
           )
         }
         // Transform to format consumable by insert user
-        // TODO(dino): Implement this
+        // TODO(dino): Implement format translation
       })
     })
   }
 
+  // TODO(dino): Verify that the identity key matches the one in the database. Is there a knex way to do this?
   await insertUser(payId, allAddresses, identityKey)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware
