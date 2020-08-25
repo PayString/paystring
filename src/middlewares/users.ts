@@ -120,19 +120,20 @@ export async function postUser(
   // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
   let allAddresses: AddressInformation[] = []
   let identityKey: string | undefined
+  // This is defined because we checked it in checkRequestAdminApiVersionHeaders middleware
+  const requestVersion = String(req.get('PayID-API-Version'))
 
   if (req.body.addresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.addresses)
   }
   // Checking for existence of identity key to see if we are using old Admin API format
-  // TODO(dino): Use version instead of object inspection
   if (
     req.body.verifiedAddresses !== undefined &&
-    res.get('PayID-API-Version') < adminApiVersions[1]
+    requestVersion < adminApiVersions[1]
   ) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
     identityKey = req.body.identityKey
-  } else if (res.get('PayID-API-Version') >= adminApiVersions[1]) {
+  } else if (requestVersion >= adminApiVersions[1]) {
     req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
       address.signatures.forEach((signature: VerifiedAddressSignature) => {
         const decodedKey = JSON.parse(
