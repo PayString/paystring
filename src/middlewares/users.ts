@@ -97,6 +97,7 @@ export async function getUser(
  *
  * @throws ParseError if the PayID is missing from the request body.
  */
+// eslint-disable-next-line max-lines-per-function -- Disabling until I finish building the functionality here.
 export async function postUser(
   req: Request,
   res: Response,
@@ -117,6 +118,8 @@ export async function postUser(
 
   // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
   const requestVersion = String(req.get('PayID-API-Version'))
+  const identityKeyLabel = 'identityKey'
+
   let allAddresses: AddressInformation[] = []
   let identityKey: string | undefined
 
@@ -126,35 +129,54 @@ export async function postUser(
   if (req.body.addresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.addresses)
   }
-  // Check version header to determine which Admin API format we are using
+  // If using "old" API format
   if (
     req.body.verifiedAddresses !== undefined &&
     requestVersion < adminApiVersions[1]
   ) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
     identityKey = req.body.identityKey
-  } else if (requestVersion >= adminApiVersions[1]) {
+  }
+  // If using "new" ( same as Public API ) API format
+  else if (requestVersion >= adminApiVersions[1]) {
     req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
       address.signatures.forEach((signature: VerifiedAddressSignature) => {
+        let identityKeyCount = 0
         const decodedKey = JSON.parse(
           Buffer.from(signature.protected, 'base64').toString(),
         )
+
         // Get the first identity key
-        if (!identityKey && decodedKey.name === 'identityKey') {
+        if (!identityKey && decodedKey.name === identityKeyLabel) {
           identityKey = signature.protected
-        }
-        // Verify that there is only one identity key being used
-        if (
-          identityKey !== signature.protected &&
-          decodedKey.name === 'identityKey'
-        ) {
-          throw new ParseError(
-            'More than one identity key detected. Only one identity key per PayID can be used.',
-            ParseErrorType.MultipleIdentityKeys,
-          )
+          identityKeyCount += 1
+        } else {
+          // Increment the count of identity keys per address
+          if (decodedKey.name === identityKeyLabel) {
+            identityKeyCount += 1
+          }
+
+          // Identity key must match across all addresses
+          if (
+            identityKey !== signature.protected &&
+            decodedKey.name === identityKeyLabel
+          ) {
+            throw new ParseError(
+              'More than one identity key detected. Only one identity key per PayID can be used.',
+              ParseErrorType.MultipleIdentityKeys,
+            )
+          }
+
+          // Each address must have only one identity key / signature pair
+          if (identityKeyCount > 1) {
+            throw new ParseError(
+              'More than one identity key detected. Only one identity key per address can be used.',
+              ParseErrorType.MultipleIdentityKeys,
+            )
+          }
         }
         // Transform to format consumable by insert user
-        // TODO(dino): Implement format translation
+        // TODO(dino): Implement this
       })
     })
   }
