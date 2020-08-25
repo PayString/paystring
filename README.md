@@ -6,7 +6,7 @@
 
 Welcome to PayID, the universal payment identifier.
 
-This is a reference implementation server for [PayID](https://docs.payid.org/payid-overview), serving the [PayID API](https://api.payid.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a Postgres database. This reference implementation follows the [PayID Protocol](https://github.com/payid-org/rfcs), and other implementations are also possible. 
+This is a reference implementation server for [PayID](https://docs.payid.org/payid-overview), serving the [PayID API](https://api.payid.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a Postgres database. This reference implementation follows the [PayID Protocol](https://github.com/payid-org/rfcs), and we welcome other implementations that follow this protocol. 
 
 By default, the server hosts the Public PayID API, on port 8080. It also hosts a second RESTful API on port 8081 for CRUD (Create/Read/Update/Delete) operations to manage PayIDs and associated addresses.
 
