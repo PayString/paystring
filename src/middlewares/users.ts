@@ -384,6 +384,17 @@ export async function patchUserPayId(
   const newPayId = rawNewPotentialPayId.toLowerCase()
   const oldPayId = rawOldPayId.toLowerCase()
 
+  const verifiedAddresses = await getAllVerifiedAddressInfoFromDatabase(
+    oldPayId,
+  )
+
+  if (verifiedAddresses.length > 0) {
+    throw new ParseError(
+      'Cannot PATCH a PayID with verified addresses, as that would break the address signatures. Please use the PUT endpoint to update this PayID.',
+      ParseErrorType.IncompatibleRequestMethod,
+    )
+  }
+
   const account = await replaceUserPayId(oldPayId, newPayId)
 
   // If we try to update a PayID which doesn't exist, the 'account' object will be null.
