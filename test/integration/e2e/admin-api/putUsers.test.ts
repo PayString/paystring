@@ -4,7 +4,7 @@ import 'mocha'
 
 import App from '../../../../src/app'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
-import {AddressDetailsType} from 'src/types/protocol'
+import { AddressDetailsType } from '../../../../src/types/protocol'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
