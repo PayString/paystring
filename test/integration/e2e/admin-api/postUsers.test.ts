@@ -174,7 +174,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       })
   })
 
-  it('Returns a 201 when creating a new user with the CLI format', function (done): void {
+  it('Returns a 201 when creating a new user with the canonical format', function (done): void {
     // GIVEN a user with a PayID known to not exist on the PayID service
     const payId = 'johnnywalker$emptybottles.com'
     const userInformation = {
