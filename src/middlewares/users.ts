@@ -140,8 +140,9 @@ export async function postUser(
   // If using "new" ( same as Public API ) API format
   else if (requestVersion >= adminApiVersions[1]) {
     req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
+      let identityKeyCount = 0
+
       address.signatures.forEach((signature: VerifiedAddressSignature) => {
-        let identityKeyCount = 0
         const decodedKey = JSON.parse(
           Buffer.from(signature.protected, 'base64').toString(),
         )
