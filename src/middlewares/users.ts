@@ -139,52 +139,54 @@ export async function postUser(
   }
   // If using "new" ( same as Public API ) API format
   else if (requestVersion >= adminApiVersions[1]) {
-    req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
+    req.body.verifiedAddresses.forEach((verifiedAddress: VerifiedAddress) => {
       let identityKeySignature: string | undefined
       let identityKeyCount = 0
 
-      address.signatures.forEach((signature: VerifiedAddressSignature) => {
-        const decodedKey = JSON.parse(
-          Buffer.from(signature.protected, 'base64').toString(),
-        )
+      verifiedAddress.signatures.forEach(
+        (signaturePayload: VerifiedAddressSignature) => {
+          const decodedKey = JSON.parse(
+            Buffer.from(signaturePayload.protected, 'base64').toString(),
+          )
 
-        // Get the first identity key & signature
-        if (!identityKey && decodedKey.name === identityKeyLabel) {
-          identityKey = signature.protected
-          identityKeyCount += 1
-          identityKeySignature = signature.signature
-        } else {
-          // Increment the count of identity keys per address
-          // And grab the signature for each address
-          if (decodedKey.name === identityKeyLabel) {
+          // Get the first identity key & signature
+          if (!identityKey && decodedKey.name === identityKeyLabel) {
+            identityKey = signaturePayload.protected
             identityKeyCount += 1
-            identityKeySignature = signature.signature
-          }
+            identityKeySignature = signaturePayload.signature
+          } else {
+            // Increment the count of identity keys per address
+            // And grab the signature for each address
+            if (decodedKey.name === identityKeyLabel) {
+              identityKeyCount += 1
+              identityKeySignature = signaturePayload.signature
+            }
 
-          // Identity key must match across all addresses
-          if (
-            identityKey !== signature.protected &&
-            decodedKey.name === identityKeyLabel
-          ) {
-            throw new ParseError(
-              'More than one identity key detected. Only one identity key per PayID can be used.',
-              ParseErrorType.MultipleIdentityKeys,
-            )
-          }
+            // Identity key must match across all addresses
+            if (
+              identityKey !== signaturePayload.protected &&
+              decodedKey.name === identityKeyLabel
+            ) {
+              throw new ParseError(
+                'More than one identity key detected. Only one identity key per PayID can be used.',
+                ParseErrorType.MultipleIdentityKeys,
+              )
+            }
 
-          // Each address must have only one identity key / signature pair
-          if (identityKeyCount > 1) {
-            throw new ParseError(
-              'More than one identity key detected. Only one identity key per address can be used.',
-              ParseErrorType.MultipleIdentityKeys,
-            )
+            // Each address must have only one identity key / signature pair
+            if (identityKeyCount > 1) {
+              throw new ParseError(
+                'More than one identity key detected. Only one identity key per address can be used.',
+                ParseErrorType.MultipleIdentityKeys,
+              )
+            }
           }
-        }
-      })
+        },
+      )
       // Transform to format consumable by insert user
       // And add to all addresses
-      const jwsPayload = JSON.parse(address.payload)
-      const addressPayload = {
+      const jwsPayload = JSON.parse(verifiedAddress.payload)
+      const databaseAddressPayload = {
         paymentNetwork: jwsPayload.payIdAddress.paymentNetwork,
         environment: jwsPayload.payIdAddress.environment,
         details: {
@@ -192,7 +194,7 @@ export async function postUser(
         },
         identityKeySignature,
       }
-      allAddresses.push(addressPayload)
+      allAddresses.push(databaseAddressPayload)
     })
   }
 
