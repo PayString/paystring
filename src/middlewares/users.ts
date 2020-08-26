@@ -141,9 +141,9 @@ export async function postUser(
   else if (requestVersion >= adminApiVersions[1]) {
     req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
       let identityKeySignature: string | undefined
+      let identityKeyCount = 0
 
       address.signatures.forEach((signature: VerifiedAddressSignature) => {
-        let identityKeyCount = 0
         const decodedKey = JSON.parse(
           Buffer.from(signature.protected, 'base64').toString(),
         )
@@ -397,6 +397,17 @@ export async function patchUserPayId(
   }
   const newPayId = rawNewPotentialPayId.toLowerCase()
   const oldPayId = rawOldPayId.toLowerCase()
+
+  const verifiedAddresses = await getAllVerifiedAddressInfoFromDatabase(
+    oldPayId,
+  )
+
+  if (verifiedAddresses.length > 0) {
+    throw new ParseError(
+      'Cannot PATCH a PayID with verified addresses, as that would break the address signatures. Please use the PUT endpoint to update this PayID.',
+      ParseErrorType.IncompatibleRequestMethod,
+    )
+  }
 
   const account = await replaceUserPayId(oldPayId, newPayId)
 

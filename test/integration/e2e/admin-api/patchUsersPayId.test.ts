@@ -81,6 +81,35 @@ describe('E2E - adminApiRouter - PATCH /users/:payId', function (): void {
       .expect(HttpStatus.Created, done)
   })
 
+  it('Returns a 400 - Bad Request with an error payload for a request changing the PayID on an account with verified addresses', function (done): void {
+    // GIVEN a PayID known to have verified addresses
+    const payId = 'johnwick$127.0.0.1'
+
+    // AND a request to update that PayID to one known to be new
+    const newPayId = {
+      payId: 'bambi$xpring.money',
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      error: 'Bad Request',
+      message:
+        'Cannot PATCH a PayID with verified addresses, as that would break the address signatures. Please use the PUT endpoint to update this PayID.',
+      statusCode: 400,
+    }
+
+    // WHEN we make a PATCH request to /users/:payId with the new PayID to update
+    request(app.adminApiExpress)
+      .patch(`/users/${payId}`)
+      .set('PayID-API-Version', payIdApiVersion)
+      .set('Content-Type', contentType)
+      .send(newPayId)
+      .expect('Content-Type', /json/u)
+      .expect('Accept-Patch', contentType)
+      // THEN we expect back a 400 - Bad Request, with the expected error payload response
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
   it('Returns a 400 - Bad Request with an error payload for a request with a malformed PayID', function (done): void {
     // GIVEN a PayID known to be in a bad format (missing $)
     const payId = 'johnnyxpring.money'
