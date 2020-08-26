@@ -235,6 +235,129 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
       })
   })
 
+  it('Throws BadRequest error on multiple identity keys per PayID', function (done): void {
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const payId = 'mikey$pence.com'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                  address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            }
+          ]
+        },
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                  address: 'rsem3MPogcwLCD6iX34GQ4fAp4EC8kqMYM',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            }
+          ]
+        }
+      ],
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'More than one identity key detected. Only one identity key per PayID can be used.',
+    }
+
+    // WHEN we make a POST request 
+    request(app.adminApiExpress)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
+  it('Throws BadRequest error on multiple identity keys per address', function (done): void {
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const payId = 'tony$hawk.com'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                  address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+            {
+              name: 'identityKey',
+              protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
+              signature: 'd2Fsa2luZyB0aG91Z2ggdGhlIHNyZWV3dCB3aWggbXkgdDQ0',
+            }
+          ],
+        },
+      ],
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'More than one identity key detected. Only one identity key per address can be used.'
+    }
+
+    // WHEN we make a POST request 
+    request(app.adminApiExpress)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect to have an Accept-Patch header in the response
+      .expect('Accept-Patch', acceptPatch)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
   it('Returns a 201 when creating a new user with an uppercase PayID', function (done): void {
     const payId = 'johnsmith$xpring.money'
 
