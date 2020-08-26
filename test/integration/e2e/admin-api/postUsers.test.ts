@@ -5,9 +5,11 @@ import 'mocha'
 
 import App from '../../../../src/app'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
+import { AddressDetailsType } from '../../../../src/types/protocol'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
+const payIdNextApiVersion = '2020-08-24'
 const acceptPatch = 'application/merge-patch+json'
 
 describe('E2E - adminApiRouter - POST /users', function (): void {
@@ -169,6 +171,67 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
         expect(res.header).to.not.have.key('Accept-Patch')
 
         return done()
+      })
+  })
+
+  it('Returns a 201 when creating a new user with the CLI format', function (done): void {
+    // GIVEN a user with a PayID known to not exist on the PayID service
+    const payId = 'johnnywalker$emptybottles.com'
+    const userInformation = {
+      payId,
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          addressDetailsType: AddressDetailsType.CryptoAddress,
+          addressDetails: {
+            address: 'mxxUKnhPLJnCCVUcW9kDcHe6neA66mhA7a',
+          },
+        },
+      ],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                  address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            }
+          ]
+        }
+      ],
+    }
+
+    // WHEN we make a POST request to /users with that user information
+    request(app.adminApiExpress)
+      .post(`/users`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /text\/plain/u)
+      // THEN we expect the Location header to be set to the path of the created user resource
+      .expect('Location', `/users/${userInformation.payId}`)
+      // THEN we expect back a 201 - CREATED
+      .expect(HttpStatus.Created)
+      .end(function () {
+        request(app.adminApiExpress)
+          .get(`/users/${userInformation.payId}`)
+          .set('PayID-API-Version', payIdNextApiVersion)
+          .expect('Content-Type', /json/u)
+          // THEN we expect to have an Accept-Patch header in the response
+          .expect('Accept-Patch', acceptPatch)
+          // THEN We expect back a 200 - OK, with the account information
+          .expect(HttpStatus.OK, userInformation, done)
       })
   })
 
