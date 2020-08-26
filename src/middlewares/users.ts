@@ -140,20 +140,25 @@ export async function postUser(
   // If using "new" ( same as Public API ) API format
   else if (requestVersion >= adminApiVersions[1]) {
     req.body.verifiedAddresses.forEach((address: VerifiedAddress) => {
+      let identityKeySignature: string | undefined
+
       address.signatures.forEach((signature: VerifiedAddressSignature) => {
         let identityKeyCount = 0
         const decodedKey = JSON.parse(
           Buffer.from(signature.protected, 'base64').toString(),
         )
 
-        // Get the first identity key
+        // Get the first identity key & signature
         if (!identityKey && decodedKey.name === identityKeyLabel) {
           identityKey = signature.protected
           identityKeyCount += 1
+          identityKeySignature = signature.signature
         } else {
           // Increment the count of identity keys per address
+          // And grab the signature for each address
           if (decodedKey.name === identityKeyLabel) {
             identityKeyCount += 1
+            identityKeySignature = signature.signature
           }
 
           // Identity key must match across all addresses
@@ -175,13 +180,22 @@ export async function postUser(
             )
           }
         }
-        // Transform to format consumable by insert user
-        // TODO(dino): Implement this
       })
+      // Transform to format consumable by insert user
+      // And add to all addresses
+      const jwsPayload = JSON.parse(address.payload)
+      const addressPayload = {
+        paymentNetwork: jwsPayload.payIdAddress.paymentNetwork,
+        environment: jwsPayload.payIdAddress.environment,
+        details: {
+          address: jwsPayload.payIdAddress.addressDetails.address,
+        },
+        identityKeySignature,
+      }
+      allAddresses.push(addressPayload)
     })
   }
 
-  // TODO(dino): Verify that the identity key matches the one in the database. Is there a knex way to do this?
   await insertUser(payId, allAddresses, identityKey)
 
   // Set HTTP status and save the PayID to generate the Location header in later middleware
