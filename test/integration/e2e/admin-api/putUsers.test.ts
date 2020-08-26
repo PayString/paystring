@@ -4,9 +4,11 @@ import 'mocha'
 
 import App from '../../../../src/app'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
+import { AddressDetailsType } from '../../../../src/types/protocol'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
+const payIdNextApiVersion = '2020-08-24'
 
 const acceptPatch = 'application/merge-patch+json'
 
@@ -120,6 +122,65 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
       .expect(HttpStatus.OK, updatedInformation, done)
+  })
+
+  it('Returns a 200 when updating a user with the CLI format', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const updatedInformation = {
+      payId: 'nextversion$127.0.0.1',
+      version: '1.1',
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          addressDetailsType: AddressDetailsType.CryptoAddress,
+          addressDetails: {
+            address: 'n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF',
+          },
+        },
+      ],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId: 'nextversion$127.0.0.1',
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rBJwwXADHqbwsp6yhrqoyt2nmFx9FB83Th',
+              }
+            }
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
+              signature: 'bG9vayBhdCBtZSBJIGp1c3QgdXBkYXRlZCB0aGlzIFBVVCBsZXRzIGdv',
+            }
+          ]
+        }
+      ]
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${updatedInformation.payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect back a 200-OK, with the updated user information
+      .expect(HttpStatus.OK, updatedInformation)
+      .end(function () {
+        request(app.adminApiExpress)
+          .get(`/users/${updatedInformation.payId}`)
+          .set('PayID-API-Version', payIdNextApiVersion)
+          .expect('Content-Type', /json/u)
+          // THEN we expect to have an Accept-Patch header in the response
+          .expect('Accept-Patch', acceptPatch)
+          // THEN We expect back a 200 - OK, with the account information
+          .expect(HttpStatus.OK, updatedInformation, done)
+      })
   })
 
   it('Returns a 201 and inserted user payload for a Admin API PUT creating a new user', function (done): void {
