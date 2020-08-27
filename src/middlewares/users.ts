@@ -3,6 +3,7 @@
 import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
+import config, { adminApiVersions } from '../config'
 import {
   getAllAddressInfoFromDatabase,
   getAllVerifiedAddressInfoFromDatabase,
@@ -16,6 +17,7 @@ import {
   checkUserExistence,
 } from '../data-access/users'
 import { AddressInformation } from '../types/database'
+import { AddressDetailsType } from '../types/protocol'
 import {
   LookupError,
   LookupErrorType,
@@ -65,20 +67,65 @@ export async function getUser(
   const verifiedAddresses = await getAllVerifiedAddressInfoFromDatabase(payId)
   const identityKey = await getIdentityKeyFromDatabase(payId)
 
-  if (identityKey === null || identityKey.length === 0) {
+  // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
+  const requestVersion = String(req.get('PayID-API-Version'))
+
+  if (requestVersion < adminApiVersions[1]) {
     res.locals.response = {
       payId,
+      ...(identityKey && { identityKey }),
       addresses,
       verifiedAddresses,
     }
   } else {
+    // Return same format as Public API
+
+    // sub details => addressDetails to match public API
+    const mappedAddresses = addresses.map((address) => {
+      return {
+        paymentNetwork: address.paymentNetwork,
+        environment: address.environment,
+        addressDetailsType:
+          address.paymentNetwork === 'ACH'
+            ? AddressDetailsType.FiatAddress
+            : AddressDetailsType.CryptoAddress,
+        addressDetails: address.details,
+      }
+    })
+
+    // Take identityKey and signature and construct a JWS style object from that
+    const mappedVerifiedAddresses = verifiedAddresses.map((address) => {
+      return {
+        payload: JSON.stringify({
+          payId,
+          payIdAddress: {
+            paymentNetwork: address.paymentNetwork,
+            environment: address.environment,
+            addressDetailsType:
+              address.paymentNetwork === 'ACH'
+                ? AddressDetailsType.FiatAddress
+                : AddressDetailsType.CryptoAddress,
+            addressDetails: address.details,
+          },
+        }),
+        signatures: [
+          {
+            name: 'identityKey',
+            protected: identityKey,
+            signature: address.identityKeySignature,
+          },
+        ],
+      }
+    })
+
     res.locals.response = {
       payId,
-      identityKey,
-      addresses,
-      verifiedAddresses,
+      version: config.app.payIdVersion,
+      addresses: mappedAddresses,
+      verifiedAddresses: mappedVerifiedAddresses,
     }
   }
+
   next()
 }
 
