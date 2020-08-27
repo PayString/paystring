@@ -3,8 +3,8 @@ import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
-import { appSetup, appCleanup } from '../../../helpers/helpers'
 import { AddressDetailsType } from '../../../../src/types/protocol'
+import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
@@ -81,7 +81,7 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
           addressDetails: {
             address: 'mnBgkgCvqC3JeB5akfjAFik8qSG74r39dHJ',
           },
-        }
+        },
       ],
       verifiedAddresses: [
         {
@@ -99,8 +99,10 @@ describe('E2E - adminApiRouter - GET /users', function (): void {
           signatures: [
             {
               name: 'identityKey',
-              protected: 'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
-              signature: 'YnV0IHdoYXQgaWYgaXQgd3MgdGhlIHBpZ2VvbnMgYWxsIGFsb25nIGluIHRoZSBjdWJwYXJzZHM=',
+              protected:
+                'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
+              signature:
+                'YnV0IHdoYXQgaWYgaXQgd3MgdGhlIHBpZ2VvbnMgYWxsIGFsb25nIGluIHRoZSBjdWJwYXJzZHM=',
             },
           ],
         },
