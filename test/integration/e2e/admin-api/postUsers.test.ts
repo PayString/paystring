@@ -1,11 +1,12 @@
+/* eslint-disable max-lines -- I think it's fine to have > 500 lines for testing */
 import HttpStatus from '@xpring-eng/http-status'
 import { expect } from 'chai'
 import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
-import { appSetup, appCleanup } from '../../../helpers/helpers'
 import { AddressDetailsType } from '../../../../src/types/protocol'
+import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
@@ -198,18 +199,19 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
               environment: 'TESTNET',
               addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
-                  address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
               },
             },
           }),
           signatures: [
             {
               name: 'identityKey',
-              protected: 'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              protected:
+                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
     }
 
@@ -250,17 +252,18 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
               environment: 'TESTNET',
               addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
-                  address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
               },
             },
           }),
           signatures: [
             {
               name: 'identityKey',
-              protected: 'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              protected:
+                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
-            }
-          ]
+            },
+          ],
         },
         {
           payload: JSON.stringify({
@@ -270,7 +273,7 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
               environment: 'MAINNET',
               addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
-                  address: 'rsem3MPogcwLCD6iX34GQ4fAp4EC8kqMYM',
+                address: 'rsem3MPogcwLCD6iX34GQ4fAp4EC8kqMYM',
               },
             },
           }),
@@ -279,9 +282,9 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
               name: 'identityKey',
               protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
-            }
-          ]
-        }
+            },
+          ],
+        },
       ],
     }
 
@@ -289,10 +292,11 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
     const expectedErrorResponse = {
       statusCode: 400,
       error: 'Bad Request',
-      message: 'More than one identity key detected. Only one identity key per PayID can be used.',
+      message:
+        'More than one identity key detected. Only one identity key per PayID can be used.',
     }
 
-    // WHEN we make a POST request 
+    // WHEN we make a POST request
     request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdNextApiVersion)
@@ -319,21 +323,22 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
               environment: 'TESTNET',
               addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
-                  address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
               },
             },
           }),
           signatures: [
             {
               name: 'identityKey',
-              protected: 'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              protected:
+                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
             },
             {
               name: 'identityKey',
               protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
               signature: 'd2Fsa2luZyB0aG91Z2ggdGhlIHNyZWV3dCB3aWggbXkgdDQ0',
-            }
+            },
           ],
         },
       ],
@@ -343,10 +348,11 @@ describe('E2E - adminApiRouter - POST /users', function (): void {
     const expectedErrorResponse = {
       statusCode: 400,
       error: 'Bad Request',
-      message: 'More than one identity key detected. Only one identity key per address can be used.'
+      message:
+        'More than one identity key detected. Only one identity key per address can be used.',
     }
 
-    // WHEN we make a POST request 
+    // WHEN we make a POST request
     request(app.adminApiExpress)
       .post(`/users`)
       .set('PayID-API-Version', payIdNextApiVersion)
