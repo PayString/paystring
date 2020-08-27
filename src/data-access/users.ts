@@ -96,6 +96,7 @@ export async function replaceUserPayId(
  * @param newPayId - The new PayID of the user.
  * @param addresses - The array of payment address information to associate with this user.
  * @param identityKey - The optional user identity key.
+ *
  * @returns The updated payment addresses for a given PayID.
  */
 export async function replaceUser(

@@ -18,6 +18,7 @@ import {
 } from '../data-access/users'
 import parseVerifiedAddresses from '../services/users'
 import { AddressInformation } from '../types/database'
+import { Address } from '../types/protocol'
 import {
   LookupError,
   LookupErrorType,
@@ -112,33 +113,42 @@ export async function postUser(
       ParseErrorType.MissingPayId,
     )
   }
+  const payId = rawPayId.toLowerCase()
 
   // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
   const requestVersion = String(req.get('PayID-API-Version'))
-  const payId = rawPayId.toLowerCase()
+  const addresses = req.body.addresses ? req.body.addresses : []
+  const verifiedAddresses = req.body.verifiedAddresses
+    ? req.body.verifiedAddresses
+    : []
 
   let allAddresses: AddressInformation[] = []
-  let identityKey: string | undefined
+  let identityKey = req.body.identityKey
 
   // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
   // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
   // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
-  if (req.body.addresses !== undefined) {
-    allAddresses = allAddresses.concat(req.body.addresses)
-  }
   // If using "old" API format
-  if (
-    req.body.verifiedAddresses !== undefined &&
-    requestVersion < adminApiVersions[1]
-  ) {
-    allAddresses = allAddresses.concat(req.body.verifiedAddresses)
-    identityKey = req.body.identityKey
+  if (requestVersion < adminApiVersions[1]) {
+    allAddresses = allAddresses.concat(addresses, verifiedAddresses)
   }
-  // If using "new" ( same as Public API ) API format
+  // If using "new" API format
   else if (requestVersion >= adminApiVersions[1]) {
-    const addressesAndKey = parseVerifiedAddresses(req.body.verifiedAddresses)
-    identityKey = addressesAndKey[1]
-    allAddresses = allAddresses.concat(addressesAndKey[0])
+    const formattedAddresses = addresses.map((address: Address) => {
+      return {
+        paymentNetwork: address.paymentNetwork,
+        ...(address.environment && { environment: address.environment }),
+        details: address.addressDetails,
+      }
+    })
+    const formattedVerifiedAddressesAndKey = parseVerifiedAddresses(
+      verifiedAddresses,
+    )
+    identityKey = formattedVerifiedAddressesAndKey[1]
+    allAddresses = allAddresses.concat(
+      formattedAddresses,
+      formattedVerifiedAddressesAndKey[0],
+    )
   }
 
   await insertUser(payId, allAddresses, identityKey)
@@ -211,14 +221,18 @@ export async function putUser(
   const requestVersion = String(req.get('PayID-API-Version'))
   const payId = rawPayId.toLowerCase()
   const newPayId = rawNewPayId.toLowerCase()
+
   let identityKey: string | undefined
+  let allAddresses: AddressInformation[] = []
 
   // TODO:(dino) validate body params before this
-  let allAddresses: AddressInformation[] = []
   if (req.body.addresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.addresses)
   }
-  if (req.body.verifiedAddresses !== undefined) {
+  if (
+    req.body.verifiedAddresses !== undefined &&
+    requestVersion < adminApiVersions[1]
+  ) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
     identityKey = req.body.identityKey
   } else if (requestVersion >= adminApiVersions[1]) {
@@ -258,12 +272,15 @@ export async function putUser(
     Boolean(address.identityKeySignature),
   )
 
-  res.locals.status = statusCode
-  res.locals.response = {
-    payId: newPayId,
-    addresses,
-    verifiedAddresses,
+  // Only show created output on the old version
+  if (requestVersion < adminApiVersions[1]) {
+    res.locals.response = {
+      payId: newPayId,
+      addresses,
+      verifiedAddresses,
+    }
   }
+  res.locals.status = statusCode
 
   next()
 }
