@@ -1,10 +1,11 @@
+/* eslint-disable max-lines -- I think it's fine to have > 500 lines for testing */
 import HttpStatus from '@xpring-eng/http-status'
 import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
-import { appSetup, appCleanup } from '../../../helpers/helpers'
 import { AddressDetailsType } from '../../../../src/types/protocol'
+import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
 const payIdApiVersion = '2020-05-28'
@@ -124,7 +125,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .expect(HttpStatus.OK, updatedInformation, done)
   })
 
-  it('Returns a 200 when updating a user with the CLI format', function (done): void {
+  it('Returns a 200 when updating a user with the canonical format', function (done): void {
     // GIVEN a user with a PayID known to exist on the PayID service
     const updatedInformation = {
       payId: 'nextversion$127.0.0.1',
@@ -149,18 +150,20 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
               addressDetailsType: AddressDetailsType.CryptoAddress,
               addressDetails: {
                 address: 'rBJwwXADHqbwsp6yhrqoyt2nmFx9FB83Th',
-              }
-            }
+              },
+            },
           }),
           signatures: [
             {
               name: 'identityKey',
-              protected: 'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
-              signature: 'bG9vayBhdCBtZSBJIGp1c3QgdXBkYXRlZCB0aGlzIFBVVCBsZXRzIGdv',
-            }
-          ]
-        }
-      ]
+              protected:
+                'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
+              signature:
+                'bG9vayBhdCBtZSBJIGp1c3QgdXBkYXRlZCB0aGlzIFBVVCBsZXRzIGdv',
+            },
+          ],
+        },
+      ],
     }
 
     // WHEN we make a PUT request to /users/ with the new information to update
@@ -181,6 +184,129 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           // THEN We expect back a 200 - OK, with the account information
           .expect(HttpStatus.OK, updatedInformation, done)
       })
+  })
+
+  it('Throws BadRequest error on multiple identity keys per PayID', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const payId = 'johnwick$127.0.0.1'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+          ],
+        },
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rsem3MPogcwLCD6iX34GQ4fAp4EC8kqMYM',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+          ],
+        },
+      ],
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message:
+        'More than one identity key detected. Only one identity key per PayID can be used.',
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
+  it('Throws BadRequest error on multiple identity keys per address', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const payId = 'verified$127.0.0.1'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+            {
+              name: 'identityKey',
+              protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
+              signature: 'd2Fsa2luZyB0aG91Z2ggdGhlIHNyZWV3dCB3aWggbXkgdDQ0',
+            },
+          ],
+        },
+      ],
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message:
+        'More than one identity key detected. Only one identity key per address can be used.',
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
   it('Returns a 201 and inserted user payload for a Admin API PUT creating a new user', function (done): void {
