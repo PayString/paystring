@@ -211,14 +211,18 @@ export async function putUser(
   const requestVersion = String(req.get('PayID-API-Version'))
   const payId = rawPayId.toLowerCase()
   const newPayId = rawNewPayId.toLowerCase()
+
   let identityKey: string | undefined
+  let allAddresses: AddressInformation[] = []
 
   // TODO:(dino) validate body params before this
-  let allAddresses: AddressInformation[] = []
   if (req.body.addresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.addresses)
   }
-  if (req.body.verifiedAddresses !== undefined) {
+  if (
+    req.body.verifiedAddresses !== undefined &&
+    requestVersion < adminApiVersions[1]
+  ) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
     identityKey = req.body.identityKey
   } else if (requestVersion >= adminApiVersions[1]) {
@@ -258,12 +262,15 @@ export async function putUser(
     Boolean(address.identityKeySignature),
   )
 
-  res.locals.status = statusCode
-  res.locals.response = {
-    payId: newPayId,
-    addresses,
-    verifiedAddresses,
+  // Only show created output on the old version
+  if (requestVersion < adminApiVersions[1]) {
+    res.locals.response = {
+      payId: newPayId,
+      addresses,
+      verifiedAddresses,
+    }
   }
+  res.locals.status = statusCode
 
   next()
 }
