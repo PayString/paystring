@@ -113,10 +113,9 @@ export async function postUser(
     )
   }
 
-  const payId = rawPayId.toLowerCase()
-
   // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
   const requestVersion = String(req.get('PayID-API-Version'))
+  const payId = rawPayId.toLowerCase()
 
   let allAddresses: AddressInformation[] = []
   let identityKey: string | undefined
@@ -171,7 +170,6 @@ export async function putUser(
   // TODO(hbergren): pull this PayID / HttpError out into middleware?
   const rawPayId = req.params.payId
   const rawNewPayId = req.body?.payId
-  const identityKey = req.body?.identityKey
 
   // TODO:(hbergren) More validation? Assert that the PayID is `$` and of a certain form?
   // Do that using a regex route param in Express?
@@ -209,8 +207,11 @@ export async function putUser(
     )
   }
 
+  // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
+  const requestVersion = String(req.get('PayID-API-Version'))
   const payId = rawPayId.toLowerCase()
   const newPayId = rawNewPayId.toLowerCase()
+  let identityKey: string | undefined
 
   // TODO:(dino) validate body params before this
   let allAddresses: AddressInformation[] = []
@@ -219,12 +220,22 @@ export async function putUser(
   }
   if (req.body.verifiedAddresses !== undefined) {
     allAddresses = allAddresses.concat(req.body.verifiedAddresses)
+    identityKey = req.body.identityKey
+  } else if (requestVersion >= adminApiVersions[1]) {
+    const addressesAndKey = parseVerifiedAddresses(req.body.verifiedAddresses)
+    identityKey = addressesAndKey[1]
+    allAddresses = allAddresses.concat(addressesAndKey[0])
   }
 
   let updatedAddresses
   let statusCode = HttpStatus.OK
 
-  updatedAddresses = await replaceUser(payId, newPayId, allAddresses)
+  updatedAddresses = await replaceUser(
+    payId,
+    newPayId,
+    allAddresses,
+    identityKey,
+  )
   if (updatedAddresses === null) {
     updatedAddresses = await insertUser(newPayId, allAddresses, identityKey)
     statusCode = HttpStatus.Created
