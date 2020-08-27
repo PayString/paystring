@@ -16,8 +16,8 @@ import {
   replaceUserPayId,
   checkUserExistence,
 } from '../data-access/users'
+import { formatPaymentInfo } from '../services/basePayId'
 import { AddressInformation } from '../types/database'
-import { AddressDetailsType } from '../types/protocol'
 import {
   LookupError,
   LookupErrorType,
@@ -37,7 +37,6 @@ import {
  *
  * TODO:(hbergren): Handle retrieving an array of users as well as a single user?
  */
-// eslint-disable-next-line max-lines-per-function -- TODO: Refactor this
 export async function getUser(
   req: Request,
   res: Response,
@@ -80,51 +79,13 @@ export async function getUser(
     }
   } else {
     // Return same format as Public API
-
-    // sub details => addressDetails to match public API
-    const mappedAddresses = addresses.map((address) => {
-      return {
-        paymentNetwork: address.paymentNetwork,
-        environment: address.environment,
-        addressDetailsType:
-          address.paymentNetwork === 'ACH'
-            ? AddressDetailsType.FiatAddress
-            : AddressDetailsType.CryptoAddress,
-        addressDetails: address.details,
-      }
-    })
-
-    // Take identityKey and signature and construct a JWS style object from that
-    const mappedVerifiedAddresses = verifiedAddresses.map((address) => {
-      return {
-        payload: JSON.stringify({
-          payId,
-          payIdAddress: {
-            paymentNetwork: address.paymentNetwork,
-            environment: address.environment,
-            addressDetailsType:
-              address.paymentNetwork === 'ACH'
-                ? AddressDetailsType.FiatAddress
-                : AddressDetailsType.CryptoAddress,
-            addressDetails: address.details,
-          },
-        }),
-        signatures: [
-          {
-            name: 'identityKey',
-            protected: identityKey,
-            signature: address.identityKeySignature,
-          },
-        ],
-      }
-    })
-
-    res.locals.response = {
+    res.locals.response = formatPaymentInfo(
+      addresses,
+      verifiedAddresses,
+      identityKey,
+      config.app.payIdVersion,
       payId,
-      version: config.app.payIdVersion,
-      addresses: mappedAddresses,
-      verifiedAddresses: mappedVerifiedAddresses,
-    }
+    )
   }
 
   next()
