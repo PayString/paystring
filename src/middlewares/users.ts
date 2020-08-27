@@ -16,8 +16,8 @@ import {
   replaceUserPayId,
   checkUserExistence,
 } from '../data-access/users'
+import parseVerifiedAddresses from '../services/users'
 import { AddressInformation } from '../types/database'
-import { VerifiedAddress, VerifiedAddressSignature } from '../types/protocol'
 import {
   LookupError,
   LookupErrorType,
@@ -97,7 +97,6 @@ export async function getUser(
  *
  * @throws ParseError if the PayID is missing from the request body.
  */
-// eslint-disable-next-line max-lines-per-function -- Disabling until I finish building the functionality here.
 export async function postUser(
   req: Request,
   res: Response,
@@ -118,7 +117,6 @@ export async function postUser(
 
   // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
   const requestVersion = String(req.get('PayID-API-Version'))
-  const identityKeyLabel = 'identityKey'
 
   let allAddresses: AddressInformation[] = []
   let identityKey: string | undefined
@@ -139,63 +137,9 @@ export async function postUser(
   }
   // If using "new" ( same as Public API ) API format
   else if (requestVersion >= adminApiVersions[1]) {
-    req.body.verifiedAddresses.forEach((verifiedAddress: VerifiedAddress) => {
-      let identityKeySignature: string | undefined
-      let identityKeyCount = 0
-
-      verifiedAddress.signatures.forEach(
-        (signaturePayload: VerifiedAddressSignature) => {
-          const decodedKey = JSON.parse(
-            Buffer.from(signaturePayload.protected, 'base64').toString(),
-          )
-
-          // Get the first identity key & signature
-          if (!identityKey && decodedKey.name === identityKeyLabel) {
-            identityKey = signaturePayload.protected
-            identityKeyCount += 1
-            identityKeySignature = signaturePayload.signature
-          } else {
-            // Increment the count of identity keys per address
-            // And grab the signature for each address
-            if (decodedKey.name === identityKeyLabel) {
-              identityKeyCount += 1
-              identityKeySignature = signaturePayload.signature
-            }
-
-            // Identity key must match across all addresses
-            if (
-              identityKey !== signaturePayload.protected &&
-              decodedKey.name === identityKeyLabel
-            ) {
-              throw new ParseError(
-                'More than one identity key detected. Only one identity key per PayID can be used.',
-                ParseErrorType.MultipleIdentityKeys,
-              )
-            }
-
-            // Each address must have only one identity key / signature pair
-            if (identityKeyCount > 1) {
-              throw new ParseError(
-                'More than one identity key detected. Only one identity key per address can be used.',
-                ParseErrorType.MultipleIdentityKeys,
-              )
-            }
-          }
-        },
-      )
-      // Transform to format consumable by insert user
-      // And add to all addresses
-      const jwsPayload = JSON.parse(verifiedAddress.payload)
-      const databaseAddressPayload = {
-        paymentNetwork: jwsPayload.payIdAddress.paymentNetwork,
-        environment: jwsPayload.payIdAddress.environment,
-        details: {
-          address: jwsPayload.payIdAddress.addressDetails.address,
-        },
-        identityKeySignature,
-      }
-      allAddresses.push(databaseAddressPayload)
-    })
+    const addressesAndKey = parseVerifiedAddresses(req.body.verifiedAddresses)
+    identityKey = addressesAndKey[1]
+    allAddresses = allAddresses.concat(addressesAndKey[0])
   }
 
   await insertUser(payId, allAddresses, identityKey)
