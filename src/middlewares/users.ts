@@ -37,6 +37,7 @@ import {
  *
  * TODO:(hbergren): Handle retrieving an array of users as well as a single user?
  */
+// eslint-disable-next-line max-lines-per-function -- TODO: Refactor this
 export async function getUser(
   req: Request,
   res: Response,
