@@ -18,7 +18,8 @@ INSERT INTO account(id, pay_id, identity_key) VALUES
 ('2955cce9-c350-4b60-9726-c415072961ed', 'verified$127.0.0.1', 'bGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ=='),
 ('67d9ad5f-5cd8-4a0c-b642-70e63354e647', 'postmalone$127.0.0.1', 'aGkgbXkgbmFtZSBpcyBhdXN0aW4gYW5kIEkgYW0gdGVzdGluZyB0aGluZ3M='),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'johnwick$127.0.0.1', 'aGV0IG1lIHNlZSB0aGVtIGNvcmdpcyBOT1cgb3IgcGF5IHRoZSBwcmljZQ=='),
-('772d5315-988a-4509-be15-3b535c870555', 'donaldduck$127.0.0.1', 'aGVyIGVpIGFtIGxvb2tpbmcgb3V0IHRoZSB3aW5kb3cgYW5kIGEgbWYgY3JhbmUgYXBwZWFycw==');
+('772d5315-988a-4509-be15-3b535c870555', 'donaldduck$127.0.0.1', 'aGVyIGVpIGFtIGxvb2tpbmcgb3V0IHRoZSB3aW5kb3cgYW5kIGEgbWYgY3JhbmUgYXBwZWFycw=='),
+('bc041012-7385-4904-8bc9-57219c0bf290', 'nextversion$127.0.0.1', 'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==');
 
 /* Unverified Addresses */
 INSERT INTO address(account_id, payment_network, environment, details) VALUES
@@ -30,7 +31,8 @@ INSERT INTO address(account_id, payment_network, environment, details) VALUES
 ('ec06236e-d134-4a7b-b69e-0606fb54b67b', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}'),
 ('69b0d20a-cdef-4bb9-adf9-2109979a12af', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}'),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'BTC',  'MAINNET', '{"address": "2NGZrVvZG92qGYqzTLjCAewvPZ7JE8S8VxE"}'),
-('b253bed2-79ce-45d0-bbdd-96867aa85fd5', 'INTERLEDGER', 'TESTNET', '{"address": "$xpring.money/zebra"}');
+('b253bed2-79ce-45d0-bbdd-96867aa85fd5', 'INTERLEDGER', 'TESTNET', '{"address": "$xpring.money/zebra"}'),
+('bc041012-7385-4904-8bc9-57219c0bf290', 'BTC', 'TESTNET', '{"address": "mnBgkgCvqC3JeB5akfjAFik8qSG74r39dHJ"}');
 
 /* Verified Addresses */
 INSERT INTO address(account_id, payment_network, environment, details, identity_key_signature) VALUES
@@ -40,6 +42,7 @@ INSERT INTO address(account_id, payment_network, environment, details, identity_
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'XRPL', 'TESTNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ=='),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'XRPL', 'MAINNET', '{"address": "rDk7FQvkQxQQNGTtfM2Fr66s7Nm3k87vdS"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ=='),
 ('35192b90-9b88-4137-85c9-3d1d3d92cf2c', 'ACH',   NULL,     '{"accountNumber": "000123456789", "routingNumber": "123456789"}', 'TG9vayBhdCBtZSEgd29vIEknbSB0ZXN0aW5nIHRoaW5ncyBhbmQgdGhpcyBpcyBhIHNpZ25hdHVyZQ=='),
-('772d5315-988a-4509-be15-3b535c870555', 'XRPL', 'MAINNET', '{"address": "rU5KBPzSyPycRVW1HdgCKjYpU6W9PKQdE8"}', 'YW5kIGFsbCBvZiBhIHN1ZGRlbiBpdCBzdGFydHMgcnVubmluZyBhdCBtZSBzbyBJIGZsaXAhIGNvbGEK');
+('772d5315-988a-4509-be15-3b535c870555', 'XRPL', 'MAINNET', '{"address": "rU5KBPzSyPycRVW1HdgCKjYpU6W9PKQdE8"}', 'YW5kIGFsbCBvZiBhIHN1ZGRlbiBpdCBzdGFydHMgcnVubmluZyBhdCBtZSBzbyBJIGZsaXAhIGNvbGEK'),
+('bc041012-7385-4904-8bc9-57219c0bf290', 'XRPL', 'MAINNET', '{"address": "rM19Xw44JvpC6fL2ioAZRuH6mpuwxcPqsu"}', 'YnV0IHdoYXQgaWYgaXQgd3MgdGhlIHBpZ2VvbnMgYWxsIGFsb25nIGluIHRoZSBjdWJwYXJzZHM=');
 
 END TRANSACTION;

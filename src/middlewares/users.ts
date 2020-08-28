@@ -3,7 +3,7 @@
 import HttpStatus from '@xpring-eng/http-status'
 import { Request, Response, NextFunction } from 'express'
 
-import { adminApiVersions } from '../config'
+import config, { adminApiVersions } from '../config'
 import {
   getAllAddressInfoFromDatabase,
   getAllVerifiedAddressInfoFromDatabase,
@@ -17,6 +17,7 @@ import {
   checkUserExistence,
 } from '../data-access/users'
 import parseAllAddresses from '../services/users'
+import { formatPaymentInfo } from '../services/basePayId'
 import {
   LookupError,
   LookupErrorType,
@@ -66,20 +67,27 @@ export async function getUser(
   const verifiedAddresses = await getAllVerifiedAddressInfoFromDatabase(payId)
   const identityKey = await getIdentityKeyFromDatabase(payId)
 
-  if (identityKey === null || identityKey.length === 0) {
+  // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
+  const requestVersion = String(req.get('PayID-API-Version'))
+
+  if (requestVersion < adminApiVersions[1]) {
     res.locals.response = {
       payId,
+      ...(identityKey && { identityKey }),
       addresses,
       verifiedAddresses,
     }
   } else {
-    res.locals.response = {
-      payId,
-      identityKey,
+    // Return same format as Public API
+    res.locals.response = formatPaymentInfo(
       addresses,
       verifiedAddresses,
-    }
+      identityKey,
+      config.app.payIdVersion,
+      payId,
+    )
   }
+
   next()
 }
 
