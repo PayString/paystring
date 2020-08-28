@@ -28,7 +28,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'BTC',
         environment: 'TESTNET',
-        count: 3,
+        count: 4,
       },
       {
         paymentNetwork: 'INTERLEDGER',
@@ -38,7 +38,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
       {
         paymentNetwork: 'XRPL',
         environment: 'MAINNET',
-        count: 3,
+        count: 4,
       },
       {
         paymentNetwork: 'XRPL',
@@ -51,7 +51,7 @@ describe('Data Access - getPayIdCounts()', function (): void {
 
   it('getPayIdCount - Returns a count of PayIDs', async function () {
     const payIdCount = await getPayIdCount()
-    const expectedPayIdCount = 12
+    const expectedPayIdCount = 13
 
     assert.strictEqual(payIdCount, expectedPayIdCount)
   })

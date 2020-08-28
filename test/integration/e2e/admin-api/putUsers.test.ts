@@ -1,12 +1,17 @@
+/* eslint-disable max-lines -- I think it's fine to have > 500 lines for testing */
 import HttpStatus from '@xpring-eng/http-status'
 import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
+import { adminApiVersions, payIdServerVersions } from '../../../../src/config'
+import { AddressDetailsType } from '../../../../src/types/protocol'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
-const payIdApiVersion = '2020-05-28'
+const payIdApiVersion = adminApiVersions[0]
+const payIdNextApiVersion = adminApiVersions[1]
+const payIdProtocolVersion = payIdServerVersions[1]
 
 const acceptPatch = 'application/merge-patch+json'
 
@@ -120,6 +125,239 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
       .expect(HttpStatus.OK, updatedInformation, done)
+  })
+
+  it('Returns a 200 when updating a user with the canonical format', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const updatedInformation = {
+      payId: 'nextversion$127.0.0.1',
+      version: payIdProtocolVersion,
+      addresses: [
+        {
+          paymentNetwork: 'BTC',
+          environment: 'TESTNET',
+          addressDetailsType: AddressDetailsType.CryptoAddress,
+          addressDetails: {
+            address: 'n4VQ5YdHf7hLQ2gWQYYrcxoE5B7nWuDFNF',
+          },
+        },
+      ],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId: 'nextversion$127.0.0.1',
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rBJwwXADHqbwsp6yhrqoyt2nmFx9FB83Th',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
+              signature:
+                'bG9vayBhdCBtZSBJIGp1c3QgdXBkYXRlZCB0aGlzIFBVVCBsZXRzIGdv',
+            },
+          ],
+        },
+      ],
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${updatedInformation.payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(updatedInformation)
+      .expect('Content-Type', /json/u)
+      // THEN we expect back a 200-OK, with the updated user information
+      // .expect(HttpStatus.OK, updatedInformation)
+      .end(function () {
+        request(app.adminApiExpress)
+          .get(`/users/${updatedInformation.payId}`)
+          .set('PayID-API-Version', payIdNextApiVersion)
+          .expect('Content-Type', /json/u)
+          // THEN we expect to have an Accept-Patch header in the response
+          .expect('Accept-Patch', acceptPatch)
+          // THEN We expect back a 200 - OK, with the account information
+          .expect(HttpStatus.OK, updatedInformation, done)
+      })
+  })
+
+  it('Throws BadRequest error on invalid protected payload (identity key)', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const payId = 'johnwick$127.0.0.1'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'eiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+          ],
+        },
+      ],
+    }
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'Invalid JSON for protected payload (identity key).',
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
+  it('Throws BadRequest error on multiple identity keys per PayID', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const payId = 'johnwick$127.0.0.1'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+          ],
+        },
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'MAINNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rsem3MPogcwLCD6iX34GQ4fAp4EC8kqMYM',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiJKcXNXZk1QSmNsU1JISWRtS3U0cl84MktPRXdERjctOU1XeWFYcjNkSGl3IiwieSI6IkMxZm5sQndUMmZtNzN1OGxweEhlc0NiX0xobEx2aktoeTRGN05ZdWpDR0EiLCJrdHkiOiJFQyIsImtpZCI6IlRZSlNCb05FSDVHYzVDQ0hyc3pfMVM0RHhwNk9SZVhIWlQ5bmZiYXQ3YTAifX0',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+          ],
+        },
+      ],
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message:
+        'More than one identity key detected. Only one identity key per PayID can be used.',
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
+  })
+
+  it('Throws BadRequest error on multiple identity keys per address', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const payId = 'verified$127.0.0.1'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+            {
+              name: 'identityKey',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
+              signature: 'd2Fsa2luZyB0aG91Z2ggdGhlIHNyZWV3dCB3aWggbXkgdDQ0',
+            },
+          ],
+        },
+      ],
+    }
+
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message:
+        'More than one identity key detected. Only one identity key per address can be used.',
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
   it('Returns a 201 and inserted user payload for a Admin API PUT creating a new user', function (done): void {
