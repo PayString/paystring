@@ -83,9 +83,17 @@ function parseVerifiedAddresses(
 
     verifiedAddress.signatures.forEach(
       (signaturePayload: VerifiedAddressSignature) => {
-        const decodedKey = JSON.parse(
-          Buffer.from(signaturePayload.protected, 'base64').toString(),
-        )
+        let decodedKey: { name: string }
+        try {
+          decodedKey = JSON.parse(
+            Buffer.from(signaturePayload.protected, 'base64').toString(),
+          )
+        } catch (_err) {
+          throw new ParseError(
+            'Invalid JSON for protected payload (identity key).',
+            ParseErrorType.InvalidIdentityKey,
+          )
+        }
 
         // Get the first identity key & signature
         if (!identityKey && decodedKey.name === identityKeyLabel) {
