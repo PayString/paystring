@@ -16,8 +16,7 @@ import {
   replaceUserPayId,
   checkUserExistence,
 } from '../data-access/users'
-import parseVerifiedAddresses from '../services/users'
-import { AddressInformation } from '../types/database'
+import parseAllAddresses from '../services/users'
 import {
   LookupError,
   LookupErrorType,
@@ -112,34 +111,18 @@ export async function postUser(
       ParseErrorType.MissingPayId,
     )
   }
-
-  // We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
-  const requestVersion = String(req.get('PayID-API-Version'))
   const payId = rawPayId.toLowerCase()
-
-  let allAddresses: AddressInformation[] = []
-  let identityKey: string | undefined
 
   // TODO:(hbergren) Need to test here and in `putUser()` that `req.body.addresses` is well formed.
   // This includes making sure that everything that is not ACH or ILP is in a CryptoAddressDetails format.
   // And that we `toUpperCase()` paymentNetwork and environment as part of parsing the addresses.
-  if (req.body.addresses !== undefined) {
-    allAddresses = allAddresses.concat(req.body.addresses)
-  }
-  // If using "old" API format
-  if (
-    req.body.verifiedAddresses !== undefined &&
-    requestVersion < adminApiVersions[1]
-  ) {
-    allAddresses = allAddresses.concat(req.body.verifiedAddresses)
-    identityKey = req.body.identityKey
-  }
-  // If using "new" ( same as Public API ) API format
-  else if (requestVersion >= adminApiVersions[1]) {
-    const addressesAndKey = parseVerifiedAddresses(req.body.verifiedAddresses)
-    identityKey = addressesAndKey[1]
-    allAddresses = allAddresses.concat(addressesAndKey[0])
-  }
+  // * NOTE: We can be sure the version is defined because we verified it in checkRequestAdminApiVersionHeaders middleware
+  const [allAddresses, identityKey] = parseAllAddresses(
+    req.body.addresses,
+    req.body.verifiedAddresses,
+    req.body.identityKey,
+    String(req.get('PayID-API-Version')),
+  )
 
   await insertUser(payId, allAddresses, identityKey)
 
@@ -149,9 +132,6 @@ export async function postUser(
   next()
 }
 
-/* eslint-disable max-lines-per-function, max-statements, complexity --
- * TODO: Remove all these disables when we refactor parsing/validation for the private API.
- */
 /**
  * Either create a new PayID, or update an existing PayID.
  *
@@ -161,6 +141,7 @@ export async function postUser(
  *
  * @throws A ParseError if either PayID is missing or invalid.
  */
+// eslint-disable-next-line max-lines-per-function -- Disabling until I finish building the functionality here.
 export async function putUser(
   req: Request,
   res: Response,
@@ -212,58 +193,43 @@ export async function putUser(
   const payId = rawPayId.toLowerCase()
   const newPayId = rawNewPayId.toLowerCase()
 
-  let identityKey: string | undefined
-  let allAddresses: AddressInformation[] = []
-
   // TODO:(dino) validate body params before this
-  if (req.body.addresses !== undefined) {
-    allAddresses = allAddresses.concat(req.body.addresses)
-  }
-  if (
-    req.body.verifiedAddresses !== undefined &&
-    requestVersion < adminApiVersions[1]
-  ) {
-    allAddresses = allAddresses.concat(req.body.verifiedAddresses)
-    identityKey = req.body.identityKey
-  } else if (requestVersion >= adminApiVersions[1]) {
-    const addressesAndKey = parseVerifiedAddresses(req.body.verifiedAddresses)
-    identityKey = addressesAndKey[1]
-    allAddresses = allAddresses.concat(addressesAndKey[0])
-  }
+  const [allAddresses, identityKey] = parseAllAddresses(
+    req.body.addresses,
+    req.body.verifiedAddresses,
+    req.body.identityKey,
+    String(req.get('PayID-API-Version')),
+  )
 
-  let updatedAddresses
-  let statusCode = HttpStatus.OK
-
-  updatedAddresses = await replaceUser(
+  // Attempt to replace user
+  let updatedAddresses = await replaceUser(
     payId,
     newPayId,
     allAddresses,
     identityKey,
   )
+  // If user does not exist, create
   if (updatedAddresses === null) {
     updatedAddresses = await insertUser(newPayId, allAddresses, identityKey)
-    statusCode = HttpStatus.Created
-  }
-
-  // If the status code is 201 - Created, we need to set a Location header later with the PayID
-  if (statusCode === HttpStatus.Created) {
+    // If the status code is 201 - Created, we need to set a Location header later with the PayID
+    res.locals.status = HttpStatus.Created
     res.locals.payId = newPayId
   }
 
-  const addresses = updatedAddresses
-    .filter((address) => !address.identityKeySignature)
-    .map((address) => ({
-      paymentNetwork: address.paymentNetwork,
-      environment: address.environment,
-      details: address.details,
-    }))
-
-  const verifiedAddresses = updatedAddresses.filter((address) =>
-    Boolean(address.identityKeySignature),
-  )
-
-  // Only show created output on the old version
+  // Only show created output on the "old" API
   if (requestVersion < adminApiVersions[1]) {
+    const addresses = updatedAddresses
+      .filter((address) => !address.identityKeySignature)
+      .map((address) => ({
+        paymentNetwork: address.paymentNetwork,
+        environment: address.environment,
+        details: address.details,
+      }))
+
+    const verifiedAddresses = updatedAddresses.filter((address) =>
+      Boolean(address.identityKeySignature),
+    )
+
     res.locals.response = {
       payId: newPayId,
       addresses,
@@ -274,7 +240,6 @@ export async function putUser(
 
   next()
 }
-/* eslint-enable max-lines-per-function, max-statements, complexity */
 
 /**
  * Removes a PayID from the PayID server.
