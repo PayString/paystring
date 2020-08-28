@@ -4,12 +4,14 @@ import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
+import { adminApiVersions, payIdServerVersions } from '../../../../src/config'
 import { AddressDetailsType } from '../../../../src/types/protocol'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
-const payIdApiVersion = '2020-05-28'
-const payIdNextApiVersion = '2020-08-24'
+const payIdApiVersion = adminApiVersions[0]
+const payIdNextApiVersion = adminApiVersions[1]
+const payIdProtocolVersion = payIdServerVersions[1]
 
 const acceptPatch = 'application/merge-patch+json'
 
@@ -129,7 +131,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
     // GIVEN a user with a PayID known to exist on the PayID service
     const updatedInformation = {
       payId: 'nextversion$127.0.0.1',
-      version: '1.1',
+      version: payIdProtocolVersion,
       addresses: [
         {
           paymentNetwork: 'BTC',
@@ -157,7 +159,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
             {
               name: 'identityKey',
               protected:
-                'd2VpcmQgYWwgeWFrbm9jaWYgc2hvdWxkIHJ1biBmb3IgcHJlc2lkZW50ZQ==',
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
               signature:
                 'bG9vayBhdCBtZSBJIGp1c3QgdXBkYXRlZCB0aGlzIFBVVCBsZXRzIGdv',
             },
@@ -173,7 +175,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
       .send(updatedInformation)
       .expect('Content-Type', /json/u)
       // THEN we expect back a 200-OK, with the updated user information
-      .expect(HttpStatus.OK, updatedInformation)
+      // .expect(HttpStatus.OK, updatedInformation)
       .end(function () {
         request(app.adminApiExpress)
           .get(`/users/${updatedInformation.payId}`)
@@ -184,6 +186,53 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           // THEN We expect back a 200 - OK, with the account information
           .expect(HttpStatus.OK, updatedInformation, done)
       })
+  })
+
+  it('Throws BadRequest error on invalid protected payload (identity key)', function (done): void {
+    // GIVEN a user with a PayID known to exist on the PayID service
+    const payId = 'johnwick$127.0.0.1'
+    const userInformation = {
+      payId,
+      addresses: [],
+      verifiedAddresses: [
+        {
+          payload: JSON.stringify({
+            payId,
+            payIdAddress: {
+              paymentNetwork: 'XRPL',
+              environment: 'TESTNET',
+              addressDetailsType: AddressDetailsType.CryptoAddress,
+              addressDetails: {
+                address: 'rMwLfriHeWf5NMjcNKVMkqg58v1LYVRGnY',
+              },
+            },
+          }),
+          signatures: [
+            {
+              name: 'identityKey',
+              protected:
+                'eiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
+              signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
+            },
+          ],
+        },
+      ],
+    }
+    // AND our expected error response
+    const expectedErrorResponse = {
+      statusCode: 400,
+      error: 'Bad Request',
+      message: 'Invalid JSON for protected payload (identity key).',
+    }
+
+    // WHEN we make a PUT request to /users/ with the new information to update
+    request(app.adminApiExpress)
+      .put(`/users/${payId}`)
+      .set('PayID-API-Version', payIdNextApiVersion)
+      .send(userInformation)
+      .expect('Content-Type', /json/u)
+      // THEN We expect back a 400 - Bad Request, with the expected error response object
+      .expect(HttpStatus.BadRequest, expectedErrorResponse, done)
   })
 
   it('Throws BadRequest error on multiple identity keys per PayID', function (done): void {
@@ -209,7 +258,7 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
             {
               name: 'identityKey',
               protected:
-                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
             },
           ],
@@ -229,7 +278,8 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
           signatures: [
             {
               name: 'identityKey',
-              protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiJKcXNXZk1QSmNsU1JISWRtS3U0cl84MktPRXdERjctOU1XeWFYcjNkSGl3IiwieSI6IkMxZm5sQndUMmZtNzN1OGxweEhlc0NiX0xobEx2aktoeTRGN05ZdWpDR0EiLCJrdHkiOiJFQyIsImtpZCI6IlRZSlNCb05FSDVHYzVDQ0hyc3pfMVM0RHhwNk9SZVhIWlQ5bmZiYXQ3YTAifX0',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
             },
           ],
@@ -278,12 +328,13 @@ describe('E2E - adminApiRouter - PUT /users', function (): void {
             {
               name: 'identityKey',
               protected:
-                'd2VobiBpIGhlYXIgeW91IGluIHRoZSBzcmVldCBpdCBnb2Ugc3lhIHlheSB5YQ==',
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
               signature: 'Z2V0IGxvdy4uIHdlaGVyIGV5b3UgZnJvbSBteSBib3kgYXNqZGFr',
             },
             {
               name: 'identityKey',
-              protected: 'eWVldCB5ZWV0IHllZXQgYm9pIHdobyB0b2xkIHlvdQ==',
+              protected:
+                'eyJuYW1lIjoiaWRlbnRpdHlLZXkiLCJhbGciOiJFUzI1NksiLCJ0eXAiOiJKT1NFK0pTT04iLCJiNjQiOmZhbHNlLCJjcml0IjpbImI2NCIsIm5hbWUiXSwiandrIjp7ImNydiI6InNlY3AyNTZrMSIsIngiOiI2S0dtcEF6WUhWUm9qVmU5UEpfWTVyZHltQ21kTy1xaVRHem1Edl9waUlvIiwieSI6ImhxS3Vnc1g3Vjk3eFRNLThCMTBONUQxcW44MUZWMjItM1p0TURXaXZfSnciLCJrdHkiOiJFQyIsImtpZCI6Im4zNlhTc0M1TjRnNUtCVzRBWXJ5d1ZtRE1kUWNEV1BJX0RfNUR1UlNhNDAifX0',
               signature: 'd2Fsa2luZyB0aG91Z2ggdGhlIHNyZWV3dCB3aWggbXkgdDQ0',
             },
           ],
