@@ -236,7 +236,6 @@ export async function putUser(
       verifiedAddresses,
     }
   }
-  res.locals.status = statusCode
 
   next()
 }
