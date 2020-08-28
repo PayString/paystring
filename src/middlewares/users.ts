@@ -229,12 +229,14 @@ export async function putUser(
     const verifiedAddresses = updatedAddresses.filter((address) =>
       Boolean(address.identityKeySignature),
     )
+
     res.locals.response = {
       payId: newPayId,
       addresses,
       verifiedAddresses,
     }
   }
+  res.locals.status = statusCode
 
   next()
 }
