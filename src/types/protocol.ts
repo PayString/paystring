@@ -48,7 +48,7 @@ export interface Address {
 /**
  * Object containing address information alongside signatures.
  */
-interface VerifiedAddress {
+export interface VerifiedAddress {
   readonly payload: string
   readonly signatures: readonly VerifiedAddressSignature[]
 }
@@ -56,8 +56,8 @@ interface VerifiedAddress {
 /**
  * JWS object for verification.
  */
-interface VerifiedAddressSignature {
-  name: string
+export interface VerifiedAddressSignature {
+  name?: string
   protected: string
   signature: string
 }
