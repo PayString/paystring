@@ -3,12 +3,13 @@ import * as request from 'supertest'
 import 'mocha'
 
 import App from '../../../../src/app'
+import { adminApiVersions } from '../../../../src/config'
 import { AddressDetailsType } from '../../../../src/types/protocol'
 import { appSetup, appCleanup } from '../../../helpers/helpers'
 
 let app: App
-const payIdApiVersion = '2020-05-28'
-const payIdNextApiVersion = '2020-08-24'
+const payIdApiVersion = adminApiVersions[0]
+const payIdNextApiVersion = adminApiVersions[1]
 
 const acceptPatch = 'application/merge-patch+json'
 
