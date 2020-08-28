@@ -1,6 +1,66 @@
+import { adminApiVersions } from '../config'
 import { AddressInformation } from '../types/database'
-import { VerifiedAddress, VerifiedAddressSignature } from '../types/protocol'
+import {
+  Address,
+  VerifiedAddress,
+  VerifiedAddressSignature,
+} from '../types/protocol'
 import { ParseError, ParseErrorType } from '../utils/errors'
+
+/**
+ * Parse all addresses depending on the Admin API version and format them properly
+ * so they can be consumed by the database.
+ *
+ * @param maybeAddresses - An array of addresses ( in either the old or new format ) or undefined.
+ * @param maybeVerifiedAddresses - An array of verified addresses ( in either the old or new format ) or undefined.
+ * @param maybeIdentityKey - An identity key or undefined ( included with verified addresses ).
+ * @param requestVersion - The request version to determine how to parse the addresses.
+ *
+ * @returns A tuple of all the formatted addresses & the identity key.
+ */
+export default function parseAllAddresses(
+  maybeAddresses: Address[] | AddressInformation[] | undefined,
+  maybeVerifiedAddresses: VerifiedAddress[] | AddressInformation[] | undefined,
+  maybeIdentityKey: string | undefined,
+  requestVersion: string,
+): [AddressInformation[], string | undefined] {
+  const addresses = maybeAddresses ?? []
+  const verifiedAddresses = maybeVerifiedAddresses ?? []
+  let allAddresses: AddressInformation[] = []
+
+  // If using "old" API format, we don't need to do any translation
+  if (requestVersion < adminApiVersions[1]) {
+    allAddresses = allAddresses.concat(
+      addresses as AddressInformation[],
+      verifiedAddresses as AddressInformation[],
+    )
+  }
+  // If using Public API format, we need to translate the payload so
+  // the data-access functions can consume them
+  else if (requestVersion >= adminApiVersions[1]) {
+    const formattedAddresses = (addresses as Address[]).map(
+      (address: Address) => {
+        return {
+          paymentNetwork: address.paymentNetwork,
+          ...(address.environment && { environment: address.environment }),
+          details: address.addressDetails,
+        }
+      },
+    )
+    const formattedVerifiedAddressesAndKey = parseVerifiedAddresses(
+      verifiedAddresses as VerifiedAddress[],
+    )
+    allAddresses = allAddresses.concat(
+      formattedAddresses,
+      formattedVerifiedAddressesAndKey[0],
+    )
+    return [allAddresses, formattedVerifiedAddressesAndKey[1]]
+  }
+
+  return [allAddresses, maybeIdentityKey]
+}
+
+// HELPERS
 
 /**
  * Parse all verified addresses to confirm they use a single identity key &
@@ -10,7 +70,7 @@ import { ParseError, ParseErrorType } from '../utils/errors'
  *
  * @returns Array of address inforation to be consumed by insertUser.
  */
-export default function parseVerifiedAddresses(
+function parseVerifiedAddresses(
   verifiedAddresses: VerifiedAddress[],
 ): [AddressInformation[], string | undefined] {
   const identityKeyLabel = 'identityKey'
