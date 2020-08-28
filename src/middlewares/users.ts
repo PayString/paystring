@@ -16,8 +16,8 @@ import {
   replaceUserPayId,
   checkUserExistence,
 } from '../data-access/users'
-import parseAllAddresses from '../services/users'
 import { formatPaymentInfo } from '../services/basePayId'
+import parseAllAddresses from '../services/users'
 import {
   LookupError,
   LookupErrorType,
