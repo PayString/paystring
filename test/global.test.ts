@@ -8,7 +8,7 @@ import logger from '../src/utils/logger'
 // We can use a before block outside any describe block to execute code before any test runs.
 // Here, we disable logging for all tests.
 before(function () {
-  logger.level = 'OFF'
+  logger.level = 'FATAL'
 })
 
 // Close DB connections after all tests are run
