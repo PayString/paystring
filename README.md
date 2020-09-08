@@ -12,7 +12,7 @@ This is the reference implementation server for [PayID](https://docs.payid.org/p
 
 By default, the server hosts the Public API, which conforms to the PayID Protocol, on port 8080. The server also hosts a second RESTful API on port 8081 for CRUD (Create/Read/Update/Delete) operations to manage PayIDs and associated addresses.
 
-To experiment with PayID, you can start a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file. If you want to work on the PayID server source code itself, you can start a Postgres database to develop against by running `npm run devDbUp`.
+To experiment with PayID, you can start a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file, which implicitly starts both a database and a PayID server inside Docker containers. To work on the PayID server source code itself, you can start a Postgres database to develop against by running `npm run devDbUp`, which starts a database in a Docker container, and a local PayID server. 
 
 To clean up the associated Docker containers after you create a local server or database container, run `npm run devDown`.
 
