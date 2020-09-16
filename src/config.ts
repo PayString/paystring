@@ -49,7 +49,7 @@ const config = {
      *
      * This will be dynamically set by incoming requests if the ENV var is unset.
      */
-    domain: process.env.PAYID_DOMAIN ?? 'missing_domain',
+    domain: process.env.PAYID_DOMAIN ?? 'Virtuecoin.zil',
 
     /** URL to a Prometheus push gateway, defaulting to the Xpring Prometheus server. */
     gatewayUrl:
