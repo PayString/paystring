@@ -72,7 +72,12 @@ async function executeSqlFile(
     // Close the database connection
     await client.end()
   } catch (err) {
-    logger.fatal('error running query', file, err.message)
+    logger.fatal(
+      '\nerror running query',
+      file,
+      err.message,
+      '\n\nCheck that Postgres is running and that there is no port conflict\n',
+    )
 
     // If we can't execute our SQL, our app is in an indeterminate state, so kill it.
     process.exit(1)
