@@ -80,7 +80,7 @@
     "eslint-plugin-mocha": "^7.0.1",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "eslint-plugin-tsdoc": "^0.2.5",
+    "eslint-plugin-tsdoc": "^0.2.7",
     "mocha": "^8.1.1",
     "nyc": "^15.1.0",
     "prettier": "^2.0.5",
