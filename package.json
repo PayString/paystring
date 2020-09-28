@@ -72,7 +72,7 @@
     "chokidar": "^3.4.2",
     "chokidar-cli": "^2.1.0",
     "copyfiles": "^2.3.0",
-    "eslint": "^7.6.0",
+    "eslint": "^7.10.0",
     "eslint-plugin-array-func": "^3.1.6",
     "eslint-plugin-eslint-comments": "^3.2.0",
     "eslint-plugin-import": "^2.22.0",
