@@ -18,7 +18,7 @@ To clean up the associated Docker containers after you create a local server or 
 
 ## Further Reading
 
-- [PayID Developer Documentation](https://docs.payid.org/payid-overview)
+- [PayID Developer Documentation](https://docs.payid.org)
 - [PayID API Documentation](https://api.payid.org/?version=latest)
 - [Core PayID Protocol RFCs](https://github.com/payid-org/rfcs)
 
