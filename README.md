@@ -8,11 +8,11 @@ Welcome to PayID, the universal payment identifier.
 
 _This project is not associated with PayID operated by NPP Australia Ltd. People in Australia are prohibited from using this project. See below for more details._
 
-This is the reference implementation server for [PayID](https://docs.payid.org/payid-overview), serving the [PayID API](https://api.payid.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a Postgres database.
+This is the reference implementation server for [PayID](https://docs.payid.org/payid-overview), serving the [PayID API](https://api.payid.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a PostgreSQL database.
 
 By default, the server hosts the Public API, which conforms to the PayID Protocol, on port 8080. The server also hosts a second RESTful API on port 8081 for CRUD (Create/Read/Update/Delete) operations to manage PayIDs and associated addresses.
 
-To experiment with PayID, you can start a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file, which implicitly starts both a database and a PayID server inside Docker containers. To work on the PayID server source code itself, you can start a Postgres database to develop against by running `npm run devDbUp`, which starts a database in a Docker container, and a local PayID server.
+To experiment with PayID, you can start a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file, which implicitly starts both a database and a PayID server inside Docker containers. To work on the PayID server source code itself, you can start a PostgreSQL database to develop against by running `npm run devDbUp`, which starts a database in a Docker container, and a local PayID server.
 
 To clean up the associated Docker containers after you create a local server or database container, run `npm run devDown`.
 
