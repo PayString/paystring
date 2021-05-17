@@ -11,11 +11,11 @@ jobs:
 
     # Run the auto-approve script twice (needs 2 reviewers)
     steps:
-    - uses: hmarr/auto-approve-action@v2.0.0
+    - uses: hmarr/auto-approve-action@v2.1.0
       if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
       with:
         github-token: "${{ secrets.GITHUB_TOKEN }}"
-    - uses: hmarr/auto-approve-action@v2.0.0
+    - uses: hmarr/auto-approve-action@v2.1.0
       if: github.actor == 'dependabot[bot]' || github.actor == 'dependabot-preview[bot]'
       with:
         github-token: "${{ secrets.GITHUB_TOKEN }}"
