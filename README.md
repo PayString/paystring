@@ -8,11 +8,11 @@ Welcome to PayString, the universal payment identifier.
 
 _This project is not associated with PayID operated by NPP Australia Ltd. People in Australia are prohibited from using this project. See below for more details._
 
-This is the reference implementation server for [PayString](https://docs.paystring.org/getting-started), serving the [PayString API](https://api.paystring.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a Postgres database.
+This is the reference implementation server for [PayString](https://docs.paystring.org/getting-started), serving the [PayString API](https://api.paystring.org/?version=latest). It uses TypeScript, a Node.js HTTP server, and a PostgreSQL database.
 
 By default, the server hosts the Public API, which conforms to the PayString Protocol, on port 8080. The server also hosts a second RESTful API on port 8081 for CRUD (Create/Read/Update/Delete) operations to manage PayStrings and associated addresses.
 
-To experiment with PayString, you can start a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file, which implicitly starts both a database and a PayString server inside Docker containers. To work on the PayString server source code itself, you can start a Postgres database to develop against by running `npm run devDbUp`, which starts a database in a Docker container, and a local PayString server.
+To experiment with PayString, you can start a local server by running `npm run devEnvUp`, which uses our local [`docker-compose.yml`](./docker-compose.yml) file, which implicitly starts both a database and a PayString server inside Docker containers. To work on the PayString server source code itself, you can start a PostgreSQL database to develop against by running `npm run devDbUp`, which starts a database in a Docker container, and a local PayString server.
 
 To clean up the associated Docker containers after you create a local server or database container, run `npm run devDown`.
 
