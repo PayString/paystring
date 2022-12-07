@@ -44,7 +44,7 @@
     "@payid-org/server-metrics": "^1.1.0",
     "@xpring-eng/http-status": "^1.0.0",
     "@xpring-eng/logger": "^1.0.0",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "knex": "^0.21.5",
     "knex-stringcase": "^1.4.5",
     "pg": "8.2.1",
