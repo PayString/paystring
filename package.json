@@ -45,7 +45,7 @@
     "@xpring-eng/http-status": "^1.0.0",
     "@xpring-eng/logger": "^1.0.0",
     "express": "^4.17.1",
-    "knex": "^0.21.5",
+    "knex": "^2.4.0",
     "knex-stringcase": "^1.4.5",
     "pg": "8.2.1",
     "prom-client": "^12.0.0",
